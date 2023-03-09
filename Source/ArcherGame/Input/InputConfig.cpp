@@ -6,13 +6,10 @@
 // Returns the first Input Action associated with a given tag.
 const UInputAction* UInputConfig::FindInputActionForTag(const FGameplayTag& inputTag) const
 {
-	for (const FTaggedInputAction& TaggedInputAction : TaggedInputActions)
+	const TArray<FTaggedInputAction>::ElementType* foundTaggedInputAction = TaggedInputActions.FindByPredicate([&](const FTaggedInputAction& TaggedInputAction)
 	{
-		if (TaggedInputAction.InputAction && TaggedInputAction.InputTag == inputTag)
-		{
-			return TaggedInputAction.InputAction;
-		}
-	}
+		return TaggedInputAction.InputAction && TaggedInputAction.InputTag == inputTag;
+	});
 
-	return nullptr;
+	return foundTaggedInputAction ? foundTaggedInputAction->InputAction : nullptr;
 }

@@ -18,7 +18,9 @@ public:
 	AArcherCharacter();
 
 #pragma region Input Handling
+
 public:
+	// The input config which filled with Gameplay Tagged Input Actions
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputConfig* InputConfig;
 
@@ -28,15 +30,17 @@ public:
 private:
 	void Input_Move(const FInputActionValue& inputActionValue);
 
-	void Input_Jump(const FInputActionValue& inputActionValue);
+	void Input_Jump();
 
-	void Input_Dash(const FInputActionValue& inputActionValue);
+	void Input_Dash();
 
-	void Input_FireHold(const FInputActionValue& inputActionValue);
-	void Input_FireRelease(const FInputActionValue& inputActionValue);
+	void Input_FireHold();
+	void Input_FireRelease();
+
+	FVector InputVector;
 
 #pragma endregion
-	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,4 +48,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float deltaTime) override;
+
+	// only friend for hud purposes
+	friend class AArcherDebugHUD;
 };

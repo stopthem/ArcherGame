@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EnhancedInputComponent.h"
 #include "InputConfig.h"
+#include "NativeGameplayTags.h"
 #include "ArcherEnhancedInputComponent.generated.h"
 
 struct FGameplayTag;
@@ -25,8 +26,10 @@ public:
 template <class UserClass, typename FuncType>
 void UArcherEnhancedInputComponent::BindActionByTag(const UInputConfig* inputConfig, const FGameplayTag& inputTag, ETriggerEvent triggerEvent, UserClass* object, FuncType func)
 {
+	// Make sure of input config
 	check(inputConfig);
 
+	// Bind action if given tag was given at inputConfig
 	if (const UInputAction* inputAction = inputConfig->FindInputActionForTag(inputTag))
 	{
 		BindAction(inputAction, triggerEvent, object, func);
