@@ -31,53 +31,48 @@ void AArcherCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCom
 
 	UArcherEnhancedInputComponent* archerEnhancedInputComponent = Cast<UArcherEnhancedInputComponent>(playerInputComponent);
 
+	// make sure of archerEnhancedInputComponent
 	check(archerEnhancedInputComponent);
 
-	const FArcherGameplayTags& gameplayTags = FArcherGameplayTags::Get();
-
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, gameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Move);
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, gameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Jump);
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, gameplayTags.InputTag_Dash, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Dash);
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, gameplayTags.InputTag_LookNFire, ETriggerEvent::Started, this, &AArcherCharacter::Input_FireHold);
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, gameplayTags.InputTag_LookNFire, ETriggerEvent::Completed, this, &AArcherCharacter::Input_FireRelease);
+	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_MOVE, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Move);
+	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_JUMP, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Jump);
+	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_DASH, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Dash);
+	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_LOOKNFIRE, ETriggerEvent::Started, this, &AArcherCharacter::Input_FireHold);
+	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_LOOKNFIRE, ETriggerEvent::Completed, this, &AArcherCharacter::Input_FireRelease);
 }
 
 void AArcherCharacter::Input_Move(const FInputActionValue& inputActionValue)
 {
 	if (Controller != nullptr)
 	{
-		const FVector2D MoveValue = inputActionValue.Get<FVector2D>();
-		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+		// x is vertical, y is horizontal 
+		InputVector = inputActionValue.Get<FVector>();
 
-		if (MoveValue.X != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
-			AddMovementInput(MovementDirection, MoveValue.X);
-		}
+		AddMovementInput(FVector::ForwardVector, InputVector.X);
 
-		if (MoveValue.Y != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-			AddMovementInput(MovementDirection, MoveValue.Y);
-		}
+		AddMovementInput(FVector::RightVector, InputVector.Y);
+
+		// return if there is no input so characters rotation doesnt reset to 0 0 0
+		if (InputVector.Size() == 0) return;
+
+		// set the character movement rotation target to input vector's rotation 
+		Controller->SetControlRotation(InputVector.Rotation());
 	}
 }
 
-void AArcherCharacter::Input_Jump(const FInputActionValue& inputActionValue)
+void AArcherCharacter::Input_Jump()
 {
-	UE_LOG(LogTemp, Warning, TEXT("lel"));
-
 	Jump();
 }
 
-void AArcherCharacter::Input_Dash(const FInputActionValue& inputActionValue)
+void AArcherCharacter::Input_Dash()
 {
 }
 
-void AArcherCharacter::Input_FireHold(const FInputActionValue& inputActionValue)
+void AArcherCharacter::Input_FireHold()
 {
 }
 
-void AArcherCharacter::Input_FireRelease(const FInputActionValue& inputActionValue)
+void AArcherCharacter::Input_FireRelease()
 {
 }
