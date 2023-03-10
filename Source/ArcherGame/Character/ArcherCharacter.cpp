@@ -18,6 +18,13 @@ void AArcherCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AArcherCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AnimInstance = GetMesh()->GetAnimInstance();
+}
+
 // Called every frame
 void AArcherCharacter::Tick(float deltaTime)
 {
@@ -34,8 +41,8 @@ void AArcherCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCom
 	// make sure of archerEnhancedInputComponent
 	check(archerEnhancedInputComponent);
 
+	// bind input's to functions
 	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_MOVE, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Move);
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_JUMP, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Jump);
 	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_DASH, ETriggerEvent::Triggered, this, &AArcherCharacter::Input_Dash);
 	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_LOOKNFIRE, ETriggerEvent::Started, this, &AArcherCharacter::Input_FireHold);
 	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_LOOKNFIRE, ETriggerEvent::Completed, this, &AArcherCharacter::Input_FireRelease);
@@ -48,21 +55,31 @@ void AArcherCharacter::Input_Move(const FInputActionValue& inputActionValue)
 		// x is vertical, y is horizontal 
 		InputVector = inputActionValue.Get<FVector>();
 
+		// add vertical input
 		AddMovementInput(FVector::ForwardVector, InputVector.X);
 
+		// add horizontal input
 		AddMovementInput(FVector::RightVector, InputVector.Y);
 
 		// return if there is no input so characters rotation doesnt reset to 0 0 0
-		if (InputVector.Size() == 0) return;
+		if (InputVector.Size() == 0)
+		{
+			// if character is running(determined by if current walking speed / max walking speed is more than StopMontagePlayConditionPercent) play the stopping montage
+			if (GetNormalizedWalkSpeed() >= StopMontagePlayConditionPercent && StoppingMontage->IsValidToPlay())
+			{
+				PlayAnimMontage(StoppingMontage);
+			}
+			return;
+		}
+
+		if (AnimInstance->Montage_IsPlaying(StoppingMontage))
+		{
+			AnimInstance->Montage_Stop(StoppingMontage->BlendOut.GetBlendTime(), StoppingMontage);
+		}
 
 		// set the character movement rotation target to input vector's rotation 
 		Controller->SetControlRotation(InputVector.Rotation());
 	}
-}
-
-void AArcherCharacter::Input_Jump()
-{
-	Jump();
 }
 
 void AArcherCharacter::Input_Dash()
