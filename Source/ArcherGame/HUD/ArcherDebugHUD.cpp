@@ -13,6 +13,5 @@ void AArcherDebugHUD::DrawHUD()
 
 	if (!archerCharacter)return;
 
-	AddBool(L"Is Grounded", archerCharacter->GetCharacterMovement()->IsMovingOnGround());
 	// AddBool(L"Can Dash", archerCharacter->bCanDash);
 }
