@@ -85,7 +85,7 @@ private:
 
 	// Font used to render the debug information.
 	UPROPERTY(Transient)
-	UFont* MainFont = nullptr;
+	TObjectPtr<UFont> MainFont = nullptr;
 
 	// The current X coordinate.
 	float X = 50.0f;

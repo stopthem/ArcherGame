@@ -34,7 +34,11 @@ public:
 	// Returns the first Input Action associated with a given tag.
 	const UInputAction* FindInputActionForTag(const FGameplayTag& inputTag) const;
 
-	// List of input actions used by the owner. These input actions are mapped to a gameplay tag and must be manually bound.
+	// List of native input actions used by the owner. These input actions are mapped to a gameplay tag and must be manually bound.
 	UPROPERTY(EditDefaultsOnly, meta=(TitleProperty = "InputAction"))
-	TArray<FTaggedInputAction> TaggedInputActions;
+	TArray<FTaggedInputAction> NativeInputActions;
+
+	// List of ability input actions used by the owner. These input actions are mapped to a gameplay tag and must be manually bound.
+	UPROPERTY(EditDefaultsOnly, meta=(TitleProperty = "InputAction"))
+	TArray<FTaggedInputAction> AbilityInputActions;
 };

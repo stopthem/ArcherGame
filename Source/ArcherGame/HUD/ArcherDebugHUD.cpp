@@ -2,14 +2,13 @@
 
 
 #include "ArcherDebugHUD.h"
-#include "ArcherGame/Character/ArcherCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
 
 void AArcherDebugHUD::DrawHUD()
 {
 	Super::DrawHUD();
 
-	const AArcherCharacter* archerCharacter = Cast<AArcherCharacter>(GetOwningPawn());
+	const AArcherPlayerCharacter* archerCharacter = Cast<AArcherPlayerCharacter>(GetOwningPawn());
 
 	if (!archerCharacter)return;
 

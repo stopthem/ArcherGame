@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
+#include "Ability/ArcherAbilitySystemComponent.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "ArcherCharacter.generated.h"
 
 struct FInputActionValue;
 class UInputConfig;
 UCLASS()
-class ARCHERGAME_API AArcherCharacter : public ACharacter
+class ARCHERGAME_API AArcherCharacter : public ACharacter, public IAbilitySystemInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -18,63 +19,29 @@ public:
 	// Sets default values for this character's properties
 	AArcherCharacter();
 
-#pragma region Animation
+	// Init ability system component
+	virtual void PossessedBy(AController* NewController) override;
 
-public:
-	// The value of where angle between player forward and where the player wants to go in aiming mode
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
-	float PlayerMovementAngle;
-
-	// The montage that plays when player stops after running or dashing if can
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Animation|Stopping")
-	UAnimMontage* StoppingMontage;
-
-	// The percent that has to be less than current walk speed / max walk speed to play stopping montage
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Animation|Stopping", meta=(UIMin = "0", UIMax="1"))
-	float StopMontagePlayConditionPercent = 0.8f;
+	// Ability system interface getter.
+	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent.Get(); }
 
 private:
-	float GetNormalizedWalkSpeed() const
-	{
-		return GetCharacterMovement()->Velocity.Size2D() / GetCharacterMovement()->MaxWalkSpeed;
-	}
-
-	TObjectPtr<UAnimInstance> AnimInstance;
-#pragma endregion
-
-#pragma region Input Handling
-
-public:
-	// The input config which filled with Gameplay Tagged Input Actions
-	UPROPERTY(EditDefaultsOnly, Category="Input")
-	UInputConfig* InputConfig;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(UInputComponent* playerInputComponent) override;
-
-private:
-	void Input_Move(const FInputActionValue& inputActionValue);
-
-	void Input_Dash();
-
-	void Input_FireHold();
-	void Input_FireRelease();
-
-	FVector InputVector;
-
-#pragma endregion
+	bool bAbilitySystemInitted = false;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	// The gameplay ability system brain.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ability")
+	TObjectPtr<UArcherAbilitySystemComponent> AbilitySystemComponent;
 
-	// Get anim instance
-	virtual void PostInitializeComponents() override;
-
-	// Called every frame
-	virtual void Tick(float deltaTime) override;
+	// The gameplay ability system AttributeSet, used to hold character stats like health.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ability")
+	TObjectPtr<class UArcherAttributeSet> AttributeSet;
 
 public:
-	// only friend for hud purposes
-	friend class AArcherDebugHUD;
+	// Start of IGameplayTagAssetInterface
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	virtual bool HasMatchingGameplayTag(FGameplayTag TagToCheck) const override;
+	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+	// End of IGameplayTagAssetInterface
 };

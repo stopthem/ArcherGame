@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"EnhancedInput"
+				"EnhancedInput",
+				"GameplayAbilities"
 			]
 		},
 		{
@@ -34,6 +35,10 @@
 		{
 			"Name": "Pooler",
 			"Enabled": false
+		},
+		{
+			"Name": "AbilitySystemGameFeatureActions",
+			"Enabled": true
 		}
 	]
 }
