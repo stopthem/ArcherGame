@@ -8,7 +8,7 @@ public class ArcherGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "FCTween", "GameplayTags", "EnhancedInput", "GameplayAbilities" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "FCTween", "GameplayTags", "EnhancedInput", "GameplayAbilities", "AbilitySystemGameFeatureActions", "GameplayTasks" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 

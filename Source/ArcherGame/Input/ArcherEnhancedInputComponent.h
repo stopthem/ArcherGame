@@ -21,6 +21,9 @@ class ARCHERGAME_API UArcherEnhancedInputComponent : public UEnhancedInputCompon
 public:
 	template <class UserClass, typename FuncType>
 	void BindActionByTag(const UInputConfig* inputConfig, const FGameplayTag& inputTag, ETriggerEvent triggerEvent, UserClass* object, FuncType func);
+
+	template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+	void BindAbilityActions(const UInputConfig* inputConfig, UserClass* object, PressedFuncType pressedFunc, ReleasedFuncType releasedFunc, TArray<uint32>& bindHandles);
 };
 
 template <class UserClass, typename FuncType>
@@ -33,5 +36,27 @@ void UArcherEnhancedInputComponent::BindActionByTag(const UInputConfig* inputCon
 	if (const UInputAction* inputAction = inputConfig->FindInputActionForTag(inputTag))
 	{
 		BindAction(inputAction, triggerEvent, object, func);
+	}
+}
+
+template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+void UArcherEnhancedInputComponent::BindAbilityActions(const UInputConfig* inputConfig, UserClass* object, PressedFuncType pressedFunc, ReleasedFuncType releasedFunc, TArray<uint32>& bindHandles)
+{
+	check(inputConfig);
+
+	for (const FTaggedInputAction& Action : inputConfig->AbilityInputActions)
+	{
+		if (Action.InputAction && Action.InputTag.IsValid())
+		{
+			if (pressedFunc)
+			{
+				bindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Triggered, object, pressedFunc, Action.InputTag).GetHandle());
+			}
+
+			if (releasedFunc)
+			{
+				bindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Completed, object, releasedFunc, Action.InputTag).GetHandle());
+			}
+		}
 	}
 }
