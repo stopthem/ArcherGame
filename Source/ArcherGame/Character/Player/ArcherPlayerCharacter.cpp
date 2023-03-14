@@ -29,10 +29,10 @@ void AArcherPlayerCharacter::SetupPlayerInputComponent(UInputComponent* playerIn
 	// make sure of archerEnhancedInputComponent
 	check(archerEnhancedInputComponent);
 
-	// bind input's to functions
+	// bind tagged input's to functions
 	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_MOVE, ETriggerEvent::Triggered, this, &AArcherPlayerCharacter::Input_Move);
 
-	// bind ability actions to pressed and released functions
+	// bind tagged ability actions to pressed and released functions
 	TArray<uint32> bindHandles;
 	archerEnhancedInputComponent->BindAbilityActions(InputConfig, this, &AArcherPlayerCharacter::Input_AbilityInputTagPressed, &AArcherPlayerCharacter::Input_AbilityInputTagReleased, bindHandles);
 }
@@ -66,6 +66,11 @@ void AArcherPlayerCharacter::Input_Move(const FInputActionValue& inputActionValu
 			AnimInstance->Montage_Stop(StoppingMontage->BlendOut.GetBlendTime(), StoppingMontage);
 		}
 
+		// if aiming, control rotation is handled by GA_Erika_Aim gameplay ability
+		if (IsAiming)
+		{
+			return;
+		}
 		// set the character movement rotation target to input vector's rotation 
 		Controller->SetControlRotation(InputVector.Rotation());
 	}

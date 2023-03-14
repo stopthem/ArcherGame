@@ -24,6 +24,7 @@ public:
 
 	// Ability system interface getter.
 	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent.Get(); }
+	TObjectPtr<UArcherAbilitySystemComponent> GetArcherAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 private:
 	bool bAbilitySystemInitted = false;

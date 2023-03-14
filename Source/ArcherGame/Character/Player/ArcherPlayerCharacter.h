@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
+#include "NativeGameplayTags.h"
 #include "ArcherGame/Character/ArcherCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ArcherPlayerCharacter.generated.h"
@@ -17,6 +19,12 @@ class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter
 
 public:
 	AArcherPlayerCharacter();
+
+	UPROPERTY(BlueprintReadWrite, Category="Aim")
+	bool IsAiming = false;
+
+	UFUNCTION(BlueprintCallable)
+	APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -57,7 +65,6 @@ public:
 
 private:
 	void Input_Move(const FInputActionValue& inputActionValue);
-
 	void Input_AbilityInputTagPressed(FGameplayTag gameplayTag);
 	void Input_AbilityInputTagReleased(FGameplayTag gameplayTag);
 

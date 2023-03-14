@@ -6,15 +6,16 @@
 #include "Abilities/GameplayAbility.h"
 #include "ArcherGameplayAbility.generated.h"
 
-UENUM()
-enum class EArcherAbilityInputID : uint8
+UENUM(BlueprintType)
+enum class EArcherAbilityActivationPolicy : uint8
 {
-	None,
-	Confirm,
-	Cancel,
-	Dash,
-	Aiming
+	// Try to activate the ability when the input is triggered.
+	OnInputTriggered,
+
+	// Continually try to activate the ability while the input is active.
+	WhileInputActive,
 };
+
 
 /**
  * 
@@ -27,11 +28,17 @@ class ARCHERGAME_API UArcherGameplayAbility : public UGameplayAbility
 public:
 	UArcherGameplayAbility();
 
-	// Input ID which activate this ability.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Ability Info")
-	EArcherAbilityInputID AbilityInputID = EArcherAbilityInputID::None;
+	UPROPERTY(EditDefaultsOnly, Category="Ability Info")
+	FGameplayTag InputTag;
 
 	// Level of the ability
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Ability Info")
 	int32 AbilityLevel = 1;
+
+	EArcherAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
+
+protected:
+	// Defines how this ability is meant to activate.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Info")
+	EArcherAbilityActivationPolicy ActivationPolicy;
 };
