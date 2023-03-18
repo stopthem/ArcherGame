@@ -15,6 +15,6 @@ class ARCHERGAME_API UScreenExBlueprintFunctionLibrary : public UBlueprintFuncti
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, meta=(WorldContext="context"))
+	UFUNCTION(BlueprintPure, meta=(WorldContext="context"))
 	static FVector2D GetScreenCenterToScreenPosDir(UObject* context, FVector2D screenPos, bool bNegate = true, bool bNormalize = true);
 };

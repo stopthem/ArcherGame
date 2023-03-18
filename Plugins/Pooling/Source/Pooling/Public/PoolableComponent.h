@@ -14,6 +14,7 @@ class POOLING_API UPoolableComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void ReturnToPool();
 
 	void Taken();
@@ -30,8 +31,10 @@ public:
 		return Pooler;
 	}
 
-private:
+	UPROPERTY(VisibleAnywhere)
 	bool IsTaken;
 
-	TObjectPtr<APooler> Pooler;
+private:
+	UPROPERTY()
+	APooler* Pooler;
 };

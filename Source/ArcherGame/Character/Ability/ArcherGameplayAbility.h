@@ -14,6 +14,9 @@ enum class EArcherAbilityActivationPolicy : uint8
 
 	// Continually try to activate the ability while the input is active.
 	WhileInputActive,
+
+	// Ability will be manually activated.
+	Manual
 };
 
 
@@ -36,6 +39,9 @@ public:
 	int32 AbilityLevel = 1;
 
 	EArcherAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
+
+	UFUNCTION(BlueprintCallable)
+	class AArcherPlayerCharacter* GetArcherPlayerCharacterFromActorInfo() const;
 
 protected:
 	// Defines how this ability is meant to activate.

@@ -6,36 +6,42 @@
 #include "PoolableComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-// Spawn the to be pooled objects
-void APooler::BeginPlay()
+void APooler::PreInitializeComponents()
 {
-	Super::BeginPlay();
-
-	// Get world
-	UWorld* world = GetWorld();
+	Super::PreInitializeComponents();
 
 	for (int i = 0; i < SpawnAtStart; ++i)
 	{
-		// Spawn the to be pooled actor
-		AActor* spawnedActor = world->SpawnActor<AActor>(ActorToPool, FVector::ZeroVector, FRotator::ZeroRotator);
-
-		// Reset spawnedActor
-		ResetPooledObj(spawnedActor);
-
-		// Is UPoolableComponent added manually?
-		UPoolableComponent* poolableComponent = spawnedActor->FindComponentByClass<UPoolableComponent>();
-		// If not create one
-		if (!poolableComponent)
-		{
-			poolableComponent = Cast<UPoolableComponent>(spawnedActor->AddComponentByClass(UPoolableComponent::StaticClass(), true, spawnedActor->GetTransform(), true));
-		}
-
-		// Add spawnedActor's UPoolableComponent to the list
-		PooledActors.Add(poolableComponent);
-		// Init this pooler to poolableComponent
-		poolableComponent->Init(this);
+		SpawnPooledActor();
 	}
 }
+
+AActor* APooler::SpawnPooledActor()
+{
+	if (!GetWorld())return nullptr;
+
+	// Spawn the to be pooled actor
+	AActor* spawnedActor = GetWorld()->SpawnActor<AActor>(ActorToPool, FVector::ZeroVector, FRotator::ZeroRotator);
+
+	// Reset spawnedActor
+	ResetPooledObj(spawnedActor);
+
+	// Is UPoolableComponent added manually?
+	UPoolableComponent* poolableComponent = spawnedActor->FindComponentByClass<UPoolableComponent>();
+	// If not create one
+	if (!poolableComponent)
+	{
+		poolableComponent = Cast<UPoolableComponent>(spawnedActor->AddComponentByClass(UPoolableComponent::StaticClass(), true, spawnedActor->GetTransform(), true));
+	}
+
+	// Add spawnedActor's UPoolableComponent to the list
+	PooledActors.Add(poolableComponent);
+	// Init this pooler to poolableComponent
+	poolableComponent->Init(this);
+
+	return spawnedActor;
+}
+
 
 void APooler::ResetPooledObj(AActor* pooledActor)
 {
@@ -43,7 +49,7 @@ void APooler::ResetPooledObj(AActor* pooledActor)
 	pooledActor->AttachToActor(this, attachmentTransformRules);
 
 	// Set spawned actor world outliner folder and hide it
-	pooledActor->SetFolderPath(FName("/Pools/" + UKismetSystemLibrary::GetDisplayName(this)));
+	pooledActor->SetFolderPath(GetFolderPath());
 	pooledActor->SetActorHiddenInGame(true);
 
 	// Reset position, scale and rotation
@@ -55,15 +61,26 @@ void APooler::ResetPooledObj(AActor* pooledActor)
 // Get pooled object from the pool
 AActor* APooler::GetPooledObj()
 {
-	const TObjectPtr<UPoolableComponent>* foundPoolableComponent = PooledActors.FindByPredicate([&](const UPoolableComponent* poolableComponent)
+	UPoolableComponent* poolableComponent;
+
+	// is there an available pooled actor?
+	if (const auto foundPoolableComponent = PooledActors.FindByPredicate([](const UPoolableComponent* poolableComponent)
 	{
 		return !poolableComponent->GetIsTaken();
-	});
+	}))
+	{
+		poolableComponent = *foundPoolableComponent;
+	}
+	else
+	{
+		// if not spawn one
+		const AActor* spawnedActor = SpawnPooledActor();
+		poolableComponent = spawnedActor->FindComponentByClass<UPoolableComponent>();
+	}
 
-	UPoolableComponent* returnedPoolableComponent = *foundPoolableComponent;
-	returnedPoolableComponent->Taken();
+	poolableComponent->Taken();
 
-	AActor* returnedActor = returnedPoolableComponent->GetOwner();
+	AActor* returnedActor = poolableComponent->GetOwner();
 	returnedActor->SetActorHiddenInGame(false);
 
 	return returnedActor;
@@ -71,6 +88,7 @@ AActor* APooler::GetPooledObj()
 
 void APooler::ReturnToPool(const UPoolableComponent* poolableComponent)
 {
+	// does given poolableComponent is pooled by this pooler ?
 	if (!PooledActors.Contains(poolableComponent))return;
 
 	ResetPooledObj(poolableComponent->GetOwner());

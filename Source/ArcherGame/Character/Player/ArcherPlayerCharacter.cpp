@@ -54,7 +54,7 @@ void AArcherPlayerCharacter::Input_Move(const FInputActionValue& inputActionValu
 			return;
 		}
 
-		// if aiming, control rotation is handled by GA_Erika_Aim gameplay ability
+		// if aiming, control rotation is handled by GA_Archer_Aim gameplay ability
 		if (IsAiming)
 		{
 			return;

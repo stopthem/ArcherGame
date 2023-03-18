@@ -50,9 +50,6 @@ private:
 #pragma endregion
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Animation|Dash")
-	TObjectPtr<UAnimMontage> AfterDashStoppingMontage;
-
 	// only friend for hud purposes
 	friend class AArcherDebugHUD;
 };

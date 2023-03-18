@@ -3,6 +3,13 @@
 
 #include "ArcherGameplayAbility.h"
 
+#include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
+
 UArcherGameplayAbility::UArcherGameplayAbility()
 {
+}
+
+AArcherPlayerCharacter* UArcherGameplayAbility::GetArcherPlayerCharacterFromActorInfo() const
+{
+	return CurrentActorInfo ? Cast<AArcherPlayerCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr;
 }

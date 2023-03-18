@@ -23,8 +23,10 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 	// Ability system interface getter.
-	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent.Get(); }
-	TObjectPtr<UArcherAbilitySystemComponent> GetArcherAbilitySystemComponent() const { return AbilitySystemComponent; }
+	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	UArcherAbilitySystemComponent* GetArcherAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 private:
 	bool bAbilitySystemInitted = false;
@@ -32,7 +34,7 @@ private:
 protected:
 	// The gameplay ability system brain.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ability")
-	TObjectPtr<UArcherAbilitySystemComponent> AbilitySystemComponent;
+	UArcherAbilitySystemComponent* AbilitySystemComponent;
 
 	// The gameplay ability system AttributeSet, used to hold character stats like health.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ability")

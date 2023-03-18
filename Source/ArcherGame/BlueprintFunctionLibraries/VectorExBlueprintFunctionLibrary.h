@@ -15,6 +15,6 @@ class ARCHERGAME_API UVectorExBlueprintFunctionLibrary : public UBlueprintFuncti
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	static FVector GetDirection(FVector fromVector, FVector toVector, bool bNormalized = true);
 };

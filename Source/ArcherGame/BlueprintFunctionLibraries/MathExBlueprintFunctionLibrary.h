@@ -15,9 +15,9 @@ class ARCHERGAME_API UMathExBlueprintFunctionLibrary : public UBlueprintFunction
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	static float GetAngleBetween(FVector aVector, FVector bVector);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	static float GetSignedAngleBetween(FVector aVector, FVector bVector, FVector axisVector);
 };

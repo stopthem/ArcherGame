@@ -22,6 +22,7 @@ public:
 	int SpawnAtStart;
 
 	// Get pooled object from the pool
+	UFUNCTION(BlueprintCallable)
 	AActor* GetPooledObj();
 
 	void ReturnToPool(const UPoolableComponent* poolableComponent);
@@ -53,10 +54,13 @@ public:
 #pragma endregion
 
 protected:
-	// Spawn the to be pooled objects
-	virtual void BeginPlay() override;
+	// Spawn starting pooled objects
+	virtual void PreInitializeComponents() override;
 
-	TArray<TObjectPtr<UPoolableComponent>> PooledActors;
+	TArray<UPoolableComponent*> PooledActors;
 
 	void ResetPooledObj(AActor* pooledActor);
+
+private:
+	AActor* SpawnPooledActor();
 };

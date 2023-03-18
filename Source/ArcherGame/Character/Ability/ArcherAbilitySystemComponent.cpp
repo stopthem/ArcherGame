@@ -2,7 +2,6 @@
 
 
 #include "ArcherAbilitySystemComponent.h"
-
 #include "ArcherGameplayAbility.h"
 #include "ArcherGameplayEffect.h"
 
@@ -35,7 +34,7 @@ void UArcherAbilitySystemComponent::InitializeDefaultAbilitiesEffects()
 
 void UArcherAbilitySystemComponent::AbilityInputPressed(const FGameplayTag& InputTag)
 {
-	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindCorrespondingAbilitySpecFromTag(InputTag, foundGameplayAbilitySpec))
+	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindAbilitySpecFromInputTag(InputTag, foundGameplayAbilitySpec))
 	{
 		InputPressedSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
 		InputHeldSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
@@ -44,7 +43,7 @@ void UArcherAbilitySystemComponent::AbilityInputPressed(const FGameplayTag& Inpu
 
 void UArcherAbilitySystemComponent::AbilityInputReleased(const FGameplayTag& InputTag)
 {
-	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindCorrespondingAbilitySpecFromTag(InputTag, foundGameplayAbilitySpec))
+	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindAbilitySpecFromInputTag(InputTag, foundGameplayAbilitySpec))
 	{
 		InputReleasedSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
 		InputHeldSpecHandles.Remove(foundGameplayAbilitySpec.Handle);
@@ -148,12 +147,34 @@ void UArcherAbilitySystemComponent::ClearAbilityInput()
 	InputHeldSpecHandles.Reset();
 }
 
-bool UArcherAbilitySystemComponent::FindCorrespondingAbilitySpecFromTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec)
+bool UArcherAbilitySystemComponent::FindAbilitySpecHandleFromTag(FGameplayTag abilityTag, FGameplayAbilitySpecHandle& out_gameplayAbilitySpecHandle)
+{
+	if (!abilityTag.IsValid())
+	{
+		return false;
+	}
+
+
+	// if we found a ability with the given tag try to activate it
+	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec GameplayAbilitySpec)
+	{
+		return GameplayAbilitySpec.Ability && GameplayAbilitySpec.Ability->AbilityTags.HasTagExact(abilityTag);
+	}))
+	{
+		out_gameplayAbilitySpecHandle = foundGameplayAbilitySpec->Handle;
+		return true;
+	}
+
+	return false;
+}
+
+bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec)
 {
 	if (!inputTag.IsValid())
 	{
 		return false;
 	}
+
 
 	// if we found a ability with the given tag try to activate it
 	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec GameplayAbilitySpec)
