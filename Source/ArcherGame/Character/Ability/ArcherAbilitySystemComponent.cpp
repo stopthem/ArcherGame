@@ -168,6 +168,14 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecHandleFromTag(FGameplayTag ab
 	return false;
 }
 
+bool UArcherAbilitySystemComponent::IsAbilityActiveWithTag(FGameplayTag inputTag)
+{
+	FGameplayAbilitySpec foundAbilitySpec;
+	FindAbilitySpecFromInputTag(inputTag, foundAbilitySpec);
+
+	return foundAbilitySpec.Ability ? foundAbilitySpec.IsActive() : false;
+}
+
 bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec)
 {
 	if (!inputTag.IsValid())

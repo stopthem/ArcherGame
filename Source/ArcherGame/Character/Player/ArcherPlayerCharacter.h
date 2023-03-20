@@ -5,9 +5,12 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "NativeGameplayTags.h"
+#include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Character/ArcherCharacter.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "ArcherPlayerCharacter.generated.h"
 
+class UKismetStringLibrary;
 /**
  * 
  */
@@ -19,8 +22,13 @@ class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter
 public:
 	AArcherPlayerCharacter();
 
-	UPROPERTY(BlueprintReadWrite, Category="Aim")
-	bool IsAiming = false;
+	UFUNCTION(BlueprintCallable, Category="Aim Ability")
+	bool GetIsAiming()
+	{
+		bool isAiming = GetArcherAbilitySystemComponent()->IsAbilityActiveWithTag(TAG_INPUT_AIM);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *UKismetStringLibrary::Conv_BoolToString(isAiming));
+		return isAiming;
+	}
 
 	UFUNCTION(BlueprintCallable)
 	APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }

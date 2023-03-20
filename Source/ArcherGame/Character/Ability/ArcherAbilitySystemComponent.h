@@ -53,6 +53,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool FindAbilitySpecHandleFromTag(FGameplayTag abilityTag, FGameplayAbilitySpecHandle& out_gameplayAbilitySpecHandle);
 
+	bool IsAbilityActiveWithTag(FGameplayTag inputTag);
+
 private:
 	bool FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec);
 };
