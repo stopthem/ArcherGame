@@ -15,8 +15,6 @@ AArcherPlayerCharacter::AArcherPlayerCharacter()
 void AArcherPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	AnimInstance = GetMesh()->GetAnimInstance();
 }
 
 // Called to bind functionality to input
@@ -53,17 +51,7 @@ void AArcherPlayerCharacter::Input_Move(const FInputActionValue& inputActionValu
 		// return if there is no input so characters rotation doesnt reset to 0 0 0
 		if (InputVector.Size() == 0)
 		{
-			// if character is running(determined by if current walking speed / max walking speed is more than StopMontagePlayConditionPercent) play the stopping montage
-			if (GetNormalizedWalkSpeed() >= StopMontagePlayConditionPercent && StoppingMontage->IsValidToPlay() && !AnimInstance->IsAnyMontagePlaying())
-			{
-				PlayAnimMontage(StoppingMontage);
-			}
 			return;
-		}
-
-		if (AnimInstance->Montage_IsPlaying(StoppingMontage))
-		{
-			AnimInstance->Montage_Stop(StoppingMontage->BlendOut.GetBlendTime(), StoppingMontage);
 		}
 
 		// if aiming, control rotation is handled by GA_Erika_Aim gameplay ability

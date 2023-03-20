@@ -6,7 +6,6 @@
 #include "InputActionValue.h"
 #include "NativeGameplayTags.h"
 #include "ArcherGame/Character/ArcherCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "ArcherPlayerCharacter.generated.h"
 
 /**
@@ -29,28 +28,6 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 
-#pragma region Animation
-
-public:
-	// The value of where angle between player forward and where the player wants to go in aiming mode
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
-	float PlayerMovementAngle;
-
-	// The montage that plays when player stops after running or dashing if can
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Animation|Stopping")
-	TObjectPtr<UAnimMontage> StoppingMontage;
-
-	// The percent that has to be less than current walk speed / max walk speed to play stopping montage
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Animation|Stopping", meta=(UIMin = "0", UIMax="1"))
-	float StopMontagePlayConditionPercent = 0.8f;
-
-private:
-	float GetNormalizedWalkSpeed() const
-	{
-		return GetCharacterMovement()->Velocity.Size2D() / GetCharacterMovement()->MaxWalkSpeed;
-	}
-
-	TObjectPtr<UAnimInstance> AnimInstance;
 #pragma endregion
 
 #pragma region Input Handling
@@ -73,6 +50,9 @@ private:
 #pragma endregion
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Animation|Dash")
+	TObjectPtr<UAnimMontage> AfterDashStoppingMontage;
+
 	// only friend for hud purposes
 	friend class AArcherDebugHUD;
 };
