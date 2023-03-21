@@ -7,6 +7,16 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ParticleBlueprintFunctionLibrary.generated.h"
 
+UENUM()
+enum class EParticleAttachmentRules
+{
+	DontAttach,
+	// Given Location and Rotation values will be treated like relative after attaching to actor
+	AttachGivenValuesAreRelative,
+	// Given Location and Rotation values will be treated like world and will be converted to relative after attaching
+	AttachGivenValuesAreWorld
+};
+
 USTRUCT(BlueprintType)
 struct FParticlePlayingOptions
 {
@@ -29,9 +39,7 @@ public:
 
 	FVector PlayScale = FVector::OneVector;
 
-	bool bAttachToActor = false;
-	// if true, takes PlayRotation and PlayLocation as world and converts them to given PlayActor's relative. 
-	bool bConvertInfosToRelative = true;
+	EParticleAttachmentRules ParticleAttachmentRules = EParticleAttachmentRules::DontAttach;
 
 	FRotator PlayRotation = FRotator::ZeroRotator;
 };
@@ -45,14 +53,7 @@ class ARCHERGAME_API UParticleBlueprintFunctionLibrary : public UBlueprintFuncti
 	GENERATED_BODY()
 
 public:
-	/**
-	 * @brief Play particle at given particlePlayingOptions.
-	 * @note if you set particlePlayingOptions.bAttachToActor true, given location and rotation will be used as relative
-	 * @param context 
-	 * @param poolTag 
-	 * @param particlePlayingOptions 
-	 * @return 
-	 */
+	// Play pooled particle from given poolTag's found pooler. 
 	UFUNCTION(BlueprintPure, meta=(WorldContext="context"))
 	static UParticleSystemComponent* PlayPooledParticle(UObject* context, const FGameplayTag poolTag, const FParticlePlayingOptions& particlePlayingOptions);
 

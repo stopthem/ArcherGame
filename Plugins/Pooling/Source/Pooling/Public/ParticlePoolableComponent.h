@@ -17,6 +17,7 @@ class POOLING_API UParticlePoolableComponent : public UPoolableComponent
 
 	UParticlePoolableComponent();
 
+	// get particle system if null and bind to particle system component's on system finished 
 	virtual void Taken() override;
 
 private:

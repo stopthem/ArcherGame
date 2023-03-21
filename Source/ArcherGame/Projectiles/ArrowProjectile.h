@@ -19,15 +19,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arrow Projectile")
 	float stickLocationMultiplier = 25.0f;
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pooling")
-	float timeAfterOverlapReturnToPool = 5.0f;
-
 	virtual void Shoot() const override;
 
 protected:
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
 
-private:
-	FTimerHandle ReturnToPoolTimerHandle;
+	virtual void PlayHitParticle(AActor* otherActor) override;
 };

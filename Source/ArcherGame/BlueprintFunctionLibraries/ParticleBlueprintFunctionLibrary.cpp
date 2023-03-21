@@ -28,16 +28,20 @@ void UParticleBlueprintFunctionLibrary::SetParticle(AActor* spawnedActor, const 
 {
 	spawnedActor->SetActorScale3D(particlePlayingOptions.PlayScale);
 	// attach to actor if needed and set its relative location,rotation and scale
-	if (particlePlayingOptions.bAttachToActor)
+	if (particlePlayingOptions.ParticleAttachmentRules != EParticleAttachmentRules::DontAttach)
 	{
 		spawnedActor->AttachToActor(particlePlayingOptions.PlayActor, FAttachmentTransformRules::KeepWorldTransform);
 
-		spawnedActor->SetActorRelativeLocation(particlePlayingOptions.bConvertInfosToRelative
-			                                       ? UKismetMathLibrary::InverseTransformLocation(particlePlayingOptions.PlayActor->GetTransform(), particlePlayingOptions.PlayLocation)
-			                                       : particlePlayingOptions.PlayLocation);
-		spawnedActor->SetActorRelativeRotation(particlePlayingOptions.bConvertInfosToRelative
-			                                       ? UKismetMathLibrary::InverseTransformRotation(particlePlayingOptions.PlayActor->GetTransform(), particlePlayingOptions.PlayRotation)
-			                                       : particlePlayingOptions.PlayRotation);
+		const FVector particleLocation = particlePlayingOptions.ParticleAttachmentRules == EParticleAttachmentRules::AttachGivenValuesAreWorld
+			                                 ? UKismetMathLibrary::InverseTransformLocation(particlePlayingOptions.PlayActor->GetTransform(), particlePlayingOptions.PlayLocation)
+			                                 : particlePlayingOptions.PlayLocation;
+
+		const FRotator particleRotation = particlePlayingOptions.ParticleAttachmentRules == EParticleAttachmentRules::AttachGivenValuesAreWorld
+			                                  ? UKismetMathLibrary::InverseTransformRotation(particlePlayingOptions.PlayActor->GetTransform(), particlePlayingOptions.PlayRotation)
+			                                  : particlePlayingOptions.PlayRotation;
+
+		spawnedActor->SetActorRelativeLocation(particleLocation);
+		spawnedActor->SetActorRelativeRotation(particleRotation);
 	}
 	else
 	{

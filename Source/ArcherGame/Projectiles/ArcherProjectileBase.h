@@ -32,9 +32,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
-	bool bPlayHitVfxAfterHit = true;
-
 	void PlayParticle(FParticlePlayingOptions particlePlayingOptions) const
 	{
 		if (bPlayPooledParticle)
@@ -78,7 +75,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Mesh")
 	TObjectPtr<UStaticMeshComponent> ProjectileMesh;
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
+
+	virtual void PlayHitParticle(AActor* otherActor);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")

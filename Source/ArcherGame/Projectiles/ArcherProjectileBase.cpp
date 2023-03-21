@@ -44,26 +44,27 @@ void AArcherProjectileBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
+void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
+	Super::NotifyActorBeginOverlap(otherActor);
 
 	ProjectileMesh->SetGenerateOverlapEvents(false);
 
 	ProjectileMovementComponent->StopMovementImmediately();
 
-	if (ProjectileHitParticleInfo.bPlayHitVfxAfterHit)
-	{
-		FParticlePlayingOptions particlePlayingOptions(OtherActor);
-		particlePlayingOptions.bAttachToActor = true;
-		particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
-		ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
-	}
+	PlayHitParticle(otherActor);
 
 	if (bShouldReturnToPoolAfterOverlap)
 	{
 		ReturnToPool();
 	}
+}
+
+void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
+{
+	FParticlePlayingOptions particlePlayingOptions(this);
+	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
+	ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
 }
 
 void AArcherProjectileBase::ReturnToPool()
