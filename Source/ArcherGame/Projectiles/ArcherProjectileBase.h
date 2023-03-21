@@ -3,9 +3,51 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "ArcherProjectileBase.generated.h"
+
+// class UGameplayStatics;
+class UParticleBlueprintFunctionLibrary;
+class UPoolerBlueprintFunctionLibrary;
+// Struct of what kind of action needs to be taken about particles when projectile hit something
+USTRUCT(BlueprintType)
+struct FProjectileHitParticleInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
+	bool bPlayPooledParticle = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == true", EditConditionHides))
+	FGameplayTag HitVfxPoolerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == false", EditConditionHides))
+	UParticleSystem* HitVfx;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
+	bool bUseActorRotation = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
+	bool bPlayHitVfxAfterHit = true;
+
+	void PlayParticle(FParticlePlayingOptions particlePlayingOptions) const
+	{
+		if (bPlayPooledParticle)
+		{
+			UParticleBlueprintFunctionLibrary::PlayPooledParticle(particlePlayingOptions.PlayActor, HitVfxPoolerTag, particlePlayingOptions);
+		}
+		else
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(particlePlayingOptions.PlayActor, HitVfx, particlePlayingOptions.PlayActor->GetActorLocation(),
+			                                         bUseActorRotation ? particlePlayingOptions.PlayActor->GetActorRotation() : FRotator::ZeroRotator);
+		}
+	}
+};
 
 UCLASS()
 class ARCHERGAME_API AArcherProjectileBase : public AActor
@@ -22,6 +64,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Movement")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
+	FProjectileHitParticleInfo ProjectileHitParticleInfo;
+
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -36,12 +81,14 @@ protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pooling")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")
 	TObjectPtr<class UPoolableComponent> PoolableComponent;
 
+	// calls this actors poolable component's return to pool
 	void ReturnToPool();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pooling")
+	// do we want to return to pool when projectile hits something?
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")
 	bool bShouldReturnToPoolAfterOverlap = true;
 };

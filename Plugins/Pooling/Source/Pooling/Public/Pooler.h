@@ -13,6 +13,9 @@ class POOLING_API APooler : public AActor, public IGameplayTagAssetInterface
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, Category="Pooling")
+	bool bPoolingParticle = false;
+
 	// The actor to pool
 	UPROPERTY(EditAnywhere, Category="Pooling")
 	TSubclassOf<AActor> ActorToPool = nullptr;
@@ -24,6 +27,14 @@ public:
 	// Get pooled object from the pool
 	UFUNCTION(BlueprintCallable)
 	AActor* GetPooledObj();
+
+	// Get pooled object from the pool and find given component
+	template <typename T>
+	UFUNCTION(BlueprintCallable)
+	typename TEnableIf<TIsDerivedFrom<T, UActorComponent>::IsDerived, T*>::Type GetPooledObj()
+	{
+		return GetPooledObj()->FindComponentByClass<T>();
+	}
 
 	void ReturnToPool(const UPoolableComponent* poolableComponent);
 

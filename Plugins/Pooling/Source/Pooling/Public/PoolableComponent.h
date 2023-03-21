@@ -17,7 +17,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ReturnToPool();
 
-	void Taken();
+	virtual void Taken();
 
 	bool GetIsTaken() const
 	{

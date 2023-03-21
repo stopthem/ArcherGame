@@ -52,6 +52,14 @@ void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	ProjectileMovementComponent->StopMovementImmediately();
 
+	if (ProjectileHitParticleInfo.bPlayHitVfxAfterHit)
+	{
+		FParticlePlayingOptions particlePlayingOptions(OtherActor);
+		particlePlayingOptions.bAttachToActor = true;
+		particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
+		ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
+	}
+
 	if (bShouldReturnToPoolAfterOverlap)
 	{
 		ReturnToPool();

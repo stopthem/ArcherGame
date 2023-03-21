@@ -3,8 +3,10 @@
 
 #include "Pooler.h"
 
+#include "ParticlePoolableComponent.h"
 #include "PoolableComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
 
 void APooler::PreInitializeComponents()
 {
@@ -31,7 +33,9 @@ AActor* APooler::SpawnPooledActor()
 	// If not create one
 	if (!poolableComponent)
 	{
-		poolableComponent = Cast<UPoolableComponent>(spawnedActor->AddComponentByClass(UPoolableComponent::StaticClass(), true, spawnedActor->GetTransform(), true));
+		UClass* poolableComponentClassToAdd = bPoolingParticle ? UParticlePoolableComponent::StaticClass() : UPoolableComponent::StaticClass();
+
+		poolableComponent = Cast<UPoolableComponent>(spawnedActor->AddComponentByClass(poolableComponentClassToAdd, true, spawnedActor->GetTransform(), true));
 	}
 
 	// Add spawnedActor's UPoolableComponent to the list
@@ -78,6 +82,7 @@ AActor* APooler::GetPooledObj()
 		poolableComponent = spawnedActor->FindComponentByClass<UPoolableComponent>();
 	}
 
+	poolableComponent->Activate();
 	poolableComponent->Taken();
 
 	AActor* returnedActor = poolableComponent->GetOwner();

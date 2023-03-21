@@ -23,8 +23,6 @@ void AArrowProjectile::Shoot() const
 
 void AArrowProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
-
 	// UE_LOG(LogTemp, Warning, TEXT("notify overlap actor %s other actor %s"), *GetActorNameOrLabel(), *OtherActor->GetActorNameOrLabel());
 
 	// zero out gravity scale so arrow doesnt fall down
@@ -34,7 +32,20 @@ void AArrowProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
 
 	// set a timer for returning to pool
-	GetWorldTimerManager().SetTimer(ReturnToPoolTimerHandle, this, &AArrowProjectile::ReturnToPool, timeAfterOverlapReturnToPool);
+	// GetWorldTimerManager().SetTimer(ReturnToPoolTimerHandle, this, &AArrowProjectile::ReturnToPool, timeAfterOverlapReturnToPool);
 
-	SetActorLocation(GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier);
+	const FVector stickLocation = GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier;
+
+	SetActorLocation(stickLocation);
+
+	// play particle at hit actor(for attaching) but our location and rotations
+	FParticlePlayingOptions particlePlayingOptions(OtherActor);
+	particlePlayingOptions.bAttachToActor = true;
+	particlePlayingOptions.bConvertInfosToRelative = true;
+	particlePlayingOptions.PlayLocation = stickLocation;
+	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
+
+	ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
+
+	Super::NotifyActorBeginOverlap(OtherActor);
 }
