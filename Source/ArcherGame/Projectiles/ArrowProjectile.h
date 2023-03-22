@@ -23,6 +23,7 @@ public:
 
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
-
+	
+	// play particle at hit actor(for attaching) but our location and rotations
 	virtual void PlayHitParticle(AActor* otherActor) override;
 };

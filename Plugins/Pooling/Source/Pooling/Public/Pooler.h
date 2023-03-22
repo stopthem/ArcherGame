@@ -17,16 +17,19 @@ public:
 	bool bPoolingParticle = false;
 
 	// The actor to pool
-	UPROPERTY(EditAnywhere, Category="Pooling")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pooling")
 	TSubclassOf<AActor> ActorToPool = nullptr;
 
-	// How many ActorToPool to spawn in BeginPlay
+	// How many ActorToPool to spawn in PreInitializeComponents
 	UPROPERTY(EditAnywhere, Category="Pooling")
 	int SpawnAtStart;
 
 	// Get pooled object from the pool
 	UFUNCTION(BlueprintCallable)
 	AActor* GetPooledObj();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pooling")
+	TArray<UPoolableComponent*> PooledActors;
 
 	// Get pooled object from the pool and find given component
 	template <typename T>
@@ -68,8 +71,7 @@ protected:
 	// Spawn starting pooled objects
 	virtual void PreInitializeComponents() override;
 
-	TArray<UPoolableComponent*> PooledActors;
-
+	// Make given actor reset to a newly spawned state
 	void ResetPooledObj(AActor* pooledActor);
 
 private:

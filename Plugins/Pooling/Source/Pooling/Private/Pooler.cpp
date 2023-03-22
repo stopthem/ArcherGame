@@ -46,7 +46,7 @@ AActor* APooler::SpawnPooledActor()
 	return spawnedActor;
 }
 
-
+// Make given actor reset to a newly spawned state
 void APooler::ResetPooledObj(AActor* pooledActor)
 {
 	const FAttachmentTransformRules attachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
@@ -58,7 +58,7 @@ void APooler::ResetPooledObj(AActor* pooledActor)
 
 	// Reset position, scale and rotation
 	pooledActor->SetActorRelativeLocation(FVector::ZeroVector);
-	pooledActor->SetActorScale3D(ActorToPool.GetDefaultObject()->GetActorScale());
+	pooledActor->SetActorScale3D(FVector::OneVector);
 	pooledActor->SetActorRotation(FRotator::ZeroRotator);
 }
 
@@ -84,7 +84,6 @@ AActor* APooler::GetPooledObj()
 
 	poolableComponent->Activate();
 	poolableComponent->Taken();
-
 	AActor* returnedActor = poolableComponent->GetOwner();
 	returnedActor->SetActorHiddenInGame(false);
 

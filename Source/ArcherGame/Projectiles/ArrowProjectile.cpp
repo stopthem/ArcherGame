@@ -23,24 +23,23 @@ void AArrowProjectile::Shoot() const
 
 void AArrowProjectile::NotifyActorBeginOverlap(AActor* otherActor)
 {
+	SetActorLocation(GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier);
+
 	// UE_LOG(LogTemp, Warning, TEXT("notify overlap actor %s other actor %s"), *GetActorNameOrLabel(), *OtherActor->GetActorNameOrLabel());
 	Super::NotifyActorBeginOverlap(otherActor);
 
 	// zero out gravity scale so arrow doesnt fall down
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
-
-	// attach to overlapped actor
-	AttachToActor(otherActor, FAttachmentTransformRules::KeepWorldTransform);
-
-	SetActorLocation(GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier);
 }
 
+// play particle at hit actor(for attaching) but our location and rotations
 void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 {
-	// play particle at hit actor(for attaching) but our location and rotations
 	FParticlePlayingOptions particlePlayingOptions(otherActor);
 	particlePlayingOptions.ParticleAttachmentRules = EParticleAttachmentRules::AttachGivenValuesAreWorld;
-	particlePlayingOptions.PlayLocation = GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier;
+
+	particlePlayingOptions.PlayLocation = GetActorLocation();
+
 	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
 
 	ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
