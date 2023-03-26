@@ -31,7 +31,7 @@ class ARCHERGAME_API UArcherGameplayAbility : public UGameplayAbility
 public:
 	UArcherGameplayAbility();
 
-	UPROPERTY(EditDefaultsOnly, Category="Ability Info")
+	UPROPERTY(EditDefaultsOnly, Category="Ability Info", meta=(EditCondition="ActivationPolicy != EArcherAbilityActivationPolicy::Manual"))
 	FGameplayTag InputTag;
 
 	// Level of the ability
@@ -42,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	class AArcherPlayerCharacter* GetArcherPlayerCharacterFromActorInfo() const;
+
+	UFUNCTION(BlueprintCallable)
+	class AArcherCharacter* GetArcherCharacterFromActorInfo() const;
 
 protected:
 	// Defines how this ability is meant to activate.

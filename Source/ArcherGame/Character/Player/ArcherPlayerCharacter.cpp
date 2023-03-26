@@ -29,7 +29,7 @@ void AArcherPlayerCharacter::SetupPlayerInputComponent(UInputComponent* playerIn
 	check(archerEnhancedInputComponent);
 
 	// bind tagged input's to functions
-	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_INPUT_MOVE, ETriggerEvent::Triggered, this, &AArcherPlayerCharacter::Input_Move);
+	archerEnhancedInputComponent->BindActionByTag(InputConfig, TAG_Input_Move, ETriggerEvent::Triggered, this, &AArcherPlayerCharacter::Input_Move);
 
 	// bind tagged ability actions to pressed and released functions
 	TArray<uint32> bindHandles;

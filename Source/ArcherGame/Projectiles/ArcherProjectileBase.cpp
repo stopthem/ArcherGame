@@ -3,7 +3,12 @@
 
 #include "ArcherProjectileBase.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "PoolableComponent.h"
+#include "ArcherGame/ArcherGameplayTags.h"
+#include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
+#include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -54,6 +59,8 @@ void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
 
 	PlayHitParticle(otherActor);
 
+	DamageOverlappedActor(otherActor);
+
 	if (bShouldReturnToPoolAfterOverlap)
 	{
 		ReturnToPool();
@@ -65,6 +72,38 @@ void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
 	FParticlePlayingOptions particlePlayingOptions(this);
 	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
 	ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
+}
+
+void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
+{
+	// create gameplayEvent data and only fill basic variables
+	FGameplayEventData gameplayEventData;
+	gameplayEventData.Instigator = this;
+	gameplayEventData.Target = otherActor;
+
+	if (UArcherAbilitySystemComponent* otherASC = otherActor->FindComponentByClass<UArcherAbilitySystemComponent>())
+	{
+		const FGameplayEffectContextHandle gameplayEffectContext = otherASC->MakeEffectContext();
+
+		const FGameplayEffectSpecHandle specHandle = otherASC->MakeOutgoingSpec(*DamageGameplayEffect, 0, gameplayEffectContext);
+		// the actual damage is magnitude
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
+
+		otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
+
+		otherASC->GetOwnedGameplayTags(gameplayEventData.TargetTags);
+		gameplayEventData.EventMagnitude = GetDamageAmount();
+		gameplayEventData.ContextHandle = gameplayEffectContext;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(otherActor, TAG_GameplayEvent_Damaged, gameplayEventData);
+	}
+
+
+	if (otherActor->CanBeDamaged())
+	{
+		FDamageEvent damageEvent;
+		otherActor->TakeDamage(GetDamageAmount(), damageEvent, GetInstigatorController(), this);
+	}
 }
 
 void AArcherProjectileBase::ReturnToPool()

@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Aim Ability")
 	bool GetIsAiming()
 	{
-		return GetArcherAbilitySystemComponent()->IsAbilityActiveWithTag(TAG_INPUT_AIM);
+		return GetArcherAbilitySystemComponent()->IsAbilityActiveWithTag(TAG_Input_Aim);
 	}
 
 	UFUNCTION(BlueprintCallable)

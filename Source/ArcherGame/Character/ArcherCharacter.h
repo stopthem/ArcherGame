@@ -8,8 +8,12 @@
 #include "GameFramework/Character.h"
 #include "ArcherCharacter.generated.h"
 
+class UArcherCombatSet;
+class UArcherHealthSet;
+class UArcherHealthComponent;
 struct FInputActionValue;
 class UInputConfig;
+
 UCLASS()
 class ARCHERGAME_API AArcherCharacter : public ACharacter, public IAbilitySystemInterface, public IGameplayTagAssetInterface
 {
@@ -33,12 +37,11 @@ private:
 
 protected:
 	// The gameplay ability system brain.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ability")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ArcherCharacter|Ability")
 	UArcherAbilitySystemComponent* AbilitySystemComponent;
 
-	// The gameplay ability system AttributeSet, used to hold character stats like health.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ability")
-	TObjectPtr<class UArcherAttributeSet> AttributeSet;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherCharacter|Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UArcherHealthComponent> HealthComponent;
 
 public:
 	// Start of IGameplayTagAssetInterface

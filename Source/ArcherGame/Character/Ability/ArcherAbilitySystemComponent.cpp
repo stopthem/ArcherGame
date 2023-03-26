@@ -4,6 +4,9 @@
 #include "ArcherAbilitySystemComponent.h"
 #include "ArcherGameplayAbility.h"
 #include "ArcherGameplayEffect.h"
+#include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
+#include "ArcherGame/ArcherGameplayTags.h"
+#include "Attribute/ArcherHealthSet.h"
 
 UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
 {

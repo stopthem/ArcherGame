@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ArcherProjectileBase.generated.h"
 
+class UArcherGameplayEffect;
 // class UGameplayStatics;
 class UParticleBlueprintFunctionLibrary;
 class UPoolerBlueprintFunctionLibrary;
@@ -27,7 +28,7 @@ public:
 	FGameplayTag HitVfxPoolerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == false", EditConditionHides))
-	UParticleSystem* HitVfx;
+	UParticleSystem* HitVfx = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
@@ -55,8 +56,15 @@ public:
 	// Sets default values for this actor's properties
 	AArcherProjectileBase();
 
+public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Shoot() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
+	float DamageAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
+	TSubclassOf<UArcherGameplayEffect> DamageGameplayEffect;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Movement")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
@@ -78,6 +86,10 @@ protected:
 	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
 
 	virtual void PlayHitParticle(AActor* otherActor);
+
+protected:
+	virtual void DamageOverlappedActor(AActor* otherActor);
+	virtual float GetDamageAmount() { return DamageAmount; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")

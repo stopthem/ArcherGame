@@ -2,7 +2,11 @@
 
 #include "ArcherCharacter.h"
 
-#include "Ability/ArcherAttributeSet.h"
+#include "ArcherHealthComponent.h"
+#include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
+#include "Ability/Attribute/ArcherAttributeSet.h"
+#include "Ability/Attribute/ArcherHealthSet.h"
+#include "ArcherGame/ArcherGameplayTags.h"
 
 // Sets default values
 AArcherCharacter::AArcherCharacter()
@@ -11,7 +15,8 @@ AArcherCharacter::AArcherCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	AbilitySystemComponent = CreateDefaultSubobject<UArcherAbilitySystemComponent>(TEXT("ArcherAbilitySystemComponent"));
-	AttributeSet = CreateDefaultSubobject<UArcherAttributeSet>(TEXT("ArcherAttributeSetBase"));
+
+	HealthComponent = CreateDefaultSubobject<UArcherHealthComponent>("ArcherCharacterHealthComponent");
 }
 
 void AArcherCharacter::PossessedBy(AController* NewController)
@@ -21,11 +26,12 @@ void AArcherCharacter::PossessedBy(AController* NewController)
 	check(AbilitySystemComponent);
 
 	if (bAbilitySystemInitted)return;
-
 	bAbilitySystemInitted = true;
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->InitializeDefaultAbilitiesEffects();
+
+	HealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
 }
 
 void AArcherCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const

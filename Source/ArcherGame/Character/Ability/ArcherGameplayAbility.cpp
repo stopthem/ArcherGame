@@ -13,3 +13,8 @@ AArcherPlayerCharacter* UArcherGameplayAbility::GetArcherPlayerCharacterFromActo
 {
 	return CurrentActorInfo ? Cast<AArcherPlayerCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr;
 }
+
+AArcherCharacter* UArcherGameplayAbility::GetArcherCharacterFromActorInfo() const
+{
+	return CurrentActorInfo ? Cast<AArcherCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr;
+}

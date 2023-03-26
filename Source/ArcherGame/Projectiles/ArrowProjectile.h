@@ -19,11 +19,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arrow Projectile")
 	float stickLocationMultiplier = 25.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Arrow Projectile")
+	float ShootingPower;
+
 	virtual void Shoot() const override;
 
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
-	
+
 	// play particle at hit actor(for attaching) but our location and rotations
 	virtual void PlayHitParticle(AActor* otherActor) override;
+
+protected:
+	virtual float GetDamageAmount() override { return Super::GetDamageAmount() * ShootingPower; }
 };
