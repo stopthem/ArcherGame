@@ -42,7 +42,7 @@ void UArcherHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	Super::PostGameplayEffectExecute(data);
 
 	float minimumHealth = 0.0f;
-	
+
 	if (data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), minimumHealth, GetMaxHealth()));
@@ -51,7 +51,6 @@ void UArcherHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	else if (data.EvaluatedData.Attribute == GetHealingAttribute())
 	{
 		// Convert into +Health and then clamp
-		UE_LOG(LogTemp, Warning, TEXT("health %f healing %f max health %f"), GetHealth() + GetHealing(), GetHealing(), GetMaxHealth());
 
 		SetHealth(FMath::Clamp(GetHealth() + GetHealing(), minimumHealth, GetMaxHealth()));
 		SetHealing(0.0f);

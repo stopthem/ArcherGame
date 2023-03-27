@@ -7,6 +7,11 @@
 #include "Pooler.generated.h"
 
 class UPoolableComponent;
+/**
+ * APooler
+ *
+ * The class that pools objects
+ */
 UCLASS()
 class POOLING_API APooler : public AActor, public IGameplayTagAssetInterface
 {

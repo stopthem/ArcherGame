@@ -30,6 +30,8 @@ class UArcherAbilitySystemComponent;
 DECLARE_MULTICAST_DELEGATE_FourParams(FArcherAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec& /*EffectSpec*/, float /*EffectMagnitude*/);
 
 /**
+ * UArcherAttributeSet
+ *
  *  Base attribute set class for the project.
  */
 UCLASS()

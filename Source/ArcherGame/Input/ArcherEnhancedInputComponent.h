@@ -11,7 +11,9 @@
 struct FGameplayTag;
 class UInputConfig;
 /**
- * 
+ * UArcherEnhancedInputComponent
+ *
+ * Component used to manage input mappings and bindings using an input config data asset.
  */
 UCLASS()
 class ARCHERGAME_API UArcherEnhancedInputComponent : public UEnhancedInputComponent

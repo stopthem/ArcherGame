@@ -7,7 +7,9 @@
 #include "VectorExBlueprintFunctionLibrary.generated.h"
 
 /**
- * 
+ * UVectorExBlueprintFunctionLibrary
+ *
+ * A blueprint function library class for Vector functions.
  */
 UCLASS()
 class ARCHERGAME_API UVectorExBlueprintFunctionLibrary : public UBlueprintFunctionLibrary

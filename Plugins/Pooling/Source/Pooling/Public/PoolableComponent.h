@@ -8,6 +8,11 @@
 
 class APooler;
 
+/**
+ * UPoolableComponent
+ *
+ * The component that every pooled actor has, used mainly for storing information
+ */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class POOLING_API UPoolableComponent : public UActorComponent
 {

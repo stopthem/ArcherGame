@@ -9,8 +9,11 @@
 #include "ArcherPlayerCharacter.generated.h"
 
 class UKismetStringLibrary;
+
 /**
- * 
+ * AArcherPlayerCharacter
+ *
+ * The character class that player uses
  */
 UCLASS()
 class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter

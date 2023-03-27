@@ -11,10 +11,13 @@
 #include "ArcherProjectileBase.generated.h"
 
 class UArcherGameplayEffect;
-// class UGameplayStatics;
 class UParticleBlueprintFunctionLibrary;
 class UPoolerBlueprintFunctionLibrary;
-// Struct of what kind of action needs to be taken about particles when projectile hit something
+/**
+ * FProjectileHitParticleInfo
+ *
+ * Struct of what kind of action needs to be taken about particles when projectile hit something
+ */
 USTRUCT(BlueprintType)
 struct FProjectileHitParticleInfo
 {
@@ -47,6 +50,11 @@ public:
 	}
 };
 
+/**
+ * AArcherProjectileBase
+ *
+ * Base Projectile class that this game uses
+ */
 UCLASS()
 class ARCHERGAME_API AArcherProjectileBase : public AActor
 {
@@ -71,6 +79,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	FProjectileHitParticleInfo ProjectileHitParticleInfo;
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetLaunchVelocity() const
+	{
+		return GetActorForwardVector() * ProjectileMovementComponent->InitialSpeed;
+	}
 
 protected:
 	virtual void PostInitializeComponents() override;

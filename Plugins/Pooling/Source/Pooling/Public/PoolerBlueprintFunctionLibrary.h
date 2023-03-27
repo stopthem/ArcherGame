@@ -7,7 +7,9 @@
 #include "PoolerBlueprintFunctionLibrary.generated.h"
 
 /**
- * 
+ * UPoolerBlueprintFunctionLibrary
+ *
+ * Blueprint function library class for Pooler functions
  */
 UCLASS()
 class POOLING_API UPoolerBlueprintFunctionLibrary : public UBlueprintFunctionLibrary

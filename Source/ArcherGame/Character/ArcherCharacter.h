@@ -14,6 +14,11 @@ class UArcherHealthComponent;
 struct FInputActionValue;
 class UInputConfig;
 
+/**
+ * AArcherCharacter
+ *
+ * Base class of all the characters used in the game.
+ */
 UCLASS()
 class ARCHERGAME_API AArcherCharacter : public ACharacter, public IAbilitySystemInterface, public IGameplayTagAssetInterface
 {

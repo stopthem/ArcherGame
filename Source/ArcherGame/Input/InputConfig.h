@@ -7,11 +7,13 @@
 #include "Engine/DataAsset.h"
 #include "InputConfig.generated.h"
 
-/**
- * 
- */
-
 class UInputAction;
+
+/**
+ * FTaggedInputAction
+ *
+ * Struct used to map a input action to a gameplay input tag.
+ */
 USTRUCT()
 struct FTaggedInputAction
 {
@@ -19,12 +21,17 @@ struct FTaggedInputAction
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	const UInputAction* InputAction = nullptr;
+	TObjectPtr<const UInputAction> InputAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input Tag")
 	FGameplayTag InputTag;
 };
 
+/**
+ * UInputConfig
+ *
+ * Non-mutable data asset that contains input configuration properties.
+ */
 UCLASS()
 class ARCHERGAME_API UInputConfig : public UDataAsset
 {

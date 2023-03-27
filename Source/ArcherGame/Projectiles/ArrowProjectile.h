@@ -6,6 +6,11 @@
 #include "ArcherProjectileBase.h"
 #include "ArrowProjectile.generated.h"
 
+/**
+ * AArrowProjectile
+ *
+ * Arrow projectile class which player fires
+ */
 UCLASS()
 class ARCHERGAME_API AArrowProjectile : public AArcherProjectileBase
 {

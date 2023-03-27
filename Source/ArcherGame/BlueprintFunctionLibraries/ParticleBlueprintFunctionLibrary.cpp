@@ -16,6 +16,7 @@ UParticleSystemComponent* UParticleBlueprintFunctionLibrary::PlayPooledParticle(
 	// get particle
 	AActor* particleActor = particlePooler->GetPooledObj();
 
+	// Set particle scale, location, owning actor and rotation
 	SetParticle(particleActor, particlePlayingOptions);
 
 	UParticleSystemComponent* particleSystemComponent = particleActor->FindComponentByClass<UParticleSystemComponent>();
@@ -27,10 +28,13 @@ UParticleSystemComponent* UParticleBlueprintFunctionLibrary::PlayPooledParticle(
 void UParticleBlueprintFunctionLibrary::SetParticle(AActor* spawnedActor, const FParticlePlayingOptions& particlePlayingOptions)
 {
 	spawnedActor->SetActorScale3D(particlePlayingOptions.PlayScale);
-	// attach to actor if needed and set its relative location,rotation and scale
+
+	// attach to actor if needed and set its relative location and rotation
 	if (particlePlayingOptions.ParticleAttachmentRules != EParticleAttachmentRules::DontAttach)
 	{
 		spawnedActor->AttachToActor(particlePlayingOptions.PlayActor, FAttachmentTransformRules::KeepWorldTransform);
+
+		// If ParticleAttachmentRules of the given particlePlayingOptions is AttachGivenValuesAreWorld, treat given location and rotation values like world values and transform that values to relative
 
 		const FVector particleLocation = particlePlayingOptions.ParticleAttachmentRules == EParticleAttachmentRules::AttachGivenValuesAreWorld
 			                                 ? UKismetMathLibrary::InverseTransformLocation(particlePlayingOptions.PlayActor->GetTransform(), particlePlayingOptions.PlayLocation)
@@ -45,7 +49,7 @@ void UParticleBlueprintFunctionLibrary::SetParticle(AActor* spawnedActor, const 
 	}
 	else
 	{
-		// if not set its relative location,rotation and scale
+		// if not set its relative location and rotation
 		spawnedActor->SetActorLocationAndRotation(particlePlayingOptions.PlayLocation, particlePlayingOptions.PlayRotation);
 	}
 }

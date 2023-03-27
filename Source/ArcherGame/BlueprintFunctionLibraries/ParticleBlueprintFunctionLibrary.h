@@ -17,6 +17,11 @@ enum class EParticleAttachmentRules
 	AttachGivenValuesAreWorld
 };
 
+/**
+ * FParticlePlayingOptions
+ *
+ * Stores information about location, scale, rotation, attached actor about to be played particle system
+ */
 USTRUCT(BlueprintType)
 struct FParticlePlayingOptions
 {
@@ -45,7 +50,9 @@ public:
 };
 
 /**
- * 
+ * UParticleBlueprintFunctionLibrary
+ *
+ * A blueprint function library class for Particle functions
  */
 UCLASS()
 class ARCHERGAME_API UParticleBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
@@ -53,7 +60,13 @@ class ARCHERGAME_API UParticleBlueprintFunctionLibrary : public UBlueprintFuncti
 	GENERATED_BODY()
 
 public:
-	// Play pooled particle from given poolTag's found pooler. 
+	/**
+	 * @brief Play pooled particle from given poolTag's found pooler
+	 * @param context The world context which will be auto filled by blueprint but not on c++
+	 * @param poolTag The pool tag of the pooler which pools the particles in world
+	 * @param particlePlayingOptions Location, rotation, scale and attached actor information
+	 * @return The spawned particle
+	 */
 	UFUNCTION(BlueprintPure, meta=(WorldContext="context"))
 	static UParticleSystemComponent* PlayPooledParticle(UObject* context, const FGameplayTag poolTag, const FParticlePlayingOptions& particlePlayingOptions);
 

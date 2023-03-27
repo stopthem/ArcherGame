@@ -6,6 +6,11 @@
 #include "Abilities/GameplayAbility.h"
 #include "ArcherGameplayAbility.generated.h"
 
+/**
+ * EArcherAbilityActivationPolicy
+ *
+ * Defines how a gameplay ability should be activated
+ */
 UENUM(BlueprintType)
 enum class EArcherAbilityActivationPolicy : uint8
 {
@@ -21,7 +26,9 @@ enum class EArcherAbilityActivationPolicy : uint8
 
 
 /**
- * 
+ * UArcherGameplayAbility
+ *
+ * Base gameplay ability class used by this game.
  */
 UCLASS(Abstract)
 class ARCHERGAME_API UArcherGameplayAbility : public UGameplayAbility

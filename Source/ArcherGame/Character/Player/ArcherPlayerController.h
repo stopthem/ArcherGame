@@ -7,7 +7,9 @@
 #include "ArcherPlayerController.generated.h"
 
 /**
- * 
+ * AArcherPlayerController
+ *
+ * The class that player uses for post processing input
  */
 UCLASS()
 class ARCHERGAME_API AArcherPlayerController : public APlayerController

@@ -9,6 +9,8 @@
 #include "DebugHUD.generated.h"
 
 /**
+ * ADebugHUD
+ *
  * Debugging HUD for Archer Game, a base class for deriving implementations from.
  */
 UCLASS()

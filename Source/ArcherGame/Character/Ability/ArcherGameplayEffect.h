@@ -7,7 +7,9 @@
 #include "ArcherGameplayEffect.generated.h"
 
 /**
- * 
+ * UArcherGameplayEffect
+ *
+ * Base gameplay effect class that used in this game.
  */
 UCLASS()
 class ARCHERGAME_API UArcherGameplayEffect : public UGameplayEffect

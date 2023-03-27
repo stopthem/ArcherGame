@@ -9,6 +9,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTickTaskDelegate, float, DeltaTime);
 
 /**
+ * UArcherGameplayAbilityTask_OnTick
+ *
  * Task for abilities that supply tick and its delta time.
  */
 UCLASS()

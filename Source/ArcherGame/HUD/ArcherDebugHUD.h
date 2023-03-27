@@ -7,7 +7,9 @@
 #include "ArcherDebugHUD.generated.h"
 
 /**
- * 
+ * AArcherDebugHUD
+ *
+ * DebugHUD class for debugging player variables
  */
 UCLASS()
 class ARCHERGAME_API AArcherDebugHUD : public ADebugHUD

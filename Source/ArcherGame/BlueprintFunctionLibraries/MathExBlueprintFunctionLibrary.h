@@ -7,7 +7,9 @@
 #include "MathExBlueprintFunctionLibrary.generated.h"
 
 /**
- * 
+ * UMathExBlueprintFunctionLibrary
+ *
+ * A blueprint function library class for Math functions
  */
 UCLASS()
 class ARCHERGAME_API UMathExBlueprintFunctionLibrary : public UBlueprintFunctionLibrary

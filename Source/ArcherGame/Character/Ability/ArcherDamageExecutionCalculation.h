@@ -7,7 +7,9 @@
 #include "ArcherDamageExecutionCalculation.generated.h"
 
 /**
- * 
+ * UArcherDamageExecutionCalculation
+ *
+ * Execution used by gameplay effects to apply damage to the health attributes.
  */
 UCLASS()
 class ARCHERGAME_API UArcherDamageExecutionCalculation : public UGameplayEffectExecutionCalculation

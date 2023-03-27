@@ -8,7 +8,10 @@
 #include "ParticlePoolableComponent.generated.h"
 
 /**
- * 
+ * UParticlePoolableComponent
+ *
+ * This component is specific to particle systems.
+ * What it does extra is, return to pool when the particle system finished
  */
 UCLASS()
 class POOLING_API UParticlePoolableComponent : public UPoolableComponent

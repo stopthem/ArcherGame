@@ -7,7 +7,9 @@
 #include "ArcherCombatSet.generated.h"
 
 /**
- * 
+ * UArcherCombatSet
+ *
+ * Class that defines attributes that are necessary for applying damage or healing.
  */
 UCLASS(BlueprintType)
 class ARCHERGAME_API UArcherCombatSet : public UArcherAttributeSet

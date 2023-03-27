@@ -14,7 +14,6 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_DamageImmunity);
  * UArcherHealthSet
  *
  *	Class that defines attributes that are necessary for taking damage.
- *	Attribute examples include: health, shields, and resistances.
  */
 UCLASS(BlueprintType)
 class ARCHERGAME_API UArcherHealthSet : public UArcherAttributeSet
