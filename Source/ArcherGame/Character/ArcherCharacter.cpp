@@ -4,6 +4,7 @@
 
 #include "ArcherHealthComponent.h"
 #include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
+#include "Ability/ArcherAbilitySet.h"
 #include "Ability/Attribute/ArcherAttributeSet.h"
 #include "Ability/Attribute/ArcherHealthSet.h"
 #include "ArcherGame/ArcherGameplayTags.h"
@@ -29,7 +30,8 @@ void AArcherCharacter::PossessedBy(AController* NewController)
 	bAbilitySystemInitted = true;
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	AbilitySystemComponent->InitializeDefaultAbilitiesEffects();
+
+	AbilitySet->GrantSetAbilityEffectAttributes(AbilitySystemComponent);
 
 	HealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
 }

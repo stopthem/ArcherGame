@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "ArcherCharacter.generated.h"
 
+class UArcherAbilitySet;
 class UArcherCombatSet;
 class UArcherHealthSet;
 class UArcherHealthComponent;
@@ -30,6 +31,9 @@ public:
 
 	// Init ability system component
 	virtual void PossessedBy(AController* NewController) override;
+
+	UPROPERTY(EditAnywhere, Category="ArcherCharacter|Ability")
+	TObjectPtr<UArcherAbilitySet> AbilitySet;
 
 	// Ability system interface getter.
 	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }

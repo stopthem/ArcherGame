@@ -12,29 +12,6 @@ UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
 {
 }
 
-void UArcherAbilitySystemComponent::InitializeDefaultAbilitiesEffects()
-{
-	// Add default abilities
-	for (TSubclassOf<UArcherGameplayAbility> defaultAbility : DefaultAbilities)
-	{
-		FGameplayAbilitySpec defaultGameplayAbilitySpec(FGameplayAbilitySpec(defaultAbility, defaultAbility.GetDefaultObject()->AbilityLevel));
-		defaultGameplayAbilitySpec.DynamicAbilityTags.AddTag(defaultAbility.GetDefaultObject()->InputTag);
-
-		GiveAbility(defaultGameplayAbilitySpec);
-	}
-
-	// Add default effects
-	for (TSubclassOf<UArcherGameplayEffect> defaultEffect : DefaultEffects)
-	{
-		FGameplayEffectContextHandle EffectContextHandle = MakeEffectContext();
-		EffectContextHandle.AddSourceObject(this);
-
-		FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(defaultEffect, defaultEffect.GetDefaultObject()->EffectLevel, EffectContextHandle);
-
-		ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-	}
-}
-
 void UArcherAbilitySystemComponent::AbilityInputPressed(const FGameplayTag& InputTag)
 {
 	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindAbilitySpecFromInputTag(InputTag, foundGameplayAbilitySpec))
@@ -50,6 +27,23 @@ void UArcherAbilitySystemComponent::AbilityInputReleased(const FGameplayTag& Inp
 	{
 		InputReleasedSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
 		InputHeldSpecHandles.Remove(foundGameplayAbilitySpec.Handle);
+	}
+}
+
+void UArcherAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
+{
+	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
+
+	TryActivateAbilitiesOnSpawn();
+}
+
+void UArcherAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
+{
+	ABILITYLIST_SCOPE_LOCK()
+	for (const FGameplayAbilitySpec& gameplayAbilitySpec : ActivatableAbilities.Items)
+	{
+		const UArcherGameplayAbility* gameplayAbilityCDO = CastChecked<UArcherGameplayAbility>(gameplayAbilitySpec.Ability);
+		gameplayAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), gameplayAbilitySpec);
 	}
 }
 

@@ -21,7 +21,10 @@ enum class EArcherAbilityActivationPolicy : uint8
 	WhileInputActive,
 
 	// Ability will be manually activated.
-	Manual
+	Manual,
+
+	// Ability will be activated on spawn
+	OnSpawn
 };
 
 
@@ -38,12 +41,9 @@ class ARCHERGAME_API UArcherGameplayAbility : public UGameplayAbility
 public:
 	UArcherGameplayAbility();
 
-	UPROPERTY(EditDefaultsOnly, Category="Ability Info", meta=(EditCondition="ActivationPolicy != EArcherAbilityActivationPolicy::Manual"))
-	FGameplayTag InputTag;
-
 	// Level of the ability
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Ability Info")
-	int32 AbilityLevel = 1;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Ability Info")
+	// int32 AbilityLevel = 1;
 
 	EArcherAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 
@@ -52,6 +52,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	class AArcherCharacter* GetArcherCharacterFromActorInfo() const;
+
+	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
 protected:
 	// Defines how this ability is meant to activate.

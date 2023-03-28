@@ -80,6 +80,7 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 	FGameplayEventData gameplayEventData;
 	gameplayEventData.Instigator = this;
 	gameplayEventData.Target = otherActor;
+	gameplayEventData.EventTag = TAG_GameplayEvent_Damaged;
 
 	if (UArcherAbilitySystemComponent* otherASC = otherActor->FindComponentByClass<UArcherAbilitySystemComponent>())
 	{

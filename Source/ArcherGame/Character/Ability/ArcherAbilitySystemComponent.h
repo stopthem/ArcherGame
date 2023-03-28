@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(DisplayName ="Default Character Effects"), Category= "Setup")
 	TArray<TSubclassOf<class UArcherGameplayEffect>> DefaultEffects;
 
-	void InitializeDefaultAbilitiesEffects();
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 
 public:
 	// When a ability action is performed these get called for abilities
@@ -57,4 +57,6 @@ public:
 
 private:
 	bool FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec);
+
+	void TryActivateAbilitiesOnSpawn();
 };
