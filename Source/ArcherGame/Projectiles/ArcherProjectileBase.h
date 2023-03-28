@@ -80,12 +80,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	FProjectileHitParticleInfo ProjectileHitParticleInfo;
 
-	UFUNCTION(BlueprintCallable)
-	FVector GetLaunchVelocity() const
-	{
-		return GetActorForwardVector() * ProjectileMovementComponent->InitialSpeed;
-	}
-
 protected:
 	virtual void PostInitializeComponents() override;
 

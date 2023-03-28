@@ -26,7 +26,7 @@ void AArcherProjectileBase::Shoot() const
 	ProjectileMesh->SetGenerateOverlapEvents(true);
 
 	// When we use initial speed ProjectileMovementComponent->Velocity becomes direction for unreal and we override it again with what unreal does (velocity * initial speed).
-	ProjectileMovementComponent->Velocity = GetLaunchVelocity();
+	ProjectileMovementComponent->Velocity = GetActorForwardVector() * ProjectileMovementComponent->InitialSpeed;
 	ProjectileMovementComponent->Activate();
 }
 

@@ -23,6 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Damaged Ability")
 	TObjectPtr<UDirectionalAnimationDataAsset> DirectionalAnimationDataAsset;
 
+	// Filled with TriggerEventData from ActivateAbility for blueprint usage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Damaged Ability")
 	FGameplayEventData GameplayEventData;
 

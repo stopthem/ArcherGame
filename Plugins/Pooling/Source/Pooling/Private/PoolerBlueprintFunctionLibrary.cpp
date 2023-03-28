@@ -5,7 +5,6 @@
 #include "BlueprintGameplayTagLibrary.h"
 #include "Pooler.h"
 
-// Get associated pooler by given PoolGameplayTag
 APooler* UPoolerBlueprintFunctionLibrary::GetPoolerByGameplayTag(UObject* context, FGameplayTag poolGameplayTag)
 {
 	// create a query based on given poolGameplayTag
