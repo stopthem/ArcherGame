@@ -7,9 +7,7 @@
 #include "GameplayEffectExtension.h"
 #include "Ability/ArcherAbilitySystemComponent.h"
 #include "Ability/Attribute/ArcherHealthSet.h"
-#include "Kismet/KismetStringLibrary.h"
-
-UE_DEFINE_GAMEPLAY_TAG(TAG_GAMEPLAYEVENT_DEATH, "GameplayEvent.Death")
+#include "ArcherGame/ArcherGameplayTags.h"
 
 UArcherHealthComponent::UArcherHealthComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -47,8 +45,7 @@ void UArcherHealthComponent::InitializeWithAbilitySystem(UArcherAbilitySystemCom
 	inASC->GetGameplayAttributeValueChangeDelegate(UArcherHealthSet::GetHealthAttribute()).AddUObject(this, &ThisClass::HandleHealthChanged);
 	inASC->GetGameplayAttributeValueChangeDelegate(UArcherHealthSet::GetMaxHealthAttribute()).AddUObject(this, &ThisClass::HandleMaxHealthChanged);
 
-	// HealthSet = Cast<AArcherCharacter>(GetOwner())->GetHealthSet();
-	// HealthSet->OnOutOfHealth.AddUObject(this, &ThisClass::HandleOutOfHealth);
+	HealthSet->OnOutOfHealth.AddUObject(this, &ThisClass::HandleOutOfHealth);
 	// TEMP: Reset attributes to default values.  Eventually this will be driven by a spread sheet.
 	// inASC->SetNumericAttributeBase(UArcherHealthSet::GetHealthAttribute(), HealthSet->GetMaxHealth());
 
@@ -99,7 +96,7 @@ void UArcherHealthComponent::OnUnregister()
 		return;
 	}
 
-	// HealthSet->OnOutOfHealth.RemoveAll(this);
+	HealthSet->OnOutOfHealth.RemoveAll(this);
 }
 
 void UArcherHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& changeData)
@@ -118,9 +115,8 @@ void UArcherHealthComponent::HandleOutOfHealth(AActor* damageInstigator, AActor*
 	{
 		return;
 	}
-
 	FGameplayEventData Payload;
-	Payload.EventTag = TAG_GAMEPLAYEVENT_DEATH;
+	Payload.EventTag = TAG_GameplayEvent_Death;
 	Payload.Instigator = damageInstigator;
 	Payload.Target = AbilitySystemComponent->GetAvatarActor();
 	Payload.OptionalObject = damageEffectSpec.Def;

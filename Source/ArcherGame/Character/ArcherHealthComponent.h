@@ -18,8 +18,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArcherHealth_DeathEvent, AActor*, O
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FArcherHealth_AttributeChanged, UArcherHealthComponent*, HealthComponent, float, OldValue, float, NewValue, AActor*, Instigator);
 
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GAMEPLAYEVENT_DEATH)
-
 /**
  * UArcherHealthComponent
  * 

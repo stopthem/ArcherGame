@@ -97,12 +97,17 @@ protected:
 
 protected:
 	virtual void DamageOverlappedActor(AActor* otherActor);
-	virtual float GetDamageAmount() { return DamageAmount; }
+
+	virtual float GetDamageAmount()
+	{
+		return DamageAmount;
+	}
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")
 	TObjectPtr<class UPoolableComponent> PoolableComponent;
 
+	FTimerHandle ReturnToPoolTimerHandle;
 	// calls this actors poolable component's return to pool
 	void ReturnToPool();
 

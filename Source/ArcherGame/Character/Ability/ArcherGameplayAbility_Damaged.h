@@ -20,14 +20,6 @@ class ARCHERGAME_API UArcherGameplayAbility_Damaged : public UArcherGameplayAbil
 public:
 	UArcherGameplayAbility_Damaged();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Damaged Ability")
-	TObjectPtr<UDirectionalAnimationDataAsset> DirectionalAnimationDataAsset;
-
-	// Filled with TriggerEventData from ActivateAbility for blueprint usage
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Damaged Ability")
-	FGameplayEventData GameplayEventData;
-
 protected:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 };

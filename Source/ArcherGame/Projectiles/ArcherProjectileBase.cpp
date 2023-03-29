@@ -84,12 +84,13 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 
 	if (UArcherAbilitySystemComponent* otherASC = otherActor->FindComponentByClass<UArcherAbilitySystemComponent>())
 	{
-		const FGameplayEffectContextHandle gameplayEffectContext = otherASC->MakeEffectContext();
+		FGameplayEffectContextHandle gameplayEffectContext = otherASC->MakeEffectContext();
+		gameplayEffectContext.AddInstigator(this, this);
 
 		const FGameplayEffectSpecHandle specHandle = otherASC->MakeOutgoingSpec(*DamageGameplayEffect, 0, gameplayEffectContext);
+
 		// the actual damage is magnitude
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
-
 		otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
 
 		otherASC->GetOwnedGameplayTags(gameplayEventData.TargetTags);
@@ -114,7 +115,11 @@ void AArcherProjectileBase::ReturnToPool()
 		PoolableComponent = FindComponentByClass<UPoolableComponent>();
 	}
 
-	// UE_LOG(LogTemp, Warning, TEXT("returned to pool %s"), *GetActorNameOrLabel());
-	ProjectileMovementComponent->Deactivate();
-	PoolableComponent->ReturnToPool();
+	// wait for next tick so damage calculations go correct
+	GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([&]
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("returned to pool %s"), *GetActorNameOrLabel());
+		ProjectileMovementComponent->Deactivate();
+		PoolableComponent->ReturnToPool();
+	}));
 }

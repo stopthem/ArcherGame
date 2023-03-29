@@ -9,3 +9,5 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Input_Aim, "Input.Aim");
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_Data_Damage, "Data.Damage")
 UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayEvent_Damaged, "GameplayEvent.Damaged")
+
+UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayEvent_Death, "GameplayEvent.Death")

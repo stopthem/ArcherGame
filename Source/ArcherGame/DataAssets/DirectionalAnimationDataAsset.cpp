@@ -9,23 +9,34 @@ UDirectionalAnimationDataAsset::UDirectionalAnimationDataAsset()
 {
 }
 
-UAnimMontage* UDirectionalAnimationDataAsset::GetAnimFromDeltaAngle(float deltaAngle) const
+FDirectionalAnimSet UDirectionalAnimationDataAsset::GetClosestAngleAnimSet(const float deltaAngle) const
 {
 	const float deltaAngleNormalized = UKismetMathLibrary::NormalizeToRange(deltaAngle, -180, 180);
 
 	auto GetDistanceToDeltaAngleNormalized = [&](float angle)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("delta was %f compared angle %f normalized delta %f"), deltaAngle, angle, FMath::Abs(deltaAngleNormalized - UKismetMathLibrary::NormalizeToRange(angle, -180, 180)));
 		return FMath::Abs(deltaAngleNormalized - UKismetMathLibrary::NormalizeToRange(angle, -180, 180));
 	};
 
 	// create new TArray for sorting
-	TArray<FDirectionalAnimInfo> sortedDirectionalAnimInfos = TArray(DirectionalAnimInfos);
+	TArray<FDirectionalAnimSet> sortedDirectionalAnimInfos = TArray(DirectionalAnimSets);
 	// sort by distance to deltaAngleNormalized
-	sortedDirectionalAnimInfos.Sort([&](const FDirectionalAnimInfo directionalAnimInfo1, const FDirectionalAnimInfo directionalAnimInfo2)
+	sortedDirectionalAnimInfos.Sort([&](const FDirectionalAnimSet directionalAnimInfo1, const FDirectionalAnimSet directionalAnimInfo2)
 	{
 		return GetDistanceToDeltaAngleNormalized(directionalAnimInfo1.Angle) < GetDistanceToDeltaAngleNormalized(directionalAnimInfo2.Angle);
 	});
 
-	// return first of the sorted array
-	return sortedDirectionalAnimInfos[0].AnimMontage;
+	return sortedDirectionalAnimInfos[0];
+}
+
+UAnimMontage* UDirectionalAnimationDataAsset::GetMontageFromDeltaAngle(float deltaAngle)
+{
+	return GetClosestAngleAnimSet(deltaAngle).AnimMontages[0];
+}
+
+UAnimMontage* UDirectionalAnimationDataAsset::GetRandomMontageFromDeltaAngle(float deltaAngle)
+{
+	FDirectionalAnimSet directionalAnimSet = GetClosestAngleAnimSet(deltaAngle);
+	return directionalAnimSet.AnimMontages[FMath::RandRange(0, directionalAnimSet.AnimMontages.Num() - 1)];
 }

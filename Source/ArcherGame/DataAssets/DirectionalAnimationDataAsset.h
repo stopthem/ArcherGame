@@ -12,13 +12,13 @@
  * UStruct that holds directional animation info which is montage and its angle
  */
 USTRUCT()
-struct FDirectionalAnimInfo
+struct FDirectionalAnimSet
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UAnimMontage> AnimMontage = nullptr;
+	TArray<TObjectPtr<UAnimMontage>> AnimMontages;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Angle = 0;
@@ -29,7 +29,7 @@ public:
  *
  * Data asset class that holds directional animations
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ARCHERGAME_API UDirectionalAnimationDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
@@ -39,9 +39,16 @@ public:
 
 	// List of directional anim infos will be used by Damaged Gameplay Ability.
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FDirectionalAnimInfo> DirectionalAnimInfos;
+	TArray<FDirectionalAnimSet> DirectionalAnimSets;
 
-	// Get the closest animation montage from given deltaAngle
+	// Get first montage from the closest animation set's angle
 	UFUNCTION(BlueprintCallable)
-	UAnimMontage* GetAnimFromDeltaAngle(float deltaAngle) const;
+	UAnimMontage* GetMontageFromDeltaAngle(const float deltaAngle);
+
+	// Get random montage from the closest animation set's angle
+	UFUNCTION(BlueprintCallable)
+	UAnimMontage* GetRandomMontageFromDeltaAngle(const float deltaAngle);
+
+private:
+	FDirectionalAnimSet GetClosestAngleAnimSet(const float deltaAngle) const;
 };
