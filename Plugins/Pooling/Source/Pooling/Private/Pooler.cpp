@@ -5,6 +5,7 @@
 
 #include "ParticlePoolableComponent.h"
 #include "PoolableComponent.h"
+#include "PoolerGameInstanceSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -16,6 +17,9 @@ void APooler::PreInitializeComponents()
 	{
 		SpawnPooledActor();
 	}
+
+	GetGameInstance()->GetSubsystem<UPoolerGameInstanceSubsystem>()->AddToPoolerArray(this);
+	// GetWorld()->GetSubsystem<UPoolerGameInstanceSubsystem>()->AddToPoolerArray(this);
 }
 
 AActor* APooler::SpawnPooledActor()

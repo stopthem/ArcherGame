@@ -37,6 +37,15 @@ struct FParticlePlayingOptions
 		PlayLocation = PlayActor->GetActorLocation();
 	}
 
+	explicit FParticlePlayingOptions(AActor* playActor, USkinnedMeshComponent* skinnedMeshComponent, FName socketName)
+	{
+		SocketName = socketName;
+		SkinnedMeshComponent = skinnedMeshComponent;
+	}
+
+	FName SocketName;
+	TObjectPtr<USkinnedMeshComponent> SkinnedMeshComponent;
+
 public:
 	TObjectPtr<AActor> PlayActor = nullptr;
 

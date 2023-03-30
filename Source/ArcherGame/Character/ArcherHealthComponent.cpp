@@ -70,10 +70,12 @@ float UArcherHealthComponent::GetHealthNormalized() const
 
 void UArcherHealthComponent::StartDeath()
 {
+	OnDeathStarted.Broadcast(GetOwner());
 }
 
 void UArcherHealthComponent::FinishDeath()
 {
+	OnDeathFinished.Broadcast(GetOwner());
 }
 
 static AActor* GetInstigatorFromAttrChangeData(const FOnAttributeChangeData& ChangeData)
@@ -127,4 +129,6 @@ void UArcherHealthComponent::HandleOutOfHealth(AActor* damageInstigator, AActor*
 
 	FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
 	AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+
+	StartDeath();
 }

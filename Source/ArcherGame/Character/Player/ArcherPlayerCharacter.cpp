@@ -2,6 +2,9 @@
 
 
 #include "ArcherPlayerCharacter.h"
+
+#include "Pooler.h"
+#include "PoolerGameInstanceSubsystem.h"
 #include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Input/ArcherEnhancedInputComponent.h"
 #include "Particles/ParticleSystemComponent.h"

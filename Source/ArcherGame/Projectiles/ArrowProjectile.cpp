@@ -36,6 +36,22 @@ void AArrowProjectile::NotifyActorBeginOverlap(AActor* otherActor)
 void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 {
 	FParticlePlayingOptions particlePlayingOptions(otherActor);
+
+	if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
+	{
+		FVector* socketLocation = nullptr;
+		const FName socketName = otherActorMesh->FindClosestBone(GetActorLocation(), socketLocation);
+
+		if (socketName.IsNone())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("couldn't find closest bone in actor %s overlapped actor %s"), *GetActorNameOrLabel(), *otherActor->GetActorNameOrLabel());
+			return;
+		}
+
+		particlePlayingOptions.SkinnedMeshComponent = otherActorMesh;
+		particlePlayingOptions.SocketName = socketName;
+	}
+
 	particlePlayingOptions.ParticleAttachmentRules = EParticleAttachmentRules::AttachGivenValuesAreWorld;
 
 	particlePlayingOptions.PlayLocation = GetActorLocation();
