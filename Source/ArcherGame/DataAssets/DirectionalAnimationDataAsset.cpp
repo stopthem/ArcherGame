@@ -13,9 +13,8 @@ FDirectionalAnimSet UDirectionalAnimationDataAsset::GetClosestAngleAnimSet(const
 {
 	const float deltaAngleNormalized = UKismetMathLibrary::NormalizeToRange(deltaAngle, -180, 180);
 
-	auto GetDistanceToDeltaAngleNormalized = [&](float angle)
+	auto GetNormalizedDistanceToDeltaAngleNormalized = [&](float angle)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("delta was %f compared angle %f normalized delta %f"), deltaAngle, angle, FMath::Abs(deltaAngleNormalized - UKismetMathLibrary::NormalizeToRange(angle, -180, 180)));
 		return FMath::Abs(deltaAngleNormalized - UKismetMathLibrary::NormalizeToRange(angle, -180, 180));
 	};
 
@@ -24,7 +23,7 @@ FDirectionalAnimSet UDirectionalAnimationDataAsset::GetClosestAngleAnimSet(const
 	// sort by distance to deltaAngleNormalized
 	sortedDirectionalAnimInfos.Sort([&](const FDirectionalAnimSet directionalAnimInfo1, const FDirectionalAnimSet directionalAnimInfo2)
 	{
-		return GetDistanceToDeltaAngleNormalized(directionalAnimInfo1.Angle) < GetDistanceToDeltaAngleNormalized(directionalAnimInfo2.Angle);
+		return GetNormalizedDistanceToDeltaAngleNormalized(directionalAnimInfo1.Angle) < GetNormalizedDistanceToDeltaAngleNormalized(directionalAnimInfo2.Angle);
 	});
 
 	return sortedDirectionalAnimInfos[0];
