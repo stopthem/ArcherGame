@@ -43,22 +43,26 @@ void UArcherHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
 	float minimumHealth = 0.0f;
 
+	auto GetClampedHealth = [&](float value)
+	{
+		return FMath::Clamp(value, minimumHealth, GetMaxHealth());
+	};
+
 	if (data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
-		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), minimumHealth, GetMaxHealth()));
+		SetHealth(GetClampedHealth(GetHealth() - GetDamage()));
 		SetDamage(0.0f);
 	}
 	else if (data.EvaluatedData.Attribute == GetHealingAttribute())
 	{
 		// Convert into +Health and then clamp
-
-		SetHealth(FMath::Clamp(GetHealth() + GetHealing(), minimumHealth, GetMaxHealth()));
+		SetHealth(GetClampedHealth(GetHealth() + GetHealing()));
 		SetHealing(0.0f);
 	}
 	else if (data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		// Clamp and fall into out of health handling below
-		SetHealth(FMath::Clamp(GetHealth(), minimumHealth, GetMaxHealth()));
+		SetHealth(GetClampedHealth(GetHealth()));
 	}
 
 	if (GetHealth() <= 0.0f && !bOutOfHealth)
