@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "GameplayEffectExtension.h"
 #include "ArcherAbilitySystemComponent.generated.h"
 
 /**
@@ -16,6 +17,17 @@ class ARCHERGAME_API UArcherAbilitySystemComponent : public UAbilitySystemCompon
 
 public:
 	UArcherAbilitySystemComponent();
+
+	static AActor* GetInstigatorFromAttrChangeData(const FOnAttributeChangeData& ChangeData)
+	{
+		if (ChangeData.GEModData != nullptr)
+		{
+			const FGameplayEffectContextHandle& EffectContext = ChangeData.GEModData->EffectSpec.GetEffectContext();
+			return EffectContext.GetOriginalInstigator();
+		}
+
+		return nullptr;
+	}
 
 	// Default abilities that will be given at OnPossessed
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(DisplayName ="Default Character Abilities"), Category= "Setup")

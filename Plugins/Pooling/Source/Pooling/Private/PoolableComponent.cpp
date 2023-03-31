@@ -10,6 +10,10 @@ void UPoolableComponent::Taken()
 	IsTaken = true;
 }
 
+UPoolableComponent::UPoolableComponent()
+{
+}
+
 void UPoolableComponent::ReturnToPool()
 {
 	if (!this)
@@ -17,8 +21,8 @@ void UPoolableComponent::ReturnToPool()
 		UE_LOG(LogTemp, Warning, TEXT("a poolable component is returned null when tried to return to pool! probably reference you are holding is null"));
 		return;
 	}
-	Pooler->ReturnToPool(this);
 	IsTaken = false;
+	Pooler->ReturnToPool(this);
 }
 
 void UPoolableComponent::Init(APooler* pooler)

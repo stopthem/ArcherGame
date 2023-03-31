@@ -14,7 +14,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_ManaImmunity)
  *
  * Class that defines attributes that are necessary for mana.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ARCHERGAME_API UArcherManaSet : public UArcherAttributeSet
 {
 	GENERATED_BODY()
@@ -25,7 +25,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UArcherManaSet, Mana);
 	ATTRIBUTE_ACCESSORS(UArcherManaSet, MaxMana);
 	ATTRIBUTE_ACCESSORS(UArcherManaSet, ManaRegen);
-	
+
 protected:
 	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& data) override;
@@ -37,15 +37,15 @@ protected:
 	void ClampAttribute(const FGameplayAttribute& attribute, float& newValue) const;
 
 private:
-	// The current mana attribute.  The health will be capped by the max mana attribute.  Health is hidden from modifiers so only executions can modify it.
-	UPROPERTY(BlueprintReadOnly, Category = "Archer|Health", Meta = (HideFromModifiers, AllowPrivateAccess = true))
+	// The current mana attribute.  The health will be capped by the max mana attribute.
+	UPROPERTY(BlueprintReadOnly, Category = "Archer|Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Mana;
 
 	// The current max mana attribute.  Max mana is an attribute since gameplay effects can modify it.
-	UPROPERTY(BlueprintReadOnly, Category = "Archer|Health", Meta = (HideFromModifiers, AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, Category = "Archer|Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxMana;
 
 	// The current mana regen. The mana regen is an attribute since gameplay effects can modify it.
-	UPROPERTY(BlueprintReadOnly, Category = "Archer|Health", Meta = (HideFromModifiers, AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, Category = "Archer|Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData ManaRegen;
 };

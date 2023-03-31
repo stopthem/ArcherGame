@@ -29,8 +29,6 @@ public:
 	// Sets default values for this character's properties
 	AArcherCharacter();
 
-	// Init ability system component
-	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(EditAnywhere, Category="ArcherCharacter|Ability")
 	TObjectPtr<UArcherAbilitySet> AbilitySet;
@@ -51,6 +49,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherCharacter|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UArcherHealthComponent> HealthComponent;
+
+	// Init ability system component
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void InitializeAbilitySystem();
 
 public:
 	// Start of IGameplayTagAssetInterface

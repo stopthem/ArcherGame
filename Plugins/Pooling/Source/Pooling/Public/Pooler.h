@@ -18,6 +18,8 @@ class POOLING_API APooler : public AActor, public IGameplayTagAssetInterface
 	GENERATED_BODY()
 
 public:
+	APooler();
+
 	UPROPERTY(EditAnywhere, Category="Pooling")
 	bool bPoolingParticle = false;
 
@@ -33,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AActor* GetPooledObj();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pooling")
+	UPROPERTY(BlueprintReadOnly, Category="Pooling")
 	TArray<UPoolableComponent*> PooledActors;
 
 	// Get pooled object from the pool and find given component
@@ -74,7 +76,7 @@ public:
 
 protected:
 	// Spawn starting pooled objects
-	virtual void PreInitializeComponents() override;
+	virtual void BeginPlay() override;
 
 	// Make given actor reset to a newly spawned state
 	void ResetPooledObj(AActor* pooledActor);

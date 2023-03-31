@@ -3,6 +3,7 @@
 
 #include "ArcherManaComponent.h"
 
+#include "ArcherHealthSet.h"
 #include "ArcherManaSet.h"
 #include "GameplayEffectExtension.h"
 #include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
@@ -21,21 +22,21 @@ void UArcherManaComponent::InitializeWithAbilitySystem(UArcherAbilitySystemCompo
 
 	if (AbilitySystemComponent)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ArcherHealthComponent: Health component for owner [%s] has already been initialized with an ability system."), *GetNameSafe(owner));
+		UE_LOG(LogTemp, Error, TEXT("ArcherManaComponent: mana component for owner [%s] has already been initialized with an ability system."), *GetNameSafe(owner));
 		return;
 	}
 
 	AbilitySystemComponent = inASC;
 	if (!AbilitySystemComponent)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ArcherHealthComponent: Cannot initialize health component for owner [%s] with NULL ability system."), *GetNameSafe(owner));
+		UE_LOG(LogTemp, Error, TEXT("ArcherManaComponent: Cannot initialize mana component for owner [%s] with NULL ability system."), *GetNameSafe(owner));
 		return;
 	}
 
 	ManaSet = AbilitySystemComponent->GetSet<UArcherManaSet>();
 	if (!ManaSet)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ArcherHealthComponent: Cannot initialize health component for owner [%s] with NULL health set on the ability system."), *GetNameSafe(owner));
+		UE_LOG(LogTemp, Error, TEXT("ArcherManaComponent: Cannot initialize mana component for owner [%s] with NULL mana set on the ability system."), *GetNameSafe(owner));
 		return;
 	}
 
@@ -61,23 +62,12 @@ float UArcherManaComponent::GetManaNormalized() const
 	return ManaSet && ManaSet->GetMaxMana() > 0.0f ? ManaSet->GetMana() / ManaSet->GetMaxMana() : 0.0f;
 }
 
-static AActor* GetInstigatorFromAttrChangeData(const FOnAttributeChangeData& ChangeData)
-{
-	if (ChangeData.GEModData != nullptr)
-	{
-		const FGameplayEffectContextHandle& EffectContext = ChangeData.GEModData->EffectSpec.GetEffectContext();
-		return EffectContext.GetOriginalInstigator();
-	}
-
-	return nullptr;
-}
-
 void UArcherManaComponent::HandleManaChanged(const FOnAttributeChangeData& changeData)
 {
-	OnManaChanged.Broadcast(this, ManaSet->GetMana(), ManaSet->GetMana(), GetInstigatorFromAttrChangeData(changeData));
+	OnManaChanged.Broadcast(this, ManaSet->GetMana(), ManaSet->GetMana(), UArcherAbilitySystemComponent::GetInstigatorFromAttrChangeData(changeData));
 }
 
 void UArcherManaComponent::HandleMaxManaChanged(const FOnAttributeChangeData& changeData)
 {
-	OnMaxManaChanged.Broadcast(this, ManaSet->GetMaxMana(), ManaSet->GetMaxMana(), GetInstigatorFromAttrChangeData(changeData));
+	OnMaxManaChanged.Broadcast(this, ManaSet->GetMaxMana(), ManaSet->GetMaxMana(), UArcherAbilitySystemComponent::GetInstigatorFromAttrChangeData(changeData));
 }

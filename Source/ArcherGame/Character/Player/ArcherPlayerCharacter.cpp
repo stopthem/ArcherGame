@@ -18,16 +18,11 @@ AArcherPlayerCharacter::AArcherPlayerCharacter()
 	ManaComponent = CreateDefaultSubobject<UArcherManaComponent>("ArcherPlayerCharacterManaComponent");
 }
 
-void AArcherPlayerCharacter::PossessedBy(AController* NewController)
+void AArcherPlayerCharacter::InitializeAbilitySystem()
 {
-	Super::PossessedBy(NewController);
+	Super::InitializeAbilitySystem();
 
 	ManaComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
-}
-
-void AArcherPlayerCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
 }
 
 // Called to bind functionality to input

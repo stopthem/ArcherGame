@@ -19,6 +19,8 @@ class POOLING_API UPoolableComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UPoolableComponent();
+
 	UFUNCTION(BlueprintCallable)
 	void ReturnToPool();
 

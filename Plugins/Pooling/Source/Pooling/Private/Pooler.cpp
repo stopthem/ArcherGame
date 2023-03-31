@@ -9,9 +9,13 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 
-void APooler::PreInitializeComponents()
+APooler::APooler()
 {
-	Super::PreInitializeComponents();
+}
+
+void APooler::BeginPlay()
+{
+	Super::BeginPlay();
 
 	for (int i = 0; i < SpawnAtStart; ++i)
 	{
@@ -19,7 +23,6 @@ void APooler::PreInitializeComponents()
 	}
 
 	GetGameInstance()->GetSubsystem<UPoolerGameInstanceSubsystem>()->AddToPoolerArray(this);
-	// GetWorld()->GetSubsystem<UPoolerGameInstanceSubsystem>()->AddToPoolerArray(this);
 }
 
 AActor* APooler::SpawnPooledActor()
@@ -46,9 +49,9 @@ AActor* APooler::SpawnPooledActor()
 	PooledActors.Add(poolableComponent);
 	// Init this pooler to poolableComponent
 	poolableComponent->Init(this);
-
 	return spawnedActor;
 }
+
 
 // Make given actor reset to a newly spawned state
 void APooler::ResetPooledObj(AActor* pooledActor)
@@ -65,6 +68,7 @@ void APooler::ResetPooledObj(AActor* pooledActor)
 	pooledActor->SetActorScale3D(FVector::OneVector);
 	pooledActor->SetActorRotation(FRotator::ZeroRotator);
 }
+
 
 // Get pooled object from the pool
 AActor* APooler::GetPooledObj()

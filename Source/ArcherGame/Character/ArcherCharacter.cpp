@@ -28,6 +28,11 @@ void AArcherCharacter::PossessedBy(AController* NewController)
 	if (bAbilitySystemInitted)return;
 	bAbilitySystemInitted = true;
 
+	InitializeAbilitySystem();
+}
+
+void AArcherCharacter::InitializeAbilitySystem()
+{
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 	AbilitySet->GrantSetAbilityEffectAttributes(AbilitySystemComponent);

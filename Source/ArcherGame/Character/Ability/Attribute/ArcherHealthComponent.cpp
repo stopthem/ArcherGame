@@ -77,17 +77,6 @@ void UArcherHealthComponent::FinishDeath()
 	OnDeathFinished.Broadcast(GetOwner());
 }
 
-static AActor* GetInstigatorFromAttrChangeData(const FOnAttributeChangeData& ChangeData)
-{
-	if (ChangeData.GEModData != nullptr)
-	{
-		const FGameplayEffectContextHandle& EffectContext = ChangeData.GEModData->EffectSpec.GetEffectContext();
-		return EffectContext.GetOriginalInstigator();
-	}
-
-	return nullptr;
-}
-
 void UArcherHealthComponent::OnUnregister()
 {
 	Super::OnUnregister();
@@ -102,12 +91,12 @@ void UArcherHealthComponent::OnUnregister()
 
 void UArcherHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& changeData)
 {
-	OnHealthChanged.Broadcast(this, changeData.OldValue, changeData.NewValue, GetInstigatorFromAttrChangeData(changeData));
+	OnHealthChanged.Broadcast(this, changeData.OldValue, changeData.NewValue, UArcherAbilitySystemComponent::GetInstigatorFromAttrChangeData(changeData));
 }
 
 void UArcherHealthComponent::HandleMaxHealthChanged(const FOnAttributeChangeData& changeData)
 {
-	OnMaxHealthChanged.Broadcast(this, changeData.OldValue, changeData.NewValue, GetInstigatorFromAttrChangeData(changeData));
+	OnMaxHealthChanged.Broadcast(this, changeData.OldValue, changeData.NewValue, UArcherAbilitySystemComponent::GetInstigatorFromAttrChangeData(changeData));
 }
 
 void UArcherHealthComponent::HandleOutOfHealth(AActor* damageInstigator, AActor* damageCauser, const FGameplayEffectSpec& damageEffectSpec, float damageMagnitude)
