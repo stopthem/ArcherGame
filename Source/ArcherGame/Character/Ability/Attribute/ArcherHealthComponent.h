@@ -29,7 +29,7 @@ class ARCHERGAME_API UArcherHealthComponent : public UGameFrameworkComponent
 	GENERATED_BODY()
 
 public:
-	UArcherHealthComponent(const FObjectInitializer& ObjectInitializer);
+	UArcherHealthComponent(const FObjectInitializer& objectInitializer);
 
 	// Returns the health component if one exists on the specified actor.
 	UFUNCTION(BlueprintPure, Category = "Archer|Health")

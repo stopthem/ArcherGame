@@ -4,8 +4,8 @@
 #include "ArcherPlayerCharacter.h"
 
 #include "Pooler.h"
-#include "PoolerGameInstanceSubsystem.h"
 #include "ArcherGame/ArcherGameplayTags.h"
+#include "ArcherGame/Character/Ability/Attribute/ArcherManaComponent.h"
 #include "ArcherGame/Input/ArcherEnhancedInputComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -14,6 +14,15 @@ AArcherPlayerCharacter::AArcherPlayerCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	// PrimaryActorTick.bCanEverTick = true;
+
+	ManaComponent = CreateDefaultSubobject<UArcherManaComponent>("ArcherPlayerCharacterManaComponent");
+}
+
+void AArcherPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ManaComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
 }
 
 void AArcherPlayerCharacter::PostInitializeComponents()

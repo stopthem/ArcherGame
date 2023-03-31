@@ -8,6 +8,7 @@
 #include "ArcherGame/Character/ArcherCharacter.h"
 #include "ArcherPlayerCharacter.generated.h"
 
+class UArcherManaComponent;
 class UKismetStringLibrary;
 
 /**
@@ -33,7 +34,12 @@ public:
 	APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
 
 protected:
+	virtual void PossessedBy(AController* NewController) override;
+	
 	virtual void PostInitializeComponents() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherPlayerCharacter|Mana", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UArcherManaComponent> ManaComponent;
 
 #pragma endregion
 

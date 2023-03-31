@@ -3,14 +3,13 @@
 
 #include "ArcherHealthComponent.h"
 
-#include "ArcherCharacter.h"
+#include "ArcherHealthSet.h"
 #include "GameplayEffectExtension.h"
-#include "Ability/ArcherAbilitySystemComponent.h"
-#include "Ability/Attribute/ArcherHealthSet.h"
 #include "ArcherGame/ArcherGameplayTags.h"
+#include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
 
-UArcherHealthComponent::UArcherHealthComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UArcherHealthComponent::UArcherHealthComponent(const FObjectInitializer& objectInitializer)
+	: Super(objectInitializer)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.bCanEverTick = false;
