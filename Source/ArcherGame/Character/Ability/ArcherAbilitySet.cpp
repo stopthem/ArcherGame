@@ -44,3 +44,19 @@ void UArcherAbilitySet::GrantSetAbilityEffectAttributes(UArcherAbilitySystemComp
 		NewSet->InitFromMetaDataTable(attributes.DefaultStartingDataTable);
 	}
 }
+
+FGameplayTag UArcherAbilitySet::GetInputTagFromAbility(const TSubclassOf<UArcherGameplayAbility> gameplayAbility)
+{
+	check(gameplayAbility);
+
+	if (const auto gameplayAbilitySet = GrantedGameplayAbilities.FindByPredicate([&](const FArcherAbilitySet_GameplayAbility gameplayAbilitySetElement)
+	{
+		return gameplayAbilitySetElement.Ability == gameplayAbility;
+	}))
+	{
+		return gameplayAbilitySet->InputTag;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("ArcherAbilitySet -> no gameplay ability was found with name %s"), *gameplayAbility->GetName());
+	return FGameplayTag::EmptyTag;
+}

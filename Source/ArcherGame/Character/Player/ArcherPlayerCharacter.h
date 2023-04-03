@@ -24,7 +24,7 @@ class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter
 public:
 	AArcherPlayerCharacter();
 
-	UFUNCTION(BlueprintCallable, Category="Aim Ability")
+	UFUNCTION(BlueprintCallable, Category="ArcherPlayerCharacter|Aim Ability")
 	bool GetIsAiming()
 	{
 		return GetArcherAbilitySystemComponent()->IsAbilityActiveWithTag(TAG_Input_Aim);
@@ -45,7 +45,7 @@ protected:
 
 public:
 	// The input config which filled with Gameplay Tagged Input Actions
-	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ArcherPlayerCharacter|Input")
 	TObjectPtr<UInputConfig> InputConfig;
 
 	// Called to bind functionality to input

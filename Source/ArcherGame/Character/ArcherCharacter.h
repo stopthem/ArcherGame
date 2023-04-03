@@ -30,7 +30,7 @@ public:
 	AArcherCharacter();
 
 
-	UPROPERTY(EditAnywhere, Category="ArcherCharacter|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ArcherCharacter|Ability")
 	TObjectPtr<UArcherAbilitySet> AbilitySet;
 
 	// Ability system interface getter.

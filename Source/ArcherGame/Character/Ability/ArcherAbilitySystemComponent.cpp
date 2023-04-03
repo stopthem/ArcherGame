@@ -5,7 +5,6 @@
 #include "ArcherGameplayAbility.h"
 #include "ArcherGameplayEffect.h"
 #include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
-#include "ArcherGame/ArcherGameplayTags.h"
 #include "Attribute/ArcherHealthSet.h"
 
 UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
@@ -171,6 +170,22 @@ bool UArcherAbilitySystemComponent::IsAbilityActiveWithTag(FGameplayTag inputTag
 	FindAbilitySpecFromInputTag(inputTag, foundAbilitySpec);
 
 	return foundAbilitySpec.Ability ? foundAbilitySpec.IsActive() : false;
+}
+
+FGameplayTagContainer UArcherAbilitySystemComponent::GetActivatableAbilitiesTagAsContainer()
+{
+	FGameplayTagContainer abilitiesTagContainer;
+
+	for (const FGameplayAbilitySpec gameplayAbilitySpec : ActivatableAbilities.Items)
+	{
+		if (gameplayAbilitySpec.Ability)
+		{
+			// we are only adding the first one because i don't plan to add a second tag to gameplay abilities
+			abilitiesTagContainer.AddTag(gameplayAbilitySpec.Ability->AbilityTags.First());
+		}
+	}
+
+	return abilitiesTagContainer;
 }
 
 bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec)

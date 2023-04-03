@@ -2,6 +2,8 @@
 
 
 #include "ArrowProjectile.h"
+
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
@@ -28,14 +30,19 @@ void AArrowProjectile::NotifyActorBeginOverlap(AActor* otherActor)
 	// UE_LOG(LogTemp, Warning, TEXT("notify overlap actor %s other actor %s"), *GetActorNameOrLabel(), *OtherActor->GetActorNameOrLabel());
 	Super::NotifyActorBeginOverlap(otherActor);
 
-	// zero out gravity scale so arrow doesnt fall down
+	// zero out gravity scale so arrow doesn't fall down
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
 }
 
 // play particle at hit actor(for attaching) but our location and rotations
 void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 {
-	FParticlePlayingOptions particlePlayingOptions(otherActor);
+	// create particle playing options for using its variables multiple times. playing particle can be done without it 
+	FParticlePlayingOptions particlePlayingOptions;
+
+	particlePlayingOptions.PlayLocation = GetActorLocation();
+
+	particlePlayingOptions.PlayRotation = GetActorRotation();
 
 	if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
 	{
@@ -48,15 +55,11 @@ void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 			return;
 		}
 
-		particlePlayingOptions.SkinnedMeshComponent = otherActorMesh;
-		particlePlayingOptions.SocketName = socketName;
+		UGameplayStatics::SpawnEmitterAttached(ProjectileHitParticleInfo.HitVfx, otherActorMesh, socketName, particlePlayingOptions.PlayLocation,
+		                                       particlePlayingOptions.PlayRotation, FVector(1), EAttachLocation::KeepWorldPosition);
 	}
-
-	particlePlayingOptions.ParticleAttachmentRules = EParticleAttachmentRules::AttachGivenValuesAreWorld;
-
-	particlePlayingOptions.PlayLocation = GetActorLocation();
-
-	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
-
-	ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
+	else
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, ProjectileHitParticleInfo.HitVfx, particlePlayingOptions.PlayLocation, particlePlayingOptions.PlayRotation);
+	}
 }

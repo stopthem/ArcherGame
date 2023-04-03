@@ -65,23 +65,30 @@ void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
 	{
 		ReturnToPool();
 	}
+	else
+	{
+		Destroy();
+	}
 }
 
 void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
 {
-	FParticlePlayingOptions particlePlayingOptions(this);
-	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
-	ProjectileHitParticleInfo.PlayParticle(particlePlayingOptions);
+	if (ProjectileHitParticleInfo.bPlayPooledParticle)
+	{
+		FParticlePlayingOptions particlePlayingOptions(otherActor);
+		particlePlayingOptions.PlayLocation = GetActorLocation();
+		particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator;
+		UParticleBlueprintFunctionLibrary::PlayPooledParticle(particlePlayingOptions.PlayActor, ProjectileHitParticleInfo.HitVfxPoolerTag, particlePlayingOptions);
+	}
+	else
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, ProjectileHitParticleInfo.HitVfx, GetActorLocation(),
+		                                         ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator::ZeroRotator);
+	}
 }
 
 void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 {
-	// create gameplayEvent data and only fill basic variables
-	FGameplayEventData gameplayEventData;
-	gameplayEventData.Instigator = this;
-	gameplayEventData.Target = otherActor;
-	gameplayEventData.EventTag = TAG_GameplayEvent_Damaged;
-
 	if (UArcherAbilitySystemComponent* otherASC = otherActor->FindComponentByClass<UArcherAbilitySystemComponent>())
 	{
 		FGameplayEffectContextHandle gameplayEffectContext = otherASC->MakeEffectContext();
@@ -89,10 +96,14 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 
 		const FGameplayEffectSpecHandle specHandle = otherASC->MakeOutgoingSpec(*DamageGameplayEffect, 0, gameplayEffectContext);
 
-		// the actual damage is magnitude
+		// the actual damage is magnitude and we are getting it from TAG_Data_Damage which is set by damage causer
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
 		otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
 
+		FGameplayEventData gameplayEventData;
+		gameplayEventData.Instigator = this;
+		gameplayEventData.Target = otherActor;
+		gameplayEventData.EventTag = TAG_GameplayEvent_Damaged;
 		otherASC->GetOwnedGameplayTags(gameplayEventData.TargetTags);
 		gameplayEventData.EventMagnitude = GetDamageAmount();
 		gameplayEventData.ContextHandle = gameplayEffectContext;
@@ -110,6 +121,7 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 
 void AArcherProjectileBase::ReturnToPool()
 {
+	// poolable component is added in BeginPlay so this variable can be null
 	if (!PoolableComponent)
 	{
 		PoolableComponent = FindComponentByClass<UPoolableComponent>();

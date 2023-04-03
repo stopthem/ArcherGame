@@ -88,7 +88,12 @@ class ARCHERGAME_API UArcherAbilitySet : public UDataAsset
 public:
 	UArcherAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	// called at PossessedBy from ArcherCharacter for granting abilities,effects and attributes
 	void GrantSetAbilityEffectAttributes(UArcherAbilitySystemComponent* ArcherASC);
+
+	// searches granted gameplay abilities for given ability and returns its InputTag
+	UFUNCTION(BlueprintCallable)
+	FGameplayTag GetInputTagFromAbility(const TSubclassOf<UArcherGameplayAbility> gameplayAbility);
 
 protected:
 	// Gameplay abilities to grant when this ability set is granted.

@@ -35,19 +35,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
-
-	void PlayParticle(FParticlePlayingOptions particlePlayingOptions) const
-	{
-		if (bPlayPooledParticle)
-		{
-			UParticleBlueprintFunctionLibrary::PlayPooledParticle(particlePlayingOptions.PlayActor, HitVfxPoolerTag, particlePlayingOptions);
-		}
-		else
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(particlePlayingOptions.PlayActor, HitVfx, particlePlayingOptions.PlayActor->GetActorLocation(),
-			                                         bUseActorRotation ? particlePlayingOptions.PlayActor->GetActorRotation() : FRotator::ZeroRotator);
-		}
-	}
 };
 
 /**

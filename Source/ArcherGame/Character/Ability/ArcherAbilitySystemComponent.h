@@ -58,16 +58,24 @@ protected:
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
 
 public:
+	// PlayerController calls this and handles WaitInput ability tasks
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
+	//Clears input spec handles
 	void ClearAbilityInput();
 
 public:
 	UFUNCTION(BlueprintCallable)
 	bool FindAbilitySpecHandleFromTag(FGameplayTag abilityTag, FGameplayAbilitySpecHandle& out_gameplayAbilitySpecHandle);
 
+	// Is found ability with given tag is active?
 	bool IsAbilityActiveWithTag(FGameplayTag inputTag);
 
+	// Get all activatable ability's AbilityTag and put them on a container
+	UFUNCTION(BlueprintCallable)
+	FGameplayTagContainer GetActivatableAbilitiesTagAsContainer();
+
 private:
+	// returns if a ability spec is found from given tag
 	bool FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec);
 
 	void TryActivateAbilitiesOnSpawn();
