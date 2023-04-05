@@ -40,6 +40,15 @@ public:
 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 
 public:
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+
+	UPROPERTY(BlueprintReadOnly, Category="Archer Ability System Component|Abilities With Widgets")
+	TArray<TObjectPtr<UArcherGameplayAbility>> ArcherAbilitiesWithCostBroadcast;
+
+	UFUNCTION(BlueprintCallable)
+	void CheckCanActivateBroadcasterArcherAbilities();
+
+public:
 	// When a ability action is performed these get called for abilities
 	virtual void AbilityInputPressed(const FGameplayTag& InputTag);
 	virtual void AbilityInputReleased(const FGameplayTag& InputTag);

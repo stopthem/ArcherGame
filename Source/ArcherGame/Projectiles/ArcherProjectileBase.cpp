@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "PoolableComponent.h"
 #include "ArcherGame/ArcherGameplayTags.h"
+#include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
 #include "Engine/DamageEvents.h"

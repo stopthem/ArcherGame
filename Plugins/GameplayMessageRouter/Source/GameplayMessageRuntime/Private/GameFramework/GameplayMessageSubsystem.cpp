@@ -13,8 +13,8 @@ namespace UE
 	{
 		static int32 ShouldLogMessages = 0;
 		static FAutoConsoleVariableRef CVarShouldLogMessages(TEXT("GameplayMessageSubsystem.LogMessages"),
-			ShouldLogMessages,
-			TEXT("Should messages broadcast through the gameplay message subsystem be logged?"));
+		                                                     ShouldLogMessages,
+		                                                     TEXT("Should messages broadcast through the gameplay message subsystem be logged?"));
 	}
 }
 
@@ -105,10 +105,10 @@ void UGameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel, c
 					else
 					{
 						UE_LOG(LogGameplayMessageSubsystem, Error, TEXT("Struct type mismatch on channel %s (broadcast type %s, listener at %s was expecting type %s)"),
-							*Channel.ToString(),
-							*StructType->GetPathName(),
-							*Tag.ToString(),
-							*Listener.ListenerStructType->GetPathName());
+						       *Channel.ToString(),
+						       *StructType->GetPathName(),
+						       *Tag.ToString(),
+						       *Listener.ListenerStructType->GetPathName());
 					}
 				}
 			}
@@ -140,7 +140,8 @@ DEFINE_FUNCTION(UGameplayMessageSubsystem::execK2_BroadcastMessage)
 	}
 }
 
-FGameplayMessageListenerHandle UGameplayMessageSubsystem::RegisterListenerInternal(FGameplayTag Channel, TFunction<void(FGameplayTag, const UScriptStruct*, const void*)>&& Callback, const UScriptStruct* StructType, EGameplayMessageMatch MatchType)
+FGameplayMessageListenerHandle UGameplayMessageSubsystem::RegisterListenerInternal(FGameplayTag Channel, TFunction<void(FGameplayTag, const UScriptStruct*, const void*)>&& Callback, const UScriptStruct* StructType,
+                                                                                   EGameplayMessageMatch MatchType)
 {
 	FChannelListenerList& List = ListenerMap.FindOrAdd(Channel);
 
@@ -184,4 +185,3 @@ void UGameplayMessageSubsystem::UnregisterListenerInternal(FGameplayTag Channel,
 		}
 	}
 }
-

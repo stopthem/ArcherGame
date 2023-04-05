@@ -11,6 +11,22 @@ UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
 {
 }
 
+void UArcherAbilitySystemComponent::CheckCanActivateBroadcasterArcherAbilities()
+{
+	for (const TObjectPtr<UArcherGameplayAbility> archerAbilitiesWithCostBroadcast : ArcherAbilitiesWithCostBroadcast)
+	{
+		if (AbilityActorInfo == nullptr)
+		{
+			continue;
+		}
+
+		FGameplayAbilitySpecHandle specHandle;
+		FindAbilitySpecHandleFromTag(archerAbilitiesWithCostBroadcast->AbilityTags.First(), specHandle);
+		archerAbilitiesWithCostBroadcast->CanActivateAbility(specHandle, AbilityActorInfo.Get(), &GameplayTagCountContainer.GetExplicitGameplayTags(), nullptr, nullptr);
+		// archerAbilitiesWithCostBroadcast->CheckCost(specHandle, AbilityActorInfo.Get(), nullptr);
+	}
+}
+
 void UArcherAbilitySystemComponent::AbilityInputPressed(const FGameplayTag& InputTag)
 {
 	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindAbilitySpecFromInputTag(InputTag, foundGameplayAbilitySpec))
@@ -26,6 +42,17 @@ void UArcherAbilitySystemComponent::AbilityInputReleased(const FGameplayTag& Inp
 	{
 		InputReleasedSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
 		InputHeldSpecHandles.Remove(foundGameplayAbilitySpec.Handle);
+	}
+}
+
+void UArcherAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
+{
+	Super::OnGiveAbility(AbilitySpec);
+
+	UArcherGameplayAbility* archerGameplayAbility = Cast<UArcherGameplayAbility>(AbilitySpec.Ability);
+	if (archerGameplayAbility && archerGameplayAbility->MessageTagInfoHolder.CanActivateMessageInfo.bShouldBroadcast)
+	{
+		ArcherAbilitiesWithCostBroadcast.Add(archerGameplayAbility);
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include "ArrowProjectile.h"
 
+#include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -42,7 +43,7 @@ void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 
 	particlePlayingOptions.PlayLocation = GetActorLocation();
 
-	particlePlayingOptions.PlayRotation = GetActorRotation();
+	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator(0);
 
 	if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
 	{

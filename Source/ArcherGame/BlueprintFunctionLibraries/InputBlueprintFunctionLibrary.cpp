@@ -12,6 +12,7 @@ UInputBlueprintFunctionLibrary::UInputBlueprintFunctionLibrary()
 FEnhancedActionKeyMapping UInputBlueprintFunctionLibrary::GetEnhancedKeyMappingFromAction(const UInputMappingContext* mappingContext, const UInputAction* inputAction)
 {
 	check(inputAction);
+	check(mappingContext);
 
 	if (const auto foundActionKeyMapping = mappingContext->GetMappings().FindByPredicate([&](const FEnhancedActionKeyMapping keyMapping)
 	{

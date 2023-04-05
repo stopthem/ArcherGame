@@ -37,7 +37,9 @@ struct GAMEPLAYMESSAGERUNTIME_API FGameplayMessageListenerHandle
 public:
 	GENERATED_BODY()
 
-	FGameplayMessageListenerHandle() {}
+	FGameplayMessageListenerHandle()
+	{
+	}
 
 	void Unregister();
 
@@ -57,7 +59,9 @@ private:
 
 	friend UGameplayMessageSubsystem;
 
-	FGameplayMessageListenerHandle(UGameplayMessageSubsystem* InSubsystem, FGameplayTag InChannel, int32 InID) : Subsystem(InSubsystem), Channel(InChannel), ID(InID) {}
+	FGameplayMessageListenerHandle(UGameplayMessageSubsystem* InSubsystem, FGameplayTag InChannel, int32 InID) : Subsystem(InSubsystem), Channel(InChannel), ID(InID)
+	{
+	}
 };
 
 /** 
@@ -101,7 +105,6 @@ class GAMEPLAYMESSAGERUNTIME_API UGameplayMessageSubsystem : public UGameInstanc
 	friend UAsyncAction_ListenForGameplayMessage;
 
 public:
-
 	/**
 	 * @return the message router for the game instance associated with the world of the specified object
 	 */
@@ -160,17 +163,17 @@ public:
 	 * @return a handle that can be used to unregister this listener (either by calling Unregister() on the handle or calling UnregisterListener on the router)
 	 */
 	template <typename FMessageStructType, typename TOwner = UObject>
-	FGameplayMessageListenerHandle RegisterListener(FGameplayTag Channel, TOwner* Object, void(TOwner::* Function)(FGameplayTag, const FMessageStructType&))
+	FGameplayMessageListenerHandle RegisterListener(FGameplayTag Channel, TOwner* Object, void (TOwner::* Function)(FGameplayTag, const FMessageStructType&))
 	{
 		TWeakObjectPtr<TOwner> WeakObject(Object);
 		return RegisterListener<FMessageStructType>(Channel,
-			[WeakObject, Function](FGameplayTag Channel, const FMessageStructType& Payload)
-			{
-				if (TOwner* StrongObject = WeakObject.Get())
-				{
-					(StrongObject->*Function)(Channel, Payload);
-				}
-			});
+		                                            [WeakObject, Function](FGameplayTag Channel, const FMessageStructType& Payload)
+		                                            {
+			                                            if (TOwner* StrongObject = WeakObject.Get())
+			                                            {
+				                                            (StrongObject->*Function)(Channel, Payload);
+			                                            }
+		                                            });
 	}
 
 	/**
@@ -227,7 +230,7 @@ private:
 
 	// Internal helper for registering a message listener
 	FGameplayMessageListenerHandle RegisterListenerInternal(
-		FGameplayTag Channel, 
+		FGameplayTag Channel,
 		TFunction<void(FGameplayTag, const UScriptStruct*, const void*)>&& Callback,
 		const UScriptStruct* StructType,
 		EGameplayMessageMatch MatchType);

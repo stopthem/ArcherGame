@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,7 +24,7 @@ struct FProjectileHitParticleInfo
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
-	bool bPlayPooledParticle = true;
+	bool bPlayPooledParticle = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == true", EditConditionHides))
 	FGameplayTag HitVfxPoolerTag;

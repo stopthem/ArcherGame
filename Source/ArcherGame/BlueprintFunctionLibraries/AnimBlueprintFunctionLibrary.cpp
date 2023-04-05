@@ -5,5 +5,7 @@
 
 float UAnimBlueprintFunctionLibrary::GetPlayRateFromTime(const UAnimMontage* animMontage, float wantedTime)
 {
+	check(animMontage);
+
 	return animMontage->GetPlayLength() / wantedTime;
 }

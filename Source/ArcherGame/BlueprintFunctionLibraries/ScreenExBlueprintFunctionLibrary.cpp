@@ -7,6 +7,8 @@
 
 FVector2D UScreenExBlueprintFunctionLibrary::GetScreenCenterToScreenPosDir(UObject* context, FVector2D screenPos, bool bNegate, bool bNormalize)
 {
+	check(context);
+
 	FVector2D viewportSize;
 
 	// get viewport size
