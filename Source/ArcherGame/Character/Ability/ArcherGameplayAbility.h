@@ -97,6 +97,7 @@ public:
 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
 	// broadcast cooldown if we want to
 	virtual bool CommitAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, FGameplayTagContainer* optionalRelevantTags) override;
+	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const override;
 #pragma endregion
 
 protected:

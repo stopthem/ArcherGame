@@ -3,6 +3,7 @@
 
 #include "ArcherGameplayAbility.h"
 
+#include "ArcherGameplayEffectContext.h"
 #include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Kismet/KismetStringLibrary.h"
@@ -72,6 +73,25 @@ bool UArcherGameplayAbility::CommitAbility(const FGameplayAbilitySpecHandle hand
 	}
 
 	return bCommitAbility;
+}
+
+FGameplayEffectContextHandle UArcherGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const
+{
+	FGameplayEffectContextHandle ContextHandle = Super::MakeEffectContext(handle, actorInfo);
+
+	FArcherGameplayEffectContext* EffectContext = FArcherGameplayEffectContext::ExtractEffectContext(ContextHandle);
+	check(EffectContext);
+
+	check(actorInfo);
+
+	const UObject* sourceObject = GetSourceObject(handle, actorInfo);
+
+	AActor* instigator = actorInfo ? actorInfo->OwnerActor.Get() : nullptr;
+
+	EffectContext->AddInstigator(instigator, instigator);
+	EffectContext->AddSourceObject(sourceObject);
+
+	return ContextHandle;
 }
 
 void UArcherGameplayAbility::BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const

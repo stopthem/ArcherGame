@@ -100,23 +100,6 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 		// the actual damage is magnitude and we are getting it from TAG_Data_Damage which is set by damage causer
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
 		otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
-
-		FGameplayEventData gameplayEventData;
-		gameplayEventData.Instigator = this;
-		gameplayEventData.Target = otherActor;
-		gameplayEventData.EventTag = TAG_GameplayEvent_Damaged;
-		otherASC->GetOwnedGameplayTags(gameplayEventData.TargetTags);
-		gameplayEventData.EventMagnitude = GetDamageAmount();
-		gameplayEventData.ContextHandle = gameplayEffectContext;
-
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(otherActor, TAG_GameplayEvent_Damaged, gameplayEventData);
-	}
-
-
-	if (otherActor->CanBeDamaged())
-	{
-		FDamageEvent damageEvent;
-		otherActor->TakeDamage(GetDamageAmount(), damageEvent, GetInstigatorController(), this);
 	}
 }
 

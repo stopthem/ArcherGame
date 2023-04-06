@@ -97,14 +97,14 @@ public:
 
 protected:
 	// Gameplay abilities to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty="Ability"))
 	TArray<FArcherAbilitySet_GameplayAbility> GrantedGameplayAbilities;
 
 	// Gameplay effects to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty="GameplayEffect"))
 	TArray<FArcherAbilitySet_GameplayEffect> GrantedGameplayEffects;
 
 	// Attribute sets to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
+	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty="AttributeSet"))
 	TArray<FArcherAbilitySet_AttributeSet> GrantedAttributes;
 };

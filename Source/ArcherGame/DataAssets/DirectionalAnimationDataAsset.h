@@ -38,7 +38,7 @@ public:
 	UDirectionalAnimationDataAsset();
 
 	// List of directional anim infos will be used by Damaged Gameplay Ability.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta=(TitleProperty="Angle"))
 	TArray<FDirectionalAnimSet> DirectionalAnimSets;
 
 	// Get first montage from the closest animation set's angle

@@ -18,6 +18,10 @@ struct FAbilityIconInfo
 	GENERATED_BODY()
 
 public:
+	// only for editor title property
+	UPROPERTY(EditAnywhere)
+	FName ItemName;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowedClasses="Texture"))
 	TObjectPtr<UObject> AbilityIcon;
 
@@ -40,7 +44,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int32 SpawnPriority;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta=(TitleProperty="ItemName"))
 	TArray<FAbilityIconInfo> AbilityIconInfos;
 };
 
@@ -66,6 +70,6 @@ public:
 	TArray<FAbilityIconInfo> GetOrderedAbilityIconInfosFromGameplayTagContainer(FGameplayTagContainer gameplayTagContainer);
 
 private:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta=(TitleProperty="SpawnPriority"))
 	TArray<FPrioritizedAbilityIconInfos> PrioritizedAbilityIconInfosArray;
 };

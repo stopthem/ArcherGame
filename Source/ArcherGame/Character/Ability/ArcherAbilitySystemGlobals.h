@@ -16,5 +16,7 @@ class ARCHERGAME_API UArcherAbilitySystemGlobals : public UAbilitySystemGlobals
 {
 	GENERATED_BODY()
 
-	// todo implement subclass gameplay effect context - lyra has it
+#pragma region UAbilitySystemGlobals Interface
+	virtual FGameplayEffectContext* AllocGameplayEffectContext() const override;
+#pragma endregion
 };

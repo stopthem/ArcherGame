@@ -29,7 +29,6 @@ public:
 	// Sets default values for this character's properties
 	AArcherCharacter();
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ArcherCharacter|Ability")
 	TObjectPtr<UArcherAbilitySet> AbilitySet;
 
@@ -45,7 +44,7 @@ private:
 protected:
 	// The gameplay ability system brain.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ArcherCharacter|Ability")
-	UArcherAbilitySystemComponent* AbilitySystemComponent;
+	TObjectPtr<UArcherAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherCharacter|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UArcherHealthComponent> HealthComponent;
