@@ -6,5 +6,6 @@
 UArcherCombatSet::UArcherCombatSet()
 	: BaseDamage(0.0f)
 	  , BaseHeal(0.0f)
+	  , BaseAttackSpeed(0.0f)
 {
 }

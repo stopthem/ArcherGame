@@ -27,7 +27,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Arrow Projectile")
 	float ShootingPower;
 
-	virtual void Shoot() const override;
+	virtual void Shoot(AActor* effectCauser) override;
 
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;

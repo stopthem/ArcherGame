@@ -7,7 +7,7 @@
 #include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaComponent.h"
 #include "ArcherGame/Input/ArcherEnhancedInputComponent.h"
-#include "Particles/ParticleSystemComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 // Sets default values
 AArcherPlayerCharacter::AArcherPlayerCharacter()
@@ -16,6 +16,8 @@ AArcherPlayerCharacter::AArcherPlayerCharacter()
 	// PrimaryActorTick.bCanEverTick = true;
 
 	ManaComponent = CreateDefaultSubobject<UArcherManaComponent>("ArcherPlayerCharacterManaComponent");
+
+	TeamId = 0;
 }
 
 void AArcherPlayerCharacter::InitializeAbilitySystem()

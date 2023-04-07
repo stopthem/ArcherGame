@@ -9,7 +9,6 @@
 #include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
-#include "Engine/DamageEvents.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -22,8 +21,10 @@ AArcherProjectileBase::AArcherProjectileBase()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
 }
 
-void AArcherProjectileBase::Shoot() const
+void AArcherProjectileBase::Shoot(AActor* effectCauser)
 {
+	EffectCauser = effectCauser;
+
 	ProjectileMesh->SetGenerateOverlapEvents(true);
 
 	// When we use initial speed ProjectileMovementComponent->Velocity becomes direction for unreal and we override it again with what unreal does (velocity * initial speed).
@@ -93,13 +94,21 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 	if (UArcherAbilitySystemComponent* otherASC = otherActor->FindComponentByClass<UArcherAbilitySystemComponent>())
 	{
 		FGameplayEffectContextHandle gameplayEffectContext = otherASC->MakeEffectContext();
-		gameplayEffectContext.AddInstigator(this, this);
+		gameplayEffectContext.AddInstigator(EffectCauser, this);
 
 		const FGameplayEffectSpecHandle specHandle = otherASC->MakeOutgoingSpec(*DamageGameplayEffect, 0, gameplayEffectContext);
 
 		// the actual damage is magnitude and we are getting it from TAG_Data_Damage which is set by damage causer
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
-		otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
+
+		if (UArcherAbilitySystemComponent* causerASC = EffectCauser->FindComponentByClass<UArcherAbilitySystemComponent>())
+		{
+			causerASC->ApplyGameplayEffectSpecToTarget(*specHandle.Data.Get(), otherASC);
+		}
+		else
+		{
+			otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
+		}
 	}
 }
 

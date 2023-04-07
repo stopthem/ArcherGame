@@ -20,7 +20,7 @@ struct FArcherGameplayEffectContext : public FGameplayEffectContext
 	{
 	}
 
-	/** Returns the wrapped FArcherGameplayEffectContext from the handle, or nullptr if it doesn't exist or is the wrong type */
+	// Returns the wrapped FArcherGameplayEffectContext from the handle, or nullptr if it doesn't exist or is the wrong type //
 	static ARCHERGAME_API FArcherGameplayEffectContext* ExtractEffectContext(FGameplayEffectContextHandle handle);
 
 	virtual UScriptStruct* GetScriptStruct() const override

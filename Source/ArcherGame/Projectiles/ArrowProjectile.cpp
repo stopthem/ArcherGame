@@ -14,14 +14,14 @@ AArrowProjectile::AArrowProjectile()
 	// PrimaryActorTick.bCanEverTick = true;
 }
 
-void AArrowProjectile::Shoot() const
+void AArrowProjectile::Shoot(AActor* effectCauser)
 {
 	// UE_LOG(LogTemp, Warning, TEXT("timer remaining %f shot actor %s"), GetWorld()->GetTimerManager().GetTimerRemaining(ReturnToPoolTimerHandle), *GetActorNameOrLabel());
 
 	// if this projectile was used once, this might be zeroed out
 	ProjectileMovementComponent->ProjectileGravityScale = 1.0f;
 
-	Super::Shoot();
+	Super::Shoot(effectCauser);
 }
 
 void AArrowProjectile::NotifyActorBeginOverlap(AActor* otherActor)

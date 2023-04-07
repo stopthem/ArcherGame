@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "NativeGameplayTags.h"
 #include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Character/ArcherCharacter.h"
@@ -17,7 +18,7 @@ class UKismetStringLibrary;
  * The character class that player uses
  */
 UCLASS()
-class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter
+class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -39,8 +40,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherPlayerCharacter|Mana", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UArcherManaComponent> ManaComponent;
 
-#pragma endregion
-
 #pragma region Input Handling
 
 public:
@@ -59,6 +58,14 @@ private:
 	FVector InputVector;
 
 #pragma endregion
+
+private:
+	FGenericTeamId TeamId;
+
+	virtual FGenericTeamId GetGenericTeamId() const override
+	{
+		return TeamId;
+	}
 
 public:
 	// only friend for hud purposes

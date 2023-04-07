@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ArcherProjectileBase.generated.h"
 
+class UPoolableComponent;
 class UArcherGameplayEffect;
 class UParticleBlueprintFunctionLibrary;
 class UPoolerBlueprintFunctionLibrary;
@@ -52,8 +53,13 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void Shoot() const;
+	virtual void Shoot(AActor* effectCauser);
 
+private:
+	UPROPERTY()
+	TObjectPtr<AActor> EffectCauser;
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
 	float DamageAmount;
 
@@ -91,7 +97,7 @@ protected:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")
-	TObjectPtr<class UPoolableComponent> PoolableComponent;
+	TObjectPtr<UPoolableComponent> PoolableComponent;
 
 	FTimerHandle ReturnToPoolTimerHandle;
 	// calls this actors poolable component's return to pool

@@ -21,13 +21,17 @@ public:
 
 	ATTRIBUTE_ACCESSORS(UArcherCombatSet, BaseDamage)
 	ATTRIBUTE_ACCESSORS(UArcherCombatSet, BaseHeal)
+	ATTRIBUTE_ACCESSORS(UArcherCombatSet, BaseAttackSpeed);
 
-private:
 	// The base amount of damage to apply in the damage execution.
 	UPROPERTY(BlueprintReadOnly, Category="Archer|Combat", meta=(AllowPrivateAccess = true))
 	FGameplayAttributeData BaseDamage;
 
+private:
 	// The base amount of healing to apply in the heal execution.
 	UPROPERTY(BlueprintReadOnly, Category="Archer|Combat", meta=(AllowPrivateAccess = true))
 	FGameplayAttributeData BaseHeal;
+
+	UPROPERTY(BlueprintReadOnly, Category="Archer|Combat", meta=(AllowPrivateAccess = true))
+	FGameplayAttributeData BaseAttackSpeed;
 };

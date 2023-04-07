@@ -13,7 +13,8 @@
 				"EnhancedInput",
 				"GameplayAbilities",
 				"ModularGameplay",
-				"AnimationModifiers"
+				"AnimationModifiers",
+				"AIModule"
 			]
 		},
 		{

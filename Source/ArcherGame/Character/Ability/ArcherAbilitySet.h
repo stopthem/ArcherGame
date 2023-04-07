@@ -67,10 +67,11 @@ struct FArcherAbilitySet_AttributeSet
 	GENERATED_BODY()
 
 public:
-	// Gameplay effect to grant.
+	// Attribute to grant
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAttributeSet> AttributeSet;
 
+	// Attribute default values table
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataTable> DefaultStartingDataTable;
 };
