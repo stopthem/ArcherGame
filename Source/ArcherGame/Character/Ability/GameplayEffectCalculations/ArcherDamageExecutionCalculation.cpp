@@ -50,7 +50,9 @@ void UArcherDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 	float damageDone = FMath::Max(baseDamage, 0.0f);
 
 	float attributeDamage = 0.0f;
+	// get the magnitude from source base damage attribute  
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BaseDamageDef, evaluateParameters, attributeDamage);
+
 	if (attributeDamage > 0.0f)
 	{
 		damageDone += attributeDamage;
@@ -61,6 +63,6 @@ void UArcherDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 		return;
 	}
 
-
+	// add damage done to damage attribute of UArcherHealthSet so it handles in itself
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UArcherHealthSet::GetDamageAttribute(), EGameplayModOp::Additive, damageDone));
 }

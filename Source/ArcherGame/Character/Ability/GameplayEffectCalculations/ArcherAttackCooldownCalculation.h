@@ -18,7 +18,8 @@ class ARCHERGAME_API UArcherAttackCooldownCalculation : public UGameplayModMagni
 
 public:
 	UArcherAttackCooldownCalculation();
-	
+
+	// i don't know why we create a struct for ExecutionCalculation and not for ModMagnitudeCalculation but https://github.com/tranek/GASDocumentation/blob/master/README.md#concepts-ge-mmc must know something :D
 	FGameplayEffectAttributeCaptureDefinition AttackSpeedDef;
 
 	virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& spec) const override;
