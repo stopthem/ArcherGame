@@ -14,7 +14,7 @@ FEnhancedActionKeyMapping UInputBlueprintFunctionLibrary::GetEnhancedKeyMappingF
 	check(inputAction);
 	check(mappingContext);
 
-	if (const auto foundActionKeyMapping = mappingContext->GetMappings().FindByPredicate([&](const FEnhancedActionKeyMapping keyMapping)
+	if (const auto foundActionKeyMapping = mappingContext->GetMappings().FindByPredicate([&](const FEnhancedActionKeyMapping& keyMapping)
 	{
 		return keyMapping.Action == inputAction;
 	}))

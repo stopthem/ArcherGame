@@ -28,5 +28,5 @@ public:
 	APooler* GetPoolerFromGameplayTag(FGameplayTag gameplayTag);
 
 private:
-	TArray<APooler*> Poolers;
+	TArray<TObjectPtr<APooler>> Poolers;
 };

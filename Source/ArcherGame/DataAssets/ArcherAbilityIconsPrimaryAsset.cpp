@@ -11,7 +11,7 @@ FAbilityIconInfo UArcherAbilityIconsPrimaryAsset::GetAbilityIconInfoFromTag(FGam
 {
 	for (const FPrioritizedAbilityIconInfos prioritizedAbilityIconInfos : PrioritizedAbilityIconInfosArray)
 	{
-		if (const auto foundAbilityIconInfo = prioritizedAbilityIconInfos.AbilityIconInfos.FindByPredicate([&](const FAbilityIconInfo abilityIconInfo)
+		if (const auto foundAbilityIconInfo = prioritizedAbilityIconInfos.AbilityIconInfos.FindByPredicate([&](const FAbilityIconInfo& abilityIconInfo)
 		{
 			return abilityIconInfo.AbilityTag == abilityTag;
 		}))
@@ -30,7 +30,7 @@ TArray<FAbilityIconInfo> UArcherAbilityIconsPrimaryAsset::GetOrderedAbilityIconI
 
 	// ordering prioritized ability icon infos in case of they were not set ordered in editor
 	TArray<FPrioritizedAbilityIconInfos> orderedPrioAbilityIconInfos = TArray(PrioritizedAbilityIconInfosArray);
-	orderedPrioAbilityIconInfos.Sort([](const FPrioritizedAbilityIconInfos prioritizedAbilityIconInfo1, const FPrioritizedAbilityIconInfos prioritizedAbilityIconInfos2)
+	orderedPrioAbilityIconInfos.Sort([](const FPrioritizedAbilityIconInfos& prioritizedAbilityIconInfo1, const FPrioritizedAbilityIconInfos& prioritizedAbilityIconInfos2)
 	{
 		return prioritizedAbilityIconInfo1.SpawnPriority < prioritizedAbilityIconInfos2.SpawnPriority;
 	});

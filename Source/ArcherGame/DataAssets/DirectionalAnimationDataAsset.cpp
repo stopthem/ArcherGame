@@ -21,7 +21,7 @@ FDirectionalAnimSet UDirectionalAnimationDataAsset::GetClosestAngleAnimSet(const
 	// create new TArray for sorting
 	TArray<FDirectionalAnimSet> sortedDirectionalAnimInfos = TArray(DirectionalAnimSets);
 	// sort by distance to deltaAngleNormalized
-	sortedDirectionalAnimInfos.Sort([&](const FDirectionalAnimSet directionalAnimInfo1, const FDirectionalAnimSet directionalAnimInfo2)
+	sortedDirectionalAnimInfos.Sort([&](const FDirectionalAnimSet& directionalAnimInfo1, const FDirectionalAnimSet& directionalAnimInfo2)
 	{
 		return GetNormalizedDistanceToDeltaAngleNormalized(directionalAnimInfo1.Angle) < GetNormalizedDistanceToDeltaAngleNormalized(directionalAnimInfo2.Angle);
 	});
