@@ -19,4 +19,10 @@ class ARCHERGAME_API AArcherEnemyAIController : public AAIController
 
 public:
 	AArcherEnemyAIController();
+
+	virtual void BeginPlay() override;
+
+protected:
+	UFUNCTION()
+	virtual void OnOwnerDeathStarted(AActor* actor);
 };

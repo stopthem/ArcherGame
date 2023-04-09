@@ -9,6 +9,7 @@
 #include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -25,7 +26,7 @@ void AArcherProjectileBase::Shoot(AActor* effectCauser)
 {
 	EffectCauser = effectCauser;
 
-	ProjectileMesh->SetGenerateOverlapEvents(true);
+	ProjectileCollisionComponent->SetGenerateOverlapEvents(true);
 
 	// When we use initial speed ProjectileMovementComponent->Velocity becomes direction for unreal and we override it again with what unreal does (velocity * initial speed).
 	ProjectileMovementComponent->Velocity = GetActorForwardVector() * ProjectileMovementComponent->InitialSpeed;
@@ -36,7 +37,7 @@ void AArcherProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	ProjectileMesh = FindComponentByClass<UStaticMeshComponent>();
+	ProjectileCollisionComponent = FindComponentByClass<UPrimitiveComponent>();
 }
 
 // Called when the game starts or when spawned
@@ -55,7 +56,7 @@ void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
 {
 	Super::NotifyActorBeginOverlap(otherActor);
 
-	ProjectileMesh->SetGenerateOverlapEvents(false);
+	ProjectileCollisionComponent->SetGenerateOverlapEvents(false);
 
 	ProjectileMovementComponent->StopMovementImmediately();
 
@@ -101,13 +102,25 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 		// the actual damage is magnitude and we are getting it from TAG_Data_Damage which is set by damage causer
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
 
-		if (UArcherAbilitySystemComponent* causerASC = EffectCauser->FindComponentByClass<UArcherAbilitySystemComponent>())
+		auto OtherActorApplyGameEffectToSelf = [&]
 		{
-			causerASC->ApplyGameplayEffectSpecToTarget(*specHandle.Data.Get(), otherASC);
+			otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
+		};
+
+		if (EffectCauser)
+		{
+			if (UArcherAbilitySystemComponent* causerASC = EffectCauser->FindComponentByClass<UArcherAbilitySystemComponent>())
+			{
+				causerASC->ApplyGameplayEffectSpecToTarget(*specHandle.Data.Get(), otherASC);
+			}
+			else
+			{
+				OtherActorApplyGameEffectToSelf();
+			}
 		}
 		else
 		{
-			otherASC->ApplyGameplayEffectSpecToSelf(*specHandle.Data.Get());
+			OtherActorApplyGameEffectToSelf();
 		}
 	}
 }

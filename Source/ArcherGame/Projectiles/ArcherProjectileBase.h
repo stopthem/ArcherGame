@@ -82,7 +82,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Mesh")
-	TObjectPtr<UStaticMeshComponent> ProjectileMesh;
+	TObjectPtr<UPrimitiveComponent> ProjectileCollisionComponent;
 	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
 
 	virtual void PlayHitParticle(AActor* otherActor);

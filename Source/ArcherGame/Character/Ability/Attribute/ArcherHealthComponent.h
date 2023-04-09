@@ -54,6 +54,7 @@ public:
 	// Begins the death sequence for the owner.
 	virtual void StartDeath();
 
+	UFUNCTION(BlueprintCallable)
 	// Ends the death sequence for the owner.
 	virtual void FinishDeath();
 

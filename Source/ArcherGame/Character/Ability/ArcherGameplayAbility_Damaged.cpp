@@ -11,7 +11,7 @@ UArcherGameplayAbility_Damaged::UArcherGameplayAbility_Damaged()
 
 void UArcherGameplayAbility_Damaged::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
-	if (HasAnyFlags(RF_ClassDefaultObject))
+	if (AbilityTriggers.Num() == 0)
 	{
 		// Add the ability trigger tag as default to the CDO.
 		FAbilityTriggerData TriggerData;
