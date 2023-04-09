@@ -24,6 +24,7 @@ class POOLING_API UParticlePoolableComponent : public UPoolableComponent
 	virtual void Taken() override;
 
 private:
+	UPROPERTY()
 	TObjectPtr<UParticleSystemComponent> ParticleSystemComponent;
 
 	// when the system is finished, return to pool

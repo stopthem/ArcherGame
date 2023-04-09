@@ -13,7 +13,7 @@ UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
 
 void UArcherAbilitySystemComponent::CheckCanActivateBroadcasterArcherAbilities()
 {
-	for (const TObjectPtr<UArcherGameplayAbility> archerAbilitiesWithCostBroadcast : ArcherAbilitiesWithCostBroadcast)
+	for (const UArcherGameplayAbility* archerAbilitiesWithCostBroadcast : ArcherAbilitiesWithCostBroadcast)
 	{
 		if (AbilityActorInfo == nullptr)
 		{

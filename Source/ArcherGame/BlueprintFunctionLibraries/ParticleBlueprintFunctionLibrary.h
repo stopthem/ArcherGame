@@ -44,9 +44,11 @@ struct FParticlePlayingOptions
 	}
 
 	FName SocketName;
+	UPROPERTY()
 	TObjectPtr<USkinnedMeshComponent> SkinnedMeshComponent;
 
 public:
+	UPROPERTY()
 	TObjectPtr<AActor> PlayActor = nullptr;
 
 	FVector PlayLocation = FVector::ZeroVector;

@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pooling")
 	TSubclassOf<AActor> ActorToPool = nullptr;
 
-	// How many ActorToPool to spawn in PreInitializeComponents
+	// How many ActorToPool to spawn in BeginPlay
 	UPROPERTY(EditAnywhere, Category="Pooling")
 	int SpawnAtStart;
 

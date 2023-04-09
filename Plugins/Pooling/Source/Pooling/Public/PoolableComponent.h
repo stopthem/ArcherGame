@@ -33,15 +33,16 @@ public:
 
 	void Init(APooler* pooler);
 
+	// Get Pooler that pools this object
 	APooler* GetPooler() const
 	{
 		return Pooler;
 	}
 
-	UPROPERTY(VisibleAnywhere)
+private:
 	bool IsTaken;
 
-private:
+	// Pooler that pools this object
 	UPROPERTY()
 	APooler* Pooler;
 };

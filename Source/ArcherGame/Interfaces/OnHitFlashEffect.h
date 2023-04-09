@@ -46,7 +46,7 @@ public:
 public:
 	// Duration of the blinking animation. Will be considered as full length because animation is YoYo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="OnHitParams|Play")
-	float Duration = 0.15f;
+	float Duration = 0.1f;
 
 	// Intensity of the blink animation. Basically the scalar value's target
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="OnHitParams|Play")
