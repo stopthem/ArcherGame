@@ -4,20 +4,18 @@
 #include "ArcherProjectileBase.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "FCTween.h"
 #include "PoolableComponent.h"
 #include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
 #include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
-#include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AArcherProjectileBase::AArcherProjectileBase()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	// PrimaryActorTick.bCanEverTick = true;
-
 	// create projectile movement
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
 }
@@ -31,6 +29,17 @@ void AArcherProjectileBase::Shoot(AActor* effectCauser)
 	// When we use initial speed ProjectileMovementComponent->Velocity becomes direction for unreal and we override it again with what unreal does (velocity * initial speed).
 	ProjectileMovementComponent->Velocity = GetActorForwardVector() * ProjectileMovementComponent->InitialSpeed;
 	ProjectileMovementComponent->Activate();
+
+	// Start tween for scaling to zero and calling HandleActorEnding
+	ProjectileHitParticleInfo.SpawnedTween = FCTween::Play(GetActorScale3D(), FVector(0), [&](const FVector& vector)
+	                                         {
+		                                         SetActorScale3D(vector);
+	                                         }, ProjectileHitParticleInfo.DestroyEmitterScaleTweenParams.Duration, ProjectileHitParticleInfo.DestroyEmitterScaleTweenParams.Ease)
+	                                         ->SetDelay(ProjectileHitParticleInfo.DestroyEmitterScaleTweenParams.OneValue)
+	                                         ->SetOnComplete([&]
+	                                         {
+		                                         HandleActorEnding();
+	                                         });
 }
 
 void AArcherProjectileBase::PostInitializeComponents()
@@ -64,14 +73,7 @@ void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
 
 	DamageOverlappedActor(otherActor);
 
-	if (bShouldReturnToPoolAfterOverlap)
-	{
-		ReturnToPool();
-	}
-	else
-	{
-		Destroy();
-	}
+	HandleActorEnding();
 }
 
 void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
@@ -122,6 +124,23 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 		{
 			OtherActorApplyGameEffectToSelf();
 		}
+	}
+}
+
+void AArcherProjectileBase::HandleActorEnding()
+{
+	if (ProjectileHitParticleInfo.SpawnedTween != nullptr)
+	{
+		ProjectileHitParticleInfo.SpawnedTween->Destroy();
+	}
+
+	if (bShouldReturnToPoolAfterOverlap)
+	{
+		ReturnToPool();
+	}
+	else
+	{
+		Destroy();
 	}
 }
 

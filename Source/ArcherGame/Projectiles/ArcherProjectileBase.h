@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FCTweenUObject.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "ArcherProjectileBase.generated.h"
 
 class UPoolableComponent;
@@ -32,6 +32,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == false", EditConditionHides))
 	UParticleSystem* HitVfx = nullptr;
+
+	TObjectPtr<FCTweenInstance> SpawnedTween = nullptr;
+
+	// OneValue will be used as time before destroying the projectile 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
+	FTweenParamsOneValue DestroyEmitterScaleTweenParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
@@ -94,6 +100,9 @@ protected:
 	{
 		return DamageAmount;
 	}
+
+private:
+	void HandleActorEnding();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")

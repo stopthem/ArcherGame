@@ -25,4 +25,9 @@ public:
 protected:
 	UFUNCTION()
 	virtual void OnOwnerDeathStarted(AActor* actor);
+
+private:
+#if WITH_EDITOR
+	void HandleAIBehaviourTreeConsoleVariableChanged(IConsoleVariable* variable) const;
+#endif
 };

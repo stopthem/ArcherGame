@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="ArcherPlayerCharacter|Aim Ability")
 	bool GetIsAiming()
 	{
-		return GetArcherAbilitySystemComponent()->IsAbilityActiveWithTag(TAG_Input_Aim);
+		return GetArcherAbilitySystemComponent()->IsAbilityActiveWithTag(TAG_Input_PrimaryAbility);
 	}
 
 	UFUNCTION(BlueprintCallable)

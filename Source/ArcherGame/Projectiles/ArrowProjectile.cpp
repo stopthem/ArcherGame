@@ -4,8 +4,7 @@
 #include "ArrowProjectile.h"
 
 #include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AArrowProjectile::AArrowProjectile()

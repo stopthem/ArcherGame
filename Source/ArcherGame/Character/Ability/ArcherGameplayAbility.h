@@ -7,6 +7,7 @@
 #include "ArcherGameplayAbility.generated.h"
 
 class UGameplayMessageSubsystem;
+
 USTRUCT(BlueprintType)
 struct FMessageTagInfo
 {
@@ -103,7 +104,7 @@ public:
 protected:
 	// Defines how this ability is meant to activate.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Archer Gameplay Ability")
-	EArcherAbilityActivationPolicy ActivationPolicy;
+	EArcherAbilityActivationPolicy ActivationPolicy = EArcherAbilityActivationPolicy::Manual;
 
 private:
 	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;

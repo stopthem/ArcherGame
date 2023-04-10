@@ -11,6 +11,11 @@
 
 FCTWEEN_API DECLARE_LOG_CATEGORY_EXTERN(LogFCTween, Log, All)
 
+/*
+ * FTweenParams
+ *
+ * Can be used when playing a FCTween to reduce variable declaring
+ */
 class FCTWEEN_API FCTween
 {
 private:
@@ -58,7 +63,7 @@ public:
 		FVector Start, FVector End, TFunction<void(FVector)> OnUpdate, float DurationSecs, EFCEase EaseType = EFCEase::OutQuad);
 
 	static FCTweenInstanceVector2D* Play(FVector2D Start, FVector2D End, TFunction<void(FVector2D)> OnUpdate, float DurationSecs,
-		EFCEase EaseType = EFCEase::OutQuad);
+	                                     EFCEase EaseType = EFCEase::OutQuad);
 
 	static FCTweenInstanceQuat* Play(
 		FQuat Start, FQuat End, TFunction<void(FQuat)> OnUpdate, float DurationSecs, EFCEase EaseType = EFCEase::OutQuad);
