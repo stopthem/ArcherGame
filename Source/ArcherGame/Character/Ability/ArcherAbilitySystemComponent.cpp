@@ -5,6 +5,7 @@
 #include "ArcherGameplayAbility.h"
 #include "ArcherGameplayEffect.h"
 #include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
+#include "ArcherGame/BlueprintFunctionLibraries/ArrayBlueprintFunctionLibrary.h"
 #include "Attribute/ArcherHealthSet.h"
 
 UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
@@ -29,19 +30,23 @@ void UArcherAbilitySystemComponent::CheckCanActivateBroadcasterArcherAbilities()
 
 void UArcherAbilitySystemComponent::AbilityInputPressed(const FGameplayTag& InputTag)
 {
-	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindAbilitySpecFromInputTag(InputTag, foundGameplayAbilitySpec))
+	if (TArray<FGameplayAbilitySpecHandle> foundGameplayAbilitySpecHandles; FindAbilitySpecHandlesFromInputTag(InputTag, foundGameplayAbilitySpecHandles))
 	{
-		InputPressedSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
-		InputHeldSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
+		UArrayBlueprintFunctionLibrary::AppendUnique(foundGameplayAbilitySpecHandles, InputPressedSpecHandles);
+		UArrayBlueprintFunctionLibrary::AppendUnique(foundGameplayAbilitySpecHandles, InputHeldSpecHandles);
 	}
 }
 
 void UArcherAbilitySystemComponent::AbilityInputReleased(const FGameplayTag& InputTag)
 {
-	if (FGameplayAbilitySpec foundGameplayAbilitySpec; FindAbilitySpecFromInputTag(InputTag, foundGameplayAbilitySpec))
+	if (TArray<FGameplayAbilitySpecHandle> foundGameplayAbilitySpecHandles; FindAbilitySpecHandlesFromInputTag(InputTag, foundGameplayAbilitySpecHandles))
 	{
-		InputReleasedSpecHandles.AddUnique(foundGameplayAbilitySpec.Handle);
-		InputHeldSpecHandles.Remove(foundGameplayAbilitySpec.Handle);
+		UArrayBlueprintFunctionLibrary::AppendUnique(foundGameplayAbilitySpecHandles, InputReleasedSpecHandles);
+
+		InputHeldSpecHandles.RemoveAll([&](const FGameplayAbilitySpecHandle& gameplayAbilitySpecHandle)
+		{
+			return foundGameplayAbilitySpecHandles.Contains(gameplayAbilitySpecHandle);
+		});
 	}
 }
 
@@ -234,6 +239,42 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inp
 	}
 
 	return false;
+}
+
+bool UArcherAbilitySystemComponent::FindAbilitySpecsFromInputTag(FGameplayTag inputTag, TArray<FGameplayAbilitySpec>& out_gameplayAbilitySpecs)
+{
+	if (!inputTag.IsValid())
+	{
+		return false;
+	}
+
+	for (const FGameplayAbilitySpec gameplayAbilitySpec : ActivatableAbilities.Items)
+	{
+		if (gameplayAbilitySpec.Ability && gameplayAbilitySpec.DynamicAbilityTags.HasTagExact(inputTag))
+		{
+			out_gameplayAbilitySpecs.Add(gameplayAbilitySpec);
+		}
+	}
+
+	return out_gameplayAbilitySpecs.Num() > 0;
+}
+
+bool UArcherAbilitySystemComponent::FindAbilitySpecHandlesFromInputTag(FGameplayTag inputTag, TArray<FGameplayAbilitySpecHandle>& out_gameplayAbilitySpecHandles)
+{
+	if (!inputTag.IsValid())
+	{
+		return false;
+	}
+
+	TArray<FGameplayAbilitySpec> gameplayAbilitySpecs;
+	FindAbilitySpecsFromInputTag(inputTag, gameplayAbilitySpecs);
+
+	for (const FGameplayAbilitySpec gameplayAbilitySpec : gameplayAbilitySpecs)
+	{
+		out_gameplayAbilitySpecHandles.Add(gameplayAbilitySpec.Handle);
+	}
+
+	return out_gameplayAbilitySpecHandles.Num() > 0;
 }
 
 void UArcherAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)

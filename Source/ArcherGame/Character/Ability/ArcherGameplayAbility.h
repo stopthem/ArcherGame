@@ -96,8 +96,11 @@ public:
 	// broadcast can activate ability if we want to
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
+
 	// broadcast cooldown if we want to
 	virtual bool CommitAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, FGameplayTagContainer* optionalRelevantTags) override;
+
+	//Make and return our custom effect context with useful informations
 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const override;
 #pragma endregion
 
@@ -107,7 +110,7 @@ protected:
 	EArcherAbilityActivationPolicy ActivationPolicy = EArcherAbilityActivationPolicy::Manual;
 
 private:
-	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;
 
 	void BroadcastCooldown() const;
+	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;
 };
