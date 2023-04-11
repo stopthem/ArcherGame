@@ -20,6 +20,12 @@ void AArcherEnemyCharacter::BeginPlay()
 
 void AArcherEnemyCharacter::OnHealthChanged(UArcherHealthComponent* sentHealthComponent, float oldValue, float newValue, AActor* sentInstigator)
 {
+	// don't apply hit flash effect if we are dying
+	if (oldValue == 0)
+	{
+		return;
+	}
+
 	// maybe its better to call once but i wanted this interface to be simple and maybe in the future this mesh will change? :D
 	OnHitEffectParams.Mesh = GetMesh();
 
