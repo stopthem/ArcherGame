@@ -12,6 +12,7 @@
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AArcherProjectileBase::AArcherProjectileBase()
@@ -42,23 +43,11 @@ void AArcherProjectileBase::Shoot(AActor* effectCauser)
 	                                         });
 }
 
-void AArcherProjectileBase::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	ProjectileCollisionComponent = FindComponentByClass<UPrimitiveComponent>();
-}
-
-// Called when the game starts or when spawned
 void AArcherProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-}
 
-// Called every frame
-void AArcherProjectileBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	ProjectileCollisionComponent = FindComponentByClass<UPrimitiveComponent>();
 }
 
 void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
@@ -134,14 +123,18 @@ void AArcherProjectileBase::HandleActorEnding()
 		ProjectileHitParticleInfo.SpawnedTween->Destroy();
 	}
 
-	if (bShouldReturnToPoolAfterOverlap)
+	// wait for next tick so damage calculations go correct
+	GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([&]
 	{
-		ReturnToPool();
-	}
-	else
-	{
-		Destroy();
-	}
+		if (bShouldReturnToPoolAfterOverlap)
+		{
+			ReturnToPool();
+		}
+		else
+		{
+			Destroy();
+		}
+	}));
 }
 
 void AArcherProjectileBase::ReturnToPool()
@@ -152,11 +145,6 @@ void AArcherProjectileBase::ReturnToPool()
 		PoolableComponent = FindComponentByClass<UPoolableComponent>();
 	}
 
-	// wait for next tick so damage calculations go correct
-	GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([&]
-	{
-		// UE_LOG(LogTemp, Warning, TEXT("returned to pool %s"), *GetActorNameOrLabel());
-		ProjectileMovementComponent->Deactivate();
-		PoolableComponent->ReturnToPool();
-	}));
+	ProjectileMovementComponent->Deactivate();
+	PoolableComponent->ReturnToPool();
 }

@@ -104,13 +104,14 @@ public:
 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const override;
 #pragma endregion
 
+	UFUNCTION(BlueprintCallable)
+	void BroadcastCooldown() const;
+
 protected:
 	// Defines how this ability is meant to activate.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Archer Gameplay Ability")
 	EArcherAbilityActivationPolicy ActivationPolicy = EArcherAbilityActivationPolicy::Manual;
 
 private:
-
-	void BroadcastCooldown() const;
 	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;
 };

@@ -25,10 +25,13 @@ class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter, public IG
 public:
 	AArcherPlayerCharacter();
 
-	UFUNCTION(BlueprintCallable, Category="ArcherPlayerCharacter|Aim Ability")
+	UPROPERTY(EditAnywhere, Category="ArcherPlayerCharacter|Aim")
+	FGameplayTagContainer AimingTagsContainer;
+
+	UFUNCTION(BlueprintCallable, Category="ArcherPlayerCharacter|Aim")
 	bool GetIsAiming()
 	{
-		return HasMatchingGameplayTag(TAG_Event_Aiming);
+		return HasAnyMatchingGameplayTags(AimingTagsContainer);
 	}
 
 	UFUNCTION(BlueprintCallable)

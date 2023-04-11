@@ -24,7 +24,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arrow Projectile")
 	float stickLocationMultiplier = 25.0f;
 
-	UPROPERTY(BlueprintReadWrite, Category="Arrow Projectile")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Arrow Projectile", meta=(UIMin= "0", UIMax="1", ClampMin="0", ClampMax="1"))
 	float ShootingPower;
 
 	virtual void Shoot(AActor* effectCauser) override;
