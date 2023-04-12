@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Archer Gameplay Ability|Message")
 	FMessageTagInfo CooldownMessageInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Archer Gameplay Ability|Message")
+	FMessageTagInfo IsActiveMessageInfo;
 };
 
 /**
@@ -106,7 +109,10 @@ public:
 	//Make and return our custom effect context with useful informations
 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const override;
 
-	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
+	                                               FGameplayTagContainer* OptionalRelevantTags) const override;
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 #pragma endregion
 
 	UFUNCTION(BlueprintCallable)
@@ -119,4 +125,6 @@ protected:
 
 private:
 	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;
+
+	void BroadcastIsActive(const FGameplayAbilityActorInfo* actorInfo, const bool bIsAbilityActive) const;
 };

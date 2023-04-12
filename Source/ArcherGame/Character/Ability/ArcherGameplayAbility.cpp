@@ -8,6 +8,7 @@
 #include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Messages/ArcherAbilityCanActivateMessage.h"
+#include "Messages/ArcherAbilityIsActiveMessage.h"
 #include "Messages/ArcherInteractionDurationMessage.h"
 
 UArcherGameplayAbility::UArcherGameplayAbility()
@@ -79,9 +80,16 @@ bool UArcherGameplayAbility::CommitAbility(const FGameplayAbilitySpecHandle hand
 {
 	const bool bCommitAbility = Super::CommitAbility(handle, actorInfo, activationInfo, optionalRelevantTags);
 
-	if (bCommitAbility && MessageTagInfoHolder.CooldownMessageInfo.bShouldBroadcast)
+	if (bCommitAbility)
 	{
-		BroadcastCooldown();
+		if (MessageTagInfoHolder.CooldownMessageInfo.bShouldBroadcast)
+		{
+			BroadcastCooldown();
+		}
+		if (MessageTagInfoHolder.IsActiveMessageInfo.bShouldBroadcast)
+		{
+			BroadcastIsActive(actorInfo, true);
+		}
 	}
 
 	return bCommitAbility;
@@ -208,11 +216,27 @@ bool UArcherGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySys
 	return true;
 }
 
+void UArcherGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	if (MessageTagInfoHolder.IsActiveMessageInfo.bShouldBroadcast)
+	{
+		BroadcastIsActive(actorInfo, false);
+	}
+	Super::EndAbility(handle, actorInfo, activationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
 void UArcherGameplayAbility::BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const
 {
 	FArcherAbilityCanActivateMessage AbilityCostMessage;
 	AbilityCostMessage.bCanActivate = bCanActivate;
 	UGameplayMessageSubsystem::Get(actorInfo->OwnerActor.Get()).BroadcastMessage(MessageTagInfoHolder.CanActivateMessageInfo.MessageTag, AbilityCostMessage);
+}
+
+void UArcherGameplayAbility::BroadcastIsActive(const FGameplayAbilityActorInfo* actorInfo, const bool bIsAbilityActive) const
+{
+	FArcherAbilityIsActiveMessage abilityIsActiveMessage;
+	abilityIsActiveMessage.bIsActive = bIsAbilityActive;
+	UGameplayMessageSubsystem::Get(actorInfo->OwnerActor.Get()).BroadcastMessage(MessageTagInfoHolder.IsActiveMessageInfo.MessageTag, abilityIsActiveMessage);
 }
 
 void UArcherGameplayAbility::BroadcastCooldown() const

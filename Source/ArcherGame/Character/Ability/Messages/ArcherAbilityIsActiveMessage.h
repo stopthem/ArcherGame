@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 
-#include "ArcherAbilityCanActivateMessage.generated.h"
-/**
- * FArcherAbilityCostMessage
+#include "ArcherAbilityIsActiveMessage.generated.h"
+
+/*
+ * FArcherAbilityIsActiveMessage
  *
  * Preferably used with Gameplay Message Subsystem Broadcast Message's payload
- * Holds information about ability can activate
+ * Holds information about ability is active
  */
 USTRUCT(BlueprintType)
-struct FArcherAbilityCanActivateMessage
+struct FArcherAbilityIsActiveMessage
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(BlueprintReadOnly)
-	bool bCanActivate;
+	bool bIsActive;
 };

@@ -11,6 +11,7 @@ class UGameplayEffect;
  * FArcherInteractionDurationMessage
  *
  * Preferably used with Gameplay Message Subsystem Broadcast Message's payload
+ * Holds information about the instigator and duration
  */
 USTRUCT(BlueprintType)
 struct FArcherInteractionDurationMessage
