@@ -21,10 +21,10 @@ void AArcherEnemyAIController::BeginPlay()
 		foundHealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnOwnerDeathStarted);
 	}
 
-	BrainComponent->PauseLogic("");
 
 #if WITH_EDITOR
-	IConsoleManager::Get().FindConsoleVariable(TEXT("ai.AllBehaviorTrees.Activated"))->SetOnChangedCallback(FConsoleVariableDelegate::CreateUObject(this, &ThisClass::HandleAIBehaviourTreeConsoleVariableChanged));
+	BrainComponent->PauseLogic("");
+	FAutoConsoleVariableSink CVarSink(FConsoleCommandDelegate::CreateUObject(this, &ThisClass::HandleLogicFromConsoleVariable));
 #endif
 }
 
@@ -33,9 +33,11 @@ void AArcherEnemyAIController::OnOwnerDeathStarted(AActor* actor)
 	BrainComponent->StopLogic("Died");
 }
 
-void AArcherEnemyAIController::HandleAIBehaviourTreeConsoleVariableChanged(IConsoleVariable* variable) const
+void AArcherEnemyAIController::HandleLogicFromConsoleVariable() const
 {
-	if (variable->GetBool())
+	bool bResumeLogic = false;
+	IConsoleManager::Get().FindConsoleVariable(TEXT("ai.AllBehaviorTrees.Activated"))->GetValue(bResumeLogic);
+	if (bResumeLogic)
 	{
 		BrainComponent->ResumeLogic("Console variable is 1");
 	}

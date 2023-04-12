@@ -58,6 +58,12 @@ public:
 	// Ends the death sequence for the owner.
 	virtual void FinishDeath();
 
+	UFUNCTION(BlueprintCallable)
+	bool IsDead()
+	{
+		return GetHealth() == 0;
+	}
+
 public:
 	// Delegate fired when the health value has changed.
 	UPROPERTY(BlueprintAssignable)

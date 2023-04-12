@@ -14,6 +14,8 @@ UArcherAbilitySet::UArcherAbilitySet(const FObjectInitializer& ObjectInitializer
 
 void UArcherAbilitySet::GrantSetAbilityEffectAttributes(UArcherAbilitySystemComponent* ArcherASC)
 {
+	check(ArcherASC);
+
 	// Grant set abilities
 	for (auto [Ability, AbilityLevel, InputTag] : GrantedGameplayAbilities)
 	{
@@ -49,7 +51,7 @@ FGameplayTag UArcherAbilitySet::GetInputTagFromAbility(const TSubclassOf<UArcher
 {
 	check(gameplayAbility);
 
-	if (const auto gameplayAbilitySet = GrantedGameplayAbilities.FindByPredicate([&](const FArcherAbilitySet_GameplayAbility gameplayAbilitySetElement)
+	if (const auto gameplayAbilitySet = GrantedGameplayAbilities.FindByPredicate([&](const FArcherAbilitySet_GameplayAbility& gameplayAbilitySetElement)
 	{
 		return gameplayAbilitySetElement.Ability == gameplayAbility;
 	}))

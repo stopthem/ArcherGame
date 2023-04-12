@@ -3,10 +3,10 @@
 
 #include "ArcherGameplayAbility.h"
 
+#include "AbilitySystemGlobals.h"
 #include "ArcherGameplayEffectContext.h"
 #include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Messages/ArcherAbilityCanActivateMessage.h"
 #include "Messages/ArcherInteractionDurationMessage.h"
 
@@ -22,6 +22,18 @@ AArcherPlayerCharacter* UArcherGameplayAbility::GetArcherPlayerCharacterFromActo
 AArcherCharacter* UArcherGameplayAbility::GetArcherCharacterFromActorInfo() const
 {
 	return CurrentActorInfo ? Cast<AArcherCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr;
+}
+
+void UArcherGameplayAbility::AddRemoveLooseGameplayTags(bool bAdd, FGameplayTag gameplayTag, int count)
+{
+	if (bAdd)
+	{
+		GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(gameplayTag, count);
+	}
+	else
+	{
+		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(gameplayTag, count);
+	}
 }
 
 void UArcherGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilitySpec& spec) const
@@ -92,6 +104,108 @@ FGameplayEffectContextHandle UArcherGameplayAbility::MakeEffectContext(const FGa
 	EffectContext->AddSourceObject(sourceObject);
 
 	return ContextHandle;
+}
+
+bool UArcherGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
+                                                               FGameplayTagContainer* OptionalRelevantTags) const
+{
+	// Specialized version to handle death exclusion and AbilityTags expansion via ASC
+
+	bool bBlocked = false;
+	bool bMissing = false;
+
+	const UAbilitySystemGlobals& AbilitySystemGlobals = UAbilitySystemGlobals::Get();
+	const FGameplayTag& BlockedTag = AbilitySystemGlobals.ActivateFailTagsBlockedTag;
+	const FGameplayTag& MissingTag = AbilitySystemGlobals.ActivateFailTagsMissingTag;
+
+	// Check if any of this ability's tags are currently blocked
+	if (AbilitySystemComponent.AreAbilityTagsBlocked(AbilityTags))
+	{
+		bBlocked = true;
+	}
+
+	const UArcherAbilitySystemComponent* archerASC = Cast<UArcherAbilitySystemComponent>(&AbilitySystemComponent);
+	static FGameplayTagContainer allRequiredTags;
+	static FGameplayTagContainer allBlockedTags;
+
+	allRequiredTags = ActivationRequiredTags;
+	allBlockedTags = ActivationBlockedTags;
+
+	// Expand our ability tags to add additional required/blocked tags
+	if (archerASC)
+	{
+		archerASC->GetAdditionalActivationTagRequirements(AbilityTags, allRequiredTags, allBlockedTags);
+	}
+
+	// Check to see the required/blocked tags for this ability
+	if (allBlockedTags.Num() || allRequiredTags.Num())
+	{
+		static FGameplayTagContainer AbilitySystemComponentTags;
+
+		AbilitySystemComponentTags.Reset();
+		AbilitySystemComponent.GetOwnedGameplayTags(AbilitySystemComponentTags);
+
+		if (AbilitySystemComponentTags.HasAny(allBlockedTags))
+		{
+			bBlocked = true;
+		}
+
+		if (!AbilitySystemComponentTags.HasAll(allRequiredTags))
+		{
+			bMissing = true;
+		}
+	}
+
+	if (SourceTags != nullptr)
+	{
+		if (SourceBlockedTags.Num() || SourceRequiredTags.Num())
+		{
+			if (SourceTags->HasAny(SourceBlockedTags))
+			{
+				bBlocked = true;
+			}
+
+			if (!SourceTags->HasAll(SourceRequiredTags))
+			{
+				bMissing = true;
+			}
+		}
+	}
+
+	if (TargetTags != nullptr)
+	{
+		if (TargetBlockedTags.Num() || TargetRequiredTags.Num())
+		{
+			if (TargetTags->HasAny(TargetBlockedTags))
+			{
+				bBlocked = true;
+			}
+
+			if (!TargetTags->HasAll(TargetRequiredTags))
+			{
+				bMissing = true;
+			}
+		}
+	}
+
+	if (bBlocked)
+	{
+		if (OptionalRelevantTags && BlockedTag.IsValid())
+		{
+			OptionalRelevantTags->AddTag(BlockedTag);
+		}
+		return false;
+	}
+	if (bMissing)
+	{
+		if (OptionalRelevantTags && MissingTag.IsValid())
+		{
+			OptionalRelevantTags->AddTag(MissingTag);
+		}
+		return false;
+	}
+
+	return true;
 }
 
 void UArcherGameplayAbility::BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const

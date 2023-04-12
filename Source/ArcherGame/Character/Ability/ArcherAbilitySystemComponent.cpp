@@ -2,6 +2,8 @@
 
 
 #include "ArcherAbilitySystemComponent.h"
+
+#include "ArcherAbilityTagRelationshipMapping.h"
 #include "ArcherGameplayAbility.h"
 #include "ArcherGameplayEffect.h"
 #include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
@@ -58,6 +60,28 @@ void UArcherAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilityS
 	if (archerGameplayAbility && archerGameplayAbility->MessageTagInfoHolder.CanActivateMessageInfo.bShouldBroadcast)
 	{
 		ArcherAbilitiesWithCostBroadcast.Add(archerGameplayAbility);
+	}
+}
+
+void UArcherAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags, UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
+                                                                   const FGameplayTagContainer& CancelTags)
+{
+	FGameplayTagContainer modifiedBlockTags = BlockTags;
+	FGameplayTagContainer modifiedCancelTags = CancelTags;
+
+	if (TagRelationshipMapping)
+	{
+		TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &modifiedBlockTags, &modifiedCancelTags);
+	}
+
+	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, modifiedBlockTags, bExecuteCancelTags, modifiedCancelTags);
+}
+
+void UArcherAbilitySystemComponent::GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer& OutActivationRequired, FGameplayTagContainer& OutActivationBlocked) const
+{
+	if (TagRelationshipMapping)
+	{
+		TagRelationshipMapping->GetRequiredAndBlockedActivationTags(AbilityTags, &OutActivationRequired, &OutActivationBlocked);
 	}
 }
 

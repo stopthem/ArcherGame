@@ -89,6 +89,9 @@ public:
 		return CurrentActorInfo != nullptr;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	void AddRemoveLooseGameplayTags(bool bAdd, FGameplayTag gameplayTag, int count = 1);
+
 public:
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilitySpec& spec) const;
 
@@ -102,6 +105,8 @@ public:
 
 	//Make and return our custom effect context with useful informations
 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const override;
+
+	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 #pragma endregion
 
 	UFUNCTION(BlueprintCallable)

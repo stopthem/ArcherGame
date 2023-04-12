@@ -70,10 +70,15 @@ float UArcherHealthComponent::GetHealthNormalized() const
 void UArcherHealthComponent::StartDeath()
 {
 	OnDeathStarted.Broadcast(GetOwner());
+
+	AbilitySystemComponent->AddLooseGameplayTag(TAG_Status_Death_Started);
 }
 
 void UArcherHealthComponent::FinishDeath()
 {
+	AbilitySystemComponent->RemoveLooseGameplayTag(TAG_Status_Death_Started);
+	AbilitySystemComponent->AddLooseGameplayTag(TAG_Status_Death_Ended);
+	
 	OnDeathFinished.Broadcast(GetOwner());
 }
 
