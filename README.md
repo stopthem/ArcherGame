@@ -3,6 +3,8 @@ PC - A Top-Down game demo developed with unreal engine 5.1
 
 A personal project of learning the Unreal Engine and C++.
 
+It utilizes Gameplay Ability System.
+
 Im not finished developing it, it needs;
 Sounds,
 Basic wave of enemies,
