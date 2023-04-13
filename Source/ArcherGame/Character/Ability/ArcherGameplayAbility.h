@@ -126,5 +126,5 @@ protected:
 private:
 	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;
 
-	void BroadcastIsActive(const FGameplayAbilityActorInfo* actorInfo, const bool bIsAbilityActive) const;
+	void BroadcastIsActive(const bool bIsAbilityActive) const;
 };

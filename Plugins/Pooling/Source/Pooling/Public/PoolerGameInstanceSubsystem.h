@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystems/WorldSubsystem.h"
 #include "PoolerGameInstanceSubsystem.generated.h"
 
 struct FGameplayTag;
@@ -14,12 +14,17 @@ class APooler;
  * Class for pooler plugin utility functions
  */
 UCLASS()
-class POOLING_API UPoolerGameInstanceSubsystem : public UGameInstanceSubsystem
+class POOLING_API UPoolerSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	UPoolerGameInstanceSubsystem();
+	UPoolerSubsystem();
+
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override
+	{
+		return true;
+	}
 
 	void AddToPoolerArray(APooler* pooler);
 

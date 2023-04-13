@@ -3,54 +3,50 @@
 
 #include "ArcherAbilityTagRelationshipMapping.h"
 
-void UArcherAbilityTagRelationshipMapping::GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutTagsToBlock, FGameplayTagContainer* OutTagsToCancel) const
+void UArcherAbilityTagRelationshipMapping::GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& abilityTags, FGameplayTagContainer* outTagsToBlock, FGameplayTagContainer* outTagsToCancel) const
 {
 	// Simple iteration for now
 	for (int32 i = 0; i < AbilityTagRelationships.Num(); i++)
 	{
-		const FArcherAbilityTagRelationship& Tags = AbilityTagRelationships[i];
-		if (AbilityTags.HasTag(Tags.AbilityTag))
+		if (const auto& [abilityTag, abilityTagsToBlock, abilityTagsToCancel, activationRequiredTags, activationBlockedTags] = AbilityTagRelationships[i]; abilityTags.HasTag(abilityTag))
 		{
-			if (OutTagsToBlock)
+			if (outTagsToBlock)
 			{
-				OutTagsToBlock->AppendTags(Tags.AbilityTagsToBlock);
+				outTagsToBlock->AppendTags(abilityTagsToBlock);
 			}
-			if (OutTagsToCancel)
+			if (outTagsToCancel)
 			{
-				OutTagsToCancel->AppendTags(Tags.AbilityTagsToCancel);
+				outTagsToCancel->AppendTags(abilityTagsToCancel);
 			}
 		}
 	}
 }
 
-void UArcherAbilityTagRelationshipMapping::GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutActivationRequired, FGameplayTagContainer* OutActivationBlocked) const
+void UArcherAbilityTagRelationshipMapping::GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& abilityTags, FGameplayTagContainer* outActivationRequired, FGameplayTagContainer* outActivationBlocked) const
 {
 	// Simple iteration for now
 	for (int32 i = 0; i < AbilityTagRelationships.Num(); i++)
 	{
-		const FArcherAbilityTagRelationship& Tags = AbilityTagRelationships[i];
-		if (AbilityTags.HasTag(Tags.AbilityTag))
+		if (const auto& [abilityTag, abilityTagsToBlock, abilityTagsToCancel, activationRequiredTags, activationBlockedTags] = AbilityTagRelationships[i]; abilityTags.HasTag(abilityTag))
 		{
-			if (OutActivationRequired)
+			if (outActivationRequired)
 			{
-				OutActivationRequired->AppendTags(Tags.ActivationRequiredTags);
+				outActivationRequired->AppendTags(activationRequiredTags);
 			}
-			if (OutActivationBlocked)
+			if (outActivationBlocked)
 			{
-				OutActivationBlocked->AppendTags(Tags.ActivationBlockedTags);
+				outActivationBlocked->AppendTags(activationBlockedTags);
 			}
 		}
 	}
 }
 
-bool UArcherAbilityTagRelationshipMapping::IsAbilityCancelledByTag(const FGameplayTagContainer& AbilityTags, const FGameplayTag& ActionTag) const
+bool UArcherAbilityTagRelationshipMapping::IsAbilityCancelledByTag(const FGameplayTagContainer& abilityTags, const FGameplayTag& actionTag) const
 {
 	// Simple iteration for now
 	for (int32 i = 0; i < AbilityTagRelationships.Num(); i++)
 	{
-		const FArcherAbilityTagRelationship& Tags = AbilityTagRelationships[i];
-
-		if (Tags.AbilityTag == ActionTag && Tags.AbilityTagsToCancel.HasAny(AbilityTags))
+		if (const auto& [abilityTag, abilityTagsToBlock, abilityTagsToCancel, activationRequiredTags, activationBlockedTags] = AbilityTagRelationships[i]; abilityTag == actionTag && abilityTagsToCancel.HasAny(abilityTags))
 		{
 			return true;
 		}

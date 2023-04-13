@@ -57,11 +57,11 @@ private:
 
 public:
 	/** Given a set of ability tags, parse the tag relationship and fill out tags to block and cancel */
-	void GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutTagsToBlock, FGameplayTagContainer* OutTagsToCancel) const;
+	void GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& abilityTags, FGameplayTagContainer* outTagsToBlock, FGameplayTagContainer* outTagsToCancel) const;
 
 	/** Given a set of ability tags, add additional required and blocking tags */
-	void GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutActivationRequired, FGameplayTagContainer* OutActivationBlocked) const;
+	void GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& abilityTags, FGameplayTagContainer* outActivationRequired, FGameplayTagContainer* outActivationBlocked) const;
 
 	/** Returns true if the specified ability tags are canceled by the passed in action tag */
-	bool IsAbilityCancelledByTag(const FGameplayTagContainer& AbilityTags, const FGameplayTag& ActionTag) const;
+	bool IsAbilityCancelledByTag(const FGameplayTagContainer& abilityTags, const FGameplayTag& actionTag) const;
 };

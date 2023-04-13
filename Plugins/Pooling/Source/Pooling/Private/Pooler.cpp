@@ -22,7 +22,7 @@ void APooler::BeginPlay()
 		SpawnPooledActor();
 	}
 
-	GetGameInstance()->GetSubsystem<UPoolerGameInstanceSubsystem>()->AddToPoolerArray(this);
+	GetWorld()->GetSubsystem<UPoolerSubsystem>()->AddToPoolerArray(this);
 }
 
 AActor* APooler::SpawnPooledActor()

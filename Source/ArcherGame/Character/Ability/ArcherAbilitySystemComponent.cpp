@@ -201,6 +201,8 @@ void UArcherAbilitySystemComponent::ClearAbilityInput()
 
 bool UArcherAbilitySystemComponent::FindAbilitySpecHandleFromTag(FGameplayTag abilityTag, FGameplayAbilitySpecHandle& out_gameplayAbilitySpecHandle)
 {
+	ABILITYLIST_SCOPE_LOCK()
+
 	if (!abilityTag.IsValid())
 	{
 		return false;
@@ -230,6 +232,8 @@ bool UArcherAbilitySystemComponent::IsAbilityActiveWithTag(FGameplayTag inputTag
 
 FGameplayTagContainer UArcherAbilitySystemComponent::GetActivatableAbilitiesTagAsContainer()
 {
+	ABILITYLIST_SCOPE_LOCK()
+
 	FGameplayTagContainer abilitiesTagContainer;
 
 	for (const FGameplayAbilitySpec gameplayAbilitySpec : ActivatableAbilities.Items)
@@ -246,6 +250,8 @@ FGameplayTagContainer UArcherAbilitySystemComponent::GetActivatableAbilitiesTagA
 
 bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec)
 {
+	ABILITYLIST_SCOPE_LOCK()
+
 	if (!inputTag.IsValid())
 	{
 		return false;
@@ -267,6 +273,8 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inp
 
 bool UArcherAbilitySystemComponent::FindAbilitySpecsFromInputTag(FGameplayTag inputTag, TArray<FGameplayAbilitySpec>& out_gameplayAbilitySpecs)
 {
+	ABILITYLIST_SCOPE_LOCK()
+
 	if (!inputTag.IsValid())
 	{
 		return false;
@@ -285,6 +293,8 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecsFromInputTag(FGameplayTag in
 
 bool UArcherAbilitySystemComponent::FindAbilitySpecHandlesFromInputTag(FGameplayTag inputTag, TArray<FGameplayAbilitySpecHandle>& out_gameplayAbilitySpecHandles)
 {
+	ABILITYLIST_SCOPE_LOCK()
+
 	if (!inputTag.IsValid())
 	{
 		return false;

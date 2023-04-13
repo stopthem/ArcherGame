@@ -13,7 +13,7 @@ UParticleSystemComponent* UParticleBlueprintFunctionLibrary::PlayPooledParticle(
 	check(context);
 
 	// get pooler game instance subsystem which provides pooler by tag
-	UPoolerGameInstanceSubsystem* poolerGameInstanceSubsystem = context->GetWorld()->GetGameInstance()->GetSubsystem<UPoolerGameInstanceSubsystem>();
+	UPoolerSubsystem* poolerGameInstanceSubsystem = context->GetWorld()->GetSubsystem<UPoolerSubsystem>();
 	// get pooler
 	APooler* particlePooler = poolerGameInstanceSubsystem->GetPoolerFromGameplayTag(poolTag);
 

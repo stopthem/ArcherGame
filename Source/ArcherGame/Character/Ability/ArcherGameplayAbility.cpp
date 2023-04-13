@@ -88,7 +88,7 @@ bool UArcherGameplayAbility::CommitAbility(const FGameplayAbilitySpecHandle hand
 		}
 		if (MessageTagInfoHolder.IsActiveMessageInfo.bShouldBroadcast)
 		{
-			BroadcastIsActive(actorInfo, true);
+			BroadcastIsActive(true);
 		}
 	}
 
@@ -218,25 +218,29 @@ bool UArcherGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySys
 
 void UArcherGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	if (MessageTagInfoHolder.IsActiveMessageInfo.bShouldBroadcast)
+	// this function can be called when game is shutdown and there is no GameInstance
+	if (MessageTagInfoHolder.IsActiveMessageInfo.bShouldBroadcast && UGameplayMessageSubsystem::HasInstance(GetWorld()))
 	{
-		BroadcastIsActive(actorInfo, false);
+		BroadcastIsActive(false);
 	}
+
 	Super::EndAbility(handle, actorInfo, activationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void UArcherGameplayAbility::BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const
 {
-	FArcherAbilityCanActivateMessage AbilityCostMessage;
-	AbilityCostMessage.bCanActivate = bCanActivate;
-	UGameplayMessageSubsystem::Get(actorInfo->OwnerActor.Get()).BroadcastMessage(MessageTagInfoHolder.CanActivateMessageInfo.MessageTag, AbilityCostMessage);
+	FArcherAbilityCanActivateMessage abilityCostMessage;
+	abilityCostMessage.bCanActivate = bCanActivate;
+
+	UGameplayMessageSubsystem::Get(actorInfo->OwnerActor.Get()).BroadcastMessage(MessageTagInfoHolder.CanActivateMessageInfo.MessageTag, abilityCostMessage);
 }
 
-void UArcherGameplayAbility::BroadcastIsActive(const FGameplayAbilityActorInfo* actorInfo, const bool bIsAbilityActive) const
+void UArcherGameplayAbility::BroadcastIsActive(const bool bIsAbilityActive) const
 {
 	FArcherAbilityIsActiveMessage abilityIsActiveMessage;
 	abilityIsActiveMessage.bIsActive = bIsAbilityActive;
-	UGameplayMessageSubsystem::Get(actorInfo->OwnerActor.Get()).BroadcastMessage(MessageTagInfoHolder.IsActiveMessageInfo.MessageTag, abilityIsActiveMessage);
+
+	UGameplayMessageSubsystem::Get(GetAvatarActorFromActorInfo()).BroadcastMessage(MessageTagInfoHolder.IsActiveMessageInfo.MessageTag, abilityIsActiveMessage);
 }
 
 void UArcherGameplayAbility::BroadcastCooldown() const
@@ -244,5 +248,6 @@ void UArcherGameplayAbility::BroadcastCooldown() const
 	FArcherInteractionDurationMessage durationMessage;
 	durationMessage.Instigator = GetAvatarActorFromActorInfo();
 	durationMessage.Duration = GetCooldownTimeRemaining();
+
 	UGameplayMessageSubsystem::Get(GetAvatarActorFromActorInfo()).BroadcastMessage(MessageTagInfoHolder.CooldownMessageInfo.MessageTag, durationMessage);
 }

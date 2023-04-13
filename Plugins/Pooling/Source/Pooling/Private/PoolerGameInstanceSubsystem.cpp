@@ -6,17 +6,23 @@
 #include "GameplayTagContainer.h"
 #include "Pooler.h"
 
-UPoolerGameInstanceSubsystem::UPoolerGameInstanceSubsystem()
+UPoolerSubsystem::UPoolerSubsystem()
 {
 }
 
-void UPoolerGameInstanceSubsystem::AddToPoolerArray(APooler* pooler)
+void UPoolerSubsystem::AddToPoolerArray(APooler* pooler)
 {
 	Poolers.AddUnique(pooler);
 }
 
-APooler* UPoolerGameInstanceSubsystem::GetPoolerFromGameplayTag(FGameplayTag gameplayTag)
+APooler* UPoolerSubsystem::GetPoolerFromGameplayTag(FGameplayTag gameplayTag)
 {
+	if (!gameplayTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PoolerGameInstanceSubSystem -> GetPoolerFromGameplayTag -> gameplay tag is not valid"));
+		return nullptr;
+	}
+
 	APooler* pooler = nullptr;
 	if (const auto foundPooler = Poolers.FindByPredicate([&](const APooler* arrayPooler)
 	{
