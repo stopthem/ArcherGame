@@ -17,21 +17,17 @@ void AArrowProjectile::Shoot(AActor* effectCauser)
 {
 	// UE_LOG(LogTemp, Warning, TEXT("timer remaining %f shot actor %s"), GetWorld()->GetTimerManager().GetTimerRemaining(ReturnToPoolTimerHandle), *GetActorNameOrLabel());
 
-	// if this projectile was used once, this might be zeroed out
-	ProjectileMovementComponent->ProjectileGravityScale = 1.0f;
+	ProjectileCollisionComponent->SetGenerateOverlapEvents(true);
 
 	Super::Shoot(effectCauser);
 }
 
-void AArrowProjectile::NotifyActorBeginOverlap(AActor* otherActor)
+void AArrowProjectile::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {
 	SetActorLocation(GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier);
 
 	// UE_LOG(LogTemp, Warning, TEXT("notify overlap actor %s other actor %s"), *GetActorNameOrLabel(), *OtherActor->GetActorNameOrLabel());
-	Super::NotifyActorBeginOverlap(otherActor);
-
-	// zero out gravity scale so arrow doesn't fall down
-	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+	Super::OnBeginOverlap(overlappedComponent, otherActor, otherComponent, otherBodyIndex, bFromSweep, hit);
 }
 
 // play particle at hit actor(for attaching) but our location and rotations

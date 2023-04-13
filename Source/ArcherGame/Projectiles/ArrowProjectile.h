@@ -21,7 +21,7 @@ public:
 	AArrowProjectile();
 
 	// Arrow will go ActorForwardVector * this value when overlapped something
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arrow Projectile")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arrow Projectile|Stick")
 	float stickLocationMultiplier = 25.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Arrow Projectile", meta=(UIMin= "0", UIMax="1", ClampMin="0", ClampMax="1"))
@@ -30,7 +30,7 @@ public:
 	virtual void Shoot(AActor* effectCauser) override;
 
 protected:
-	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
+	virtual void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit) override;
 
 	// play particle at hit actor(for attaching) but our location and rotations
 	virtual void PlayHitParticle(AActor* otherActor) override;

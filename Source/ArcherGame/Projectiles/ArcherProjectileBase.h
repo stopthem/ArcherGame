@@ -62,6 +62,7 @@ public:
 	virtual void Shoot(AActor* effectCauser);
 
 private:
+	// Probably spawner of this object.
 	UPROPERTY()
 	TObjectPtr<AActor> EffectCauser;
 
@@ -69,12 +70,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
 	float DamageAmount;
 
+public:
+	UPROPERTY(EditAnywhere, Category="Projectile|Damaging Collisions", meta=(UIMin="1", ClampMin="1"))
+	bool bDoesMoveUntilBlockedAfterDamagingCollisionsFull = false;
+	// How many objects this projectile can damage
+	UPROPERTY(EditAnywhere, Category="Projectile|Damaging Collisions", meta=(UIMin="1", ClampMin="1"))
+	int HowManyDamagingCollisions = 1;
+
+private:
+	int DamagingCollisionCount;
+
+public:
+	// This will be applied to found ability system component
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
 	TSubclassOf<UArcherGameplayEffect> DamageGameplayEffect;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Movement")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
+	// The main hit vfx info
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	FProjectileHitParticleInfo ProjectileHitParticleInfo;
 
@@ -82,14 +96,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Our collision component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Mesh")
 	TObjectPtr<UPrimitiveComponent> ProjectileCollisionComponent;
-	virtual void NotifyActorBeginOverlap(AActor* otherActor) override;
+
+	UFUNCTION()
+	virtual void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit);
 
 	virtual void PlayHitParticle(AActor* otherActor);
 
 protected:
-	virtual void DamageOverlappedActor(AActor* otherActor);
+	virtual bool DamageOverlappedActor(AActor* otherActor);
 
 	virtual float GetDamageAmount()
 	{
@@ -105,7 +122,7 @@ protected:
 
 	FTimerHandle ReturnToPoolTimerHandle;
 	// calls this actors poolable component's return to pool
-	void ReturnToPool();
+	virtual void ReturnToPool();
 
 public:
 	// do we want to return to pool when projectile hits something?

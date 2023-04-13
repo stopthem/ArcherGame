@@ -12,7 +12,6 @@
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AArcherProjectileBase::AArcherProjectileBase()
@@ -41,6 +40,11 @@ void AArcherProjectileBase::Shoot(AActor* effectCauser)
 	                                         {
 		                                         HandleActorEnding();
 	                                         });
+
+	if (!ProjectileCollisionComponent->OnComponentBeginOverlap.IsAlreadyBound(this, &ThisClass::OnBeginOverlap))
+	{
+		ProjectileCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
+	}
 }
 
 void AArcherProjectileBase::BeginPlay()
@@ -50,19 +54,45 @@ void AArcherProjectileBase::BeginPlay()
 	ProjectileCollisionComponent = FindComponentByClass<UPrimitiveComponent>();
 }
 
-void AArcherProjectileBase::NotifyActorBeginOverlap(AActor* otherActor)
+void AArcherProjectileBase::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {
-	Super::NotifyActorBeginOverlap(otherActor);
+	// Local function that handles before actor ending
+	auto HandleBeforeActorEnding = [&]
+	{
+		ProjectileCollisionComponent->SetGenerateOverlapEvents(false);
 
-	ProjectileCollisionComponent->SetGenerateOverlapEvents(false);
+		ProjectileMovementComponent->StopMovementImmediately();
 
-	ProjectileMovementComponent->StopMovementImmediately();
+		HandleActorEnding();
+	};
 
-	PlayHitParticle(otherActor);
 
-	DamageOverlappedActor(otherActor);
+	bool bDamaged = false;
+	// Can we damage anything and if we can did we ?
+	if (DamagingCollisionCount < HowManyDamagingCollisions && DamageOverlappedActor(otherActor))
+	{
+		bDamaged = true;
+		DamagingCollisionCount++;
+	}
 
-	HandleActorEnding();
+	// Did overlapped actor blocked us?
+	const bool bBlocked = otherComponent->GetCollisionResponseToChannel(ProjectileCollisionComponent->GetCollisionObjectType()) == ECR_Block;
+
+	// did we get blocked or we only have one damaging collisions and we don't want to move after collision
+	if (bBlocked || (HowManyDamagingCollisions == 1 && !bDoesMoveUntilBlockedAfterDamagingCollisionsFull))
+	{
+		HandleBeforeActorEnding();
+	}
+	else if (DamagingCollisionCount == HowManyDamagingCollisions && !bDoesMoveUntilBlockedAfterDamagingCollisionsFull) // if we filled our DamagingCollisionAmount and we don't want to move until blocked
+	{
+		HandleBeforeActorEnding();
+	}
+
+	// Only play hit particle when we damaged something or we hit our concrete object
+	if (bBlocked || bDamaged)
+	{
+		PlayHitParticle(otherActor);
+	}
 }
 
 void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
@@ -81,7 +111,7 @@ void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
 	}
 }
 
-void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
+bool AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 {
 	if (UArcherAbilitySystemComponent* otherASC = otherActor->FindComponentByClass<UArcherAbilitySystemComponent>())
 	{
@@ -113,7 +143,11 @@ void AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 		{
 			OtherActorApplyGameEffectToSelf();
 		}
+
+		return true;
 	}
+
+	return false;
 }
 
 void AArcherProjectileBase::HandleActorEnding()
@@ -144,6 +178,8 @@ void AArcherProjectileBase::ReturnToPool()
 	{
 		PoolableComponent = FindComponentByClass<UPoolableComponent>();
 	}
+
+	DamagingCollisionCount = 0;
 
 	ProjectileMovementComponent->Deactivate();
 	PoolableComponent->ReturnToPool();

@@ -241,7 +241,7 @@ FGameplayTagContainer UArcherAbilitySystemComponent::GetActivatableAbilitiesTagA
 		if (gameplayAbilitySpec.Ability)
 		{
 			// we are only adding the first one because i don't plan to add a second tag to gameplay abilities
-			abilitiesTagContainer.AddTag(gameplayAbilitySpec.Ability->AbilityTags.First());
+			abilitiesTagContainer.AppendTags(gameplayAbilitySpec.Ability->AbilityTags);
 		}
 	}
 
