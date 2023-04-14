@@ -15,8 +15,6 @@ AArrowProjectile::AArrowProjectile()
 
 void AArrowProjectile::Shoot(AActor* effectCauser)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("timer remaining %f shot actor %s"), GetWorld()->GetTimerManager().GetTimerRemaining(ReturnToPoolTimerHandle), *GetActorNameOrLabel());
-
 	ProjectileCollisionComponent->SetGenerateOverlapEvents(true);
 
 	Super::Shoot(effectCauser);
@@ -26,7 +24,6 @@ void AArrowProjectile::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, 
 {
 	SetActorLocation(GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier);
 
-	// UE_LOG(LogTemp, Warning, TEXT("notify overlap actor %s other actor %s"), *GetActorNameOrLabel(), *OtherActor->GetActorNameOrLabel());
 	Super::OnBeginOverlap(overlappedComponent, otherActor, otherComponent, otherBodyIndex, bFromSweep, hit);
 }
 
@@ -38,7 +35,7 @@ void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 
 	particlePlayingOptions.PlayLocation = GetActorLocation();
 
-	particlePlayingOptions.PlayRotation = ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator(0);
+	particlePlayingOptions.PlayRotation = GetProjectileHitRotation();
 
 	if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
 	{
@@ -47,7 +44,7 @@ void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 
 		if (socketName.IsNone())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("couldn't find closest bone in actor %s overlapped actor %s"), *GetActorNameOrLabel(), *otherActor->GetActorNameOrLabel());
+			UE_LOG(LogTemp, Warning, TEXT("ArrowProjectile -> couldn't find closest bone this actor %s overlapped actor %s"), *GetActorNameOrLabel(), *otherActor->GetActorNameOrLabel());
 			return;
 		}
 

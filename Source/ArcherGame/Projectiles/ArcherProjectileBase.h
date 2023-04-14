@@ -59,25 +59,28 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void Shoot(AActor* effectCauser);
+	virtual void Shoot(AActor* projectileInstigator);
 
 private:
 	// Probably spawner of this object.
 	UPROPERTY()
-	TObjectPtr<AActor> EffectCauser;
+	TObjectPtr<AActor> ProjectileInstigator;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
 	float DamageAmount;
 
 public:
+	// Does projectile move until blocked by a collision after damaging collisions are full?
 	UPROPERTY(EditAnywhere, Category="Projectile|Damaging Collisions", meta=(UIMin="1", ClampMin="1"))
 	bool bDoesMoveUntilBlockedAfterDamagingCollisionsFull = false;
+
 	// How many objects this projectile can damage
 	UPROPERTY(EditAnywhere, Category="Projectile|Damaging Collisions", meta=(UIMin="1", ClampMin="1"))
 	int HowManyDamagingCollisions = 1;
 
 private:
+	// Current damaging collision count
 	int DamagingCollisionCount;
 
 public:
@@ -88,9 +91,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Movement")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
+public:
 	// The main hit vfx info
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	FProjectileHitParticleInfo ProjectileHitParticleInfo;
+
+protected:
+	FRotator GetProjectileHitRotation() const
+	{
+		return ProjectileHitParticleInfo.bUseActorRotation ? GetActorRotation() : FRotator(0);
+	}
 
 protected:
 	// Called when the game starts or when spawned

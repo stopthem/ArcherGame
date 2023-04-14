@@ -13,7 +13,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_DamageImmunity);
 /**
  * UArcherHealthSet
  *
- *	Class that defines attributes that are necessary for taking damage.
+ *	Class that defines attributes that are necessary for taking damage and health.
  */
 UCLASS(BlueprintType)
 class ARCHERGAME_API UArcherHealthSet : public UArcherAttributeSet

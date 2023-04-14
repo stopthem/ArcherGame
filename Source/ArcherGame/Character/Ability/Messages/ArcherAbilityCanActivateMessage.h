@@ -17,6 +17,7 @@ struct FArcherAbilityCanActivateMessage
 	GENERATED_BODY()
 
 public:
+	// Can we activate the ability?
 	UPROPERTY(BlueprintReadOnly)
-	bool bCanActivate;
+	bool bCanActivate = false;
 };

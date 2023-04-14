@@ -64,11 +64,12 @@ void AArcherPlayerCharacter::Input_Move(const FInputActionValue& inputActionValu
 			return;
 		}
 
-		// if aiming, control rotation is handled by GA_Archer_Aim gameplay ability
+		// if aiming, control rotation is handled by various aiming abilities. (ex. GA_Archer_Aim, GA_Archer_Ultimate)
 		if (GetIsAiming())
 		{
 			return;
 		}
+
 		// set the character movement rotation target to input vector's rotation 
 		Controller->SetControlRotation(InputVector.Rotation());
 	}

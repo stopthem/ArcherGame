@@ -9,7 +9,9 @@
 
 class UArcherAbilityTagRelationshipMapping;
 /**
- * 
+ * UArcherAbilitySystemComponent
+ *
+ * Base ability system component that every ability system owner uses.
  */
 UCLASS()
 class ARCHERGAME_API UArcherAbilitySystemComponent : public UAbilitySystemComponent
@@ -42,10 +44,11 @@ public:
 
 public:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
-	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags, UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags, const FGameplayTagContainer& CancelTags) override;
+	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags, UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
+	                                            const FGameplayTagContainer& CancelTags) override;
 	// Looks at ability tags and gathers additional required and blocking tags
 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer& OutActivationRequired, FGameplayTagContainer& OutActivationBlocked) const;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category="Archer Ability System Component|Abilities With Widgets")
 	TArray<TObjectPtr<UArcherGameplayAbility>> ArcherAbilitiesWithCostBroadcast;
 

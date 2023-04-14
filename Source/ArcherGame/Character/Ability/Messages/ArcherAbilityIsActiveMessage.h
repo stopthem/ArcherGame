@@ -18,6 +18,7 @@ struct FArcherAbilityIsActiveMessage
 	GENERATED_BODY()
 
 public:
+	// Is ability active right now?
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsActive;
+	bool bIsActive = false;
 };

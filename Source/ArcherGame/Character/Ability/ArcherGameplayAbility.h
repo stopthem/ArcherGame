@@ -15,7 +15,7 @@ struct FMessageTagInfo
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool bShouldBroadcast;
+	bool bShouldBroadcast = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition = "bShouldBroadcast == true"))
 	FGameplayTag MessageTag;
@@ -75,6 +75,8 @@ public:
 	// Level of the ability
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Ability Info")
 	// int32 AbilityLevel = 1;
+
+	// Holder of the messages that this ability can broadcast
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Archer Gameplay Ability|Message")
 	FMessageTagInfoHolder MessageTagInfoHolder;
 
@@ -87,11 +89,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class AArcherCharacter* GetArcherCharacterFromActorInfo() const;
 
-	bool HasActorInfo() const
-	{
-		return CurrentActorInfo != nullptr;
-	}
-
 	UFUNCTION(BlueprintCallable)
 	void AddRemoveLooseGameplayTags(bool bAdd, FGameplayTag gameplayTag, int count = 1);
 
@@ -99,19 +96,21 @@ public:
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilitySpec& spec) const;
 
 #pragma region UGameplayAbility Interface
-	// broadcast can activate ability if we want to
+	// Broadcast can activate ability if we want to
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
 
-	// broadcast cooldown if we want to
+	// Broadcast cooldown if we want to
 	virtual bool CommitAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, FGameplayTagContainer* optionalRelevantTags) override;
 
-	//Make and return our custom effect context with useful informations
+	// Make and return our custom effect context with useful informations
 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo) const override;
 
+	// Specialized version to handle death exclusion and AbilityTags expansion via ASC
 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
 	                                               FGameplayTagContainer* OptionalRelevantTags) const override;
 
+	// Broadcast is active
 	virtual void EndAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 #pragma endregion
 

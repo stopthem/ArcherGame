@@ -42,7 +42,7 @@ struct FPrioritizedAbilityIconInfos
 public:
 	// The priority for spawning to widget
 	UPROPERTY(EditDefaultsOnly)
-	int32 SpawnPriority;
+	int32 SpawnPriority = 0;
 
 	UPROPERTY(EditDefaultsOnly, meta=(TitleProperty="ItemName"))
 	TArray<FAbilityIconInfo> AbilityIconInfos;
