@@ -236,7 +236,7 @@ FGameplayTagContainer UArcherAbilitySystemComponent::GetActivatableAbilitiesTagA
 
 	FGameplayTagContainer abilitiesTagContainer;
 
-	for (const FGameplayAbilitySpec gameplayAbilitySpec : ActivatableAbilities.Items)
+	for (const FGameplayAbilitySpec& gameplayAbilitySpec : ActivatableAbilities.Items)
 	{
 		if (gameplayAbilitySpec.Ability)
 		{
@@ -280,7 +280,7 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecsFromInputTag(FGameplayTag in
 		return false;
 	}
 
-	for (const FGameplayAbilitySpec gameplayAbilitySpec : ActivatableAbilities.Items)
+	for (const FGameplayAbilitySpec& gameplayAbilitySpec : ActivatableAbilities.Items)
 	{
 		if (gameplayAbilitySpec.Ability && gameplayAbilitySpec.DynamicAbilityTags.HasTagExact(inputTag))
 		{
@@ -303,7 +303,7 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecHandlesFromInputTag(FGameplay
 	TArray<FGameplayAbilitySpec> gameplayAbilitySpecs;
 	FindAbilitySpecsFromInputTag(inputTag, gameplayAbilitySpecs);
 
-	for (const FGameplayAbilitySpec gameplayAbilitySpec : gameplayAbilitySpecs)
+	for (const FGameplayAbilitySpec& gameplayAbilitySpec : gameplayAbilitySpecs)
 	{
 		out_gameplayAbilitySpecHandles.Add(gameplayAbilitySpec.Handle);
 	}

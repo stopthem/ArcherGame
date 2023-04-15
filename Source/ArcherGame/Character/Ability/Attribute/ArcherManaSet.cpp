@@ -42,7 +42,6 @@ void UArcherManaSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 	if (data.EvaluatedData.Attribute == GetManaRegenAttribute())
 	{
 		SetMana(GetClampedMana(GetMana() + GetManaRegen()));
-		SetManaRegen(0.0f);
 	}
 	else if (data.EvaluatedData.Attribute == GetManaAttribute())
 	{

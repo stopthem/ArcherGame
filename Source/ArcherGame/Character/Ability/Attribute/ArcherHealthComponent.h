@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NativeGameplayTags.h"
+#include "ArcherGame/Character/ArcherCharacter.h"
 #include "Components/GameFrameworkComponent.h"
 #include "ArcherHealthComponent.generated.h"
 

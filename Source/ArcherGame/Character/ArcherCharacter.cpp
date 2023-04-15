@@ -2,11 +2,9 @@
 
 #include "ArcherCharacter.h"
 
-#include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
 #include "Ability/ArcherAbilitySet.h"
 #include "Ability/Attribute/ArcherAttributeSet.h"
 #include "Ability/Attribute/ArcherHealthComponent.h"
-#include "ArcherGame/ArcherGameplayTags.h"
 
 // Sets default values
 AArcherCharacter::AArcherCharacter()

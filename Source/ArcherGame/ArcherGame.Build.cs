@@ -10,7 +10,7 @@ public class ArcherGame : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "FCTween", "GameplayTags", "EnhancedInput", "GameplayAbilities", "GameplayTasks" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Pooling", "GameplayMessageRuntime" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Pooling", "GameplayMessageRuntime", "NavigationSystem" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

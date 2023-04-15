@@ -17,7 +17,7 @@ void UArcherAbilitySet::GrantSetAbilityEffectAttributes(UArcherAbilitySystemComp
 	check(ArcherASC);
 
 	// Grant set abilities
-	for (auto [Ability, AbilityLevel, InputTag] : GrantedGameplayAbilities)
+	for (auto& [Ability, AbilityLevel, InputTag] : GrantedGameplayAbilities)
 	{
 		UArcherGameplayAbility* gameplayAbility = Ability->GetDefaultObject<UArcherGameplayAbility>();
 
@@ -29,17 +29,17 @@ void UArcherAbilitySet::GrantSetAbilityEffectAttributes(UArcherAbilitySystemComp
 	}
 
 	// Grant set effects
-	for (auto [GameplayEffect,EffectLevel] : GrantedGameplayEffects)
+	for (auto& [gameplayEffect,effectLevel] : GrantedGameplayEffects)
 	{
 		FGameplayEffectContextHandle EffectContextHandle = ArcherASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
 
-		const UArcherGameplayEffect* gameplayEffect = GameplayEffect->GetDefaultObject<UArcherGameplayEffect>();
+		const UArcherGameplayEffect* defaultGameplayEffect = gameplayEffect->GetDefaultObject<UArcherGameplayEffect>();
 
-		ArcherASC->ApplyGameplayEffectToSelf(gameplayEffect, EffectLevel, ArcherASC->MakeEffectContext());
+		ArcherASC->ApplyGameplayEffectToSelf(defaultGameplayEffect, effectLevel, ArcherASC->MakeEffectContext());
 	}
 
-	for (FArcherAbilitySet_AttributeSet attributes : GrantedAttributes)
+	for (FArcherAbilitySet_AttributeSet& attributes : GrantedAttributes)
 	{
 		UAttributeSet* NewSet = NewObject<UAttributeSet>(ArcherASC->GetOwner(), attributes.AttributeSet);
 		ArcherASC->AddAttributeSetSubobject(NewSet);

@@ -9,7 +9,7 @@ UArcherAbilityIconsPrimaryAsset::UArcherAbilityIconsPrimaryAsset()
 
 FAbilityIconInfo UArcherAbilityIconsPrimaryAsset::GetAbilityIconInfoFromTag(FGameplayTag abilityTag)
 {
-	for (const FPrioritizedAbilityIconInfos prioritizedAbilityIconInfos : PrioritizedAbilityIconInfosArray)
+	for (const FPrioritizedAbilityIconInfos& prioritizedAbilityIconInfos : PrioritizedAbilityIconInfosArray)
 	{
 		if (const auto foundAbilityIconInfo = prioritizedAbilityIconInfos.AbilityIconInfos.FindByPredicate([&](const FAbilityIconInfo& abilityIconInfo)
 		{
@@ -35,9 +35,9 @@ TArray<FAbilityIconInfo> UArcherAbilityIconsPrimaryAsset::GetOrderedAbilityIconI
 		return prioritizedAbilityIconInfo1.SpawnPriority < prioritizedAbilityIconInfos2.SpawnPriority;
 	});
 
-	for (const FPrioritizedAbilityIconInfos prioritizedAbilityIconInfos : orderedPrioAbilityIconInfos)
+	for (const FPrioritizedAbilityIconInfos& prioritizedAbilityIconInfos : orderedPrioAbilityIconInfos)
 	{
-		for (const FAbilityIconInfo abilityIconInfo : prioritizedAbilityIconInfos.AbilityIconInfos)
+		for (const FAbilityIconInfo& abilityIconInfo : prioritizedAbilityIconInfos.AbilityIconInfos)
 		{
 			if (gameplayTagContainer.HasTagExact(abilityIconInfo.AbilityTag))
 			{
