@@ -3,7 +3,12 @@
 
 #include "ArcherEnemyCharacter.h"
 
+#include "AIController.h"
+#include "BrainComponent.h"
+#include "FCTween.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthComponent.h"
+#include "ArcherGame/Character/Ability/Attribute/ArcherHealthSet.h"
+#include "Kismet/GameplayStatics.h"
 
 AArcherEnemyCharacter::AArcherEnemyCharacter()
 {
@@ -16,6 +21,39 @@ void AArcherEnemyCharacter::BeginPlay()
 	// set interface variable and bind to health component's OnHealthChanged
 	OnHitEffectParams = FOnHitFlashEffectParams(OnHitFlashEffectParams);
 	HealthComponent->OnHealthChanged.AddDynamic(this, &ThisClass::OnHealthChanged);
+}
+
+void AArcherEnemyCharacter::Spawn()
+{
+	// Adding immunity so player does not damage us when we are spawning.
+	GetArcherAbilitySystemComponent()->AddLooseGameplayTag(TAG_Gameplay_DamageImmunity);
+
+	// Spawn the spawning vfx
+	UGameplayStatics::SpawnEmitterAtLocation(this, SpawnVFX, GetActorLocation(), FRotator(0));
+
+	USkeletalMeshComponent* skeletalMesh = GetMesh();
+
+	// Alter on hit effect params(interface one) duration to match our scale tween duration so it matches exactly.
+	OnHitEffectParams.Duration = SpawnScaleTweenParams.Duration;
+
+	OnHitEffectParams.Mesh = skeletalMesh;
+
+	DoHitFlashBlink();
+
+	// Play the scaling tween.
+	FCTween::Play(FVector(0), skeletalMesh->GetComponentScale(), [&](const FVector& scaleVector)
+		{
+			// It crashes when i use skeletalMesh local variable, don't know why.
+			GetMesh()->SetWorldScale3D(scaleVector);
+		}, SpawnScaleTweenParams.Duration, SpawnScaleTweenParams.Ease)
+		->SetOnComplete([&]
+		{
+			// Remove damage immunity.
+			GetArcherAbilitySystemComponent()->RemoveLooseGameplayTag(TAG_Gameplay_DamageImmunity);
+
+			// Restore on hit flash effect params duration
+			OnHitEffectParams.Duration = OnHitFlashEffectParams.Duration;
+		});
 }
 
 void AArcherEnemyCharacter::OnHealthChanged(UArcherHealthComponent* sentHealthComponent, float oldValue, float newValue, AActor* sentInstigator)

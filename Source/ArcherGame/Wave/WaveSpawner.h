@@ -47,7 +47,13 @@ public:
 	TArray<AArcherEnemyCharacter*> SpawnedEnemies;
 
 	bool GetAliveEnemies(TArray<AArcherEnemyCharacter*>& out_aliveEnemies);
+
+	// Get all will spawn enemy count
+	int GetSpawnCountAll();
 };
+
+// Used for wave started, wave completed. if any more complexity wanted this needs to be extended.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FArcherWave_WaveStatusUpdated);
 
 /*
  * AWaveSpawner
@@ -63,10 +69,15 @@ public:
 	// Sets default values for this actor's properties
 	AWaveSpawner();
 
+public:
 	// How much time we wait before spawning a new wave ?
 	UPROPERTY(EditAnywhere, Category="Wave", meta=(UIMin="0", ClampMin="0"))
 	float TimeBetweenWaves = 3.0f;
 
+private:
+	FTimerHandle TimeBetweenWavesHandle;
+
+public:
 	// The range of distance where we can spawn enemies
 	UPROPERTY(EditAnywhere, Category="Wave")
 	FFloatRange SpawnDistanceRange;
@@ -80,12 +91,37 @@ public:
 	UPROPERTY(EditAnywhere, Category="Wave")
 	TArray<FWaveInfo> WaveInfos;
 
+public:
+	UPROPERTY(BlueprintAssignable)
+	FArcherWave_WaveStatusUpdated OnWaveStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FArcherWave_WaveStatusUpdated OnWaveCompleted;
+
+	UPROPERTY(BlueprintAssignable)
+	FArcherWave_WaveStatusUpdated OnWavesCompleted;
+
+	UPROPERTY(BlueprintAssignable)
+	FArcherWave_WaveStatusUpdated OnEnemyDied;
+
+	UFUNCTION(BlueprintCallable)
+	int GetHowManyDeadCount();
+
+	UFUNCTION(BlueprintCallable)
+	int GetWaveSpawnAllCount();
+
+	UFUNCTION(BlueprintCallable)
+	int GetCurrentWaveCount();
+
 private:
 	// We will use this to get the actual wave from array
-	int CurrentWaveNumber = -1;
+	int CurrentWaveCount = -1;
 
 	FWaveInfo CurrentWave;
 
+	void PrepareSpawnWave();
+
+	UFUNCTION()
 	void SpawnWave();
 
 	// Bounded to enemy's HealthComponent.OnDeathStarted and checks if the wave is complete.

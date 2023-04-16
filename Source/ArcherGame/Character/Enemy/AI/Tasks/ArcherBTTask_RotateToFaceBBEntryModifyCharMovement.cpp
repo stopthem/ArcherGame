@@ -4,46 +4,40 @@
 #include "ArcherBTTask_RotateToFaceBBEntryModifyCharMovement.h"
 
 #include "AIController.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UArcherBTTask_RotateToFaceBBEntryModifyCharMovement::UArcherBTTask_RotateToFaceBBEntryModifyCharMovement(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
+	// C++ tasks default shared but blueprint tasks are not.
+	// This allows us to instance this task.
+	bCreateNodeInstance = true;
 }
 
-EBTNodeResult::Type UArcherBTTask_RotateToFaceBBEntryModifyCharMovement::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UArcherBTTask_RotateToFaceBBEntryModifyCharMovement::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+{
+	const EBTNodeResult::Type nodeResult = Super::ExecuteTask(ownerComp, nodeMemory);
+
+	// This task will end when nodeResult is Succeeded, so we want control rotation to be reverse that.
+	HandleCharMovementRotation(nodeResult != EBTNodeResult::Succeeded, ownerComp, nodeMemory);
+
+	return nodeResult;
+}
+
+void UArcherBTTask_RotateToFaceBBEntryModifyCharMovement::HandleCharMovementRotation(bool bEnableControlRotation, UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
 {
 	if (!CharacterMovementComponent)
 	{
-		if (UCharacterMovementComponent* characterMovementComponent = OwnerComp.GetAIOwner()->GetCharacter()->FindComponentByClass<UCharacterMovementComponent>())
+		CharacterMovementComponent = ownerComp.GetAIOwner()->GetPawn()->FindComponentByClass<UCharacterMovementComponent>();
+
+		if (!CharacterMovementComponent)
 		{
-			CharacterMovementComponent = characterMovementComponent;
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("no character movement was found in avatar actor %s"), *OwnerComp.GetAIOwner()->GetCharacter()->GetActorNameOrLabel());
-			return EBTNodeResult::Aborted;
+			UE_LOG(LogTemp, Warning, TEXT("no character movement component was found in avatar actor %s"), *ownerComp.GetAIOwner()->GetPawn()->GetActorNameOrLabel());
+			AbortTask(ownerComp, nodeMemory);
+			return;
 		}
 	}
 
-
-	check(CharacterMovementComponent);
-
-	HandleCharMovementRotation(true);
-	return Super::ExecuteTask(OwnerComp, NodeMemory);
-}
-
-EBTNodeResult::Type UArcherBTTask_RotateToFaceBBEntryModifyCharMovement::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
-{
-	check(CharacterMovementComponent);
-
-	HandleCharMovementRotation(false);
-	return Super::AbortTask(OwnerComp, NodeMemory);
-}
-
-void UArcherBTTask_RotateToFaceBBEntryModifyCharMovement::HandleCharMovementRotation(bool bEnableControlRotation) const
-{
 	CharacterMovementComponent->bUseControllerDesiredRotation = bEnableControlRotation;
 	CharacterMovementComponent->bOrientRotationToMovement = !bEnableControlRotation;
 }

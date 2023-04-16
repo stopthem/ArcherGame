@@ -8,7 +8,9 @@
 
 class UCharacterMovementComponent;
 /**
- * 
+ * UArcherBTTask_RotateToFaceBBEntryModifyCharMovement
+ *
+ * Basically rotate to face bb entry but when this task is in progress, alters char movement of the owner to use control rotation.
  */
 UCLASS()
 class ARCHERGAME_API UArcherBTTask_RotateToFaceBBEntryModifyCharMovement : public UBTTask_RotateToFaceBBEntry
@@ -18,12 +20,14 @@ class ARCHERGAME_API UArcherBTTask_RotateToFaceBBEntryModifyCharMovement : publi
 public:
 	UArcherBTTask_RotateToFaceBBEntryModifyCharMovement(const FObjectInitializer& objectInitializer);
 
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	// The safest place to check if task is in progress or success-fail to alter char movement.
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory) override;
 
 private:
+	// Owner's char movement.
 	UPROPERTY()
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 
-	void HandleCharMovementRotation(bool bEnableControlRotation) const;
+	// Handle char movement using control rotation and orient rotation to movement.
+	void HandleCharMovementRotation(bool bEnableControlRotation, UBehaviorTreeComponent& ownerComp, uint8* nodeMemory);
 };

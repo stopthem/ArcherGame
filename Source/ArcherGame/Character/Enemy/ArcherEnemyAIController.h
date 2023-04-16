@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AIController.h"
+#include "DetourCrowdAIController.h"
 
 #include "ArcherEnemyAIController.generated.h"
 
@@ -18,7 +18,7 @@ class ARCHERGAME_API AArcherEnemyAIController : public AAIController
 	GENERATED_BODY()
 
 public:
-	AArcherEnemyAIController();
+	AArcherEnemyAIController(const FObjectInitializer& objectInitializer);
 
 	virtual void BeginPlay() override;
 

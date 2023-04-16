@@ -3,6 +3,7 @@
 
 #include "OnHitFlashEffect.h"
 #include "FCTween.h"
+#include "FCTweenUObject.h"
 
 IOnHitFlashEffect::IOnHitFlashEffect()
 {

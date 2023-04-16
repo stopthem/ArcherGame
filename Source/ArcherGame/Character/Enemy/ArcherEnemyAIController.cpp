@@ -5,8 +5,10 @@
 
 #include "BrainComponent.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthComponent.h"
+#include "Navigation/CrowdFollowingComponent.h"
 
-AArcherEnemyAIController::AArcherEnemyAIController()
+AArcherEnemyAIController::AArcherEnemyAIController(const FObjectInitializer& objectInitializer)
+	: Super(objectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>(TEXT("PathFollowingComponent")))
 {
 	AAIController::SetGenericTeamId(1);
 }
@@ -21,10 +23,14 @@ void AArcherEnemyAIController::BeginPlay()
 		foundHealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnOwnerDeathStarted);
 	}
 
-
 #if WITH_EDITOR
 	BrainComponent->PauseLogic("");
 	FAutoConsoleVariableSink CVarSink(FConsoleCommandDelegate::CreateUObject(this, &ThisClass::HandleLogicFromConsoleVariable));
+
+	GetWorldTimerManager().SetTimerForNextTick([&]
+	{
+		HandleLogicFromConsoleVariable();
+	});
 #endif
 }
 
