@@ -52,7 +52,8 @@ protected:
 	// Draw the HUD
 	virtual void DrawHUD() override
 	{
-		X = Y = 50.0f;
+		X = 50.0f;
+		Y = 200.0f;
 	}
 
 	// The horizontal offset to render the statistic values at.
@@ -75,13 +76,18 @@ private:
 	void RenderStatistic(const TCHAR* title, const FText& value, const FLinearColor& valueColor = FLinearColor::White)
 	{
 		const auto actualCanvas = Canvas.Get();
-
 		FCanvasTextItem item0(FVector2D(X, Y), CStringToText(title), MainFont, FLinearColor::White);
+
 		item0.EnableShadow(FLinearColor(0.0f, 0.0f, 0.0f));
+
 		actualCanvas->DrawItem(item0);
+
 		FCanvasTextItem item1(FVector2D(X + HorizontalOffset, Y), value, MainFont, valueColor);
+
 		item1.EnableShadow(FLinearColor(0.0f, 0.0f, 0.0f));
+
 		actualCanvas->DrawItem(item1);
+
 		Y += LineHeight;
 	}
 

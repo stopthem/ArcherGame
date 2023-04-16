@@ -98,6 +98,7 @@ void AWaveSpawner::SpawnWave()
 		{
 			// Get a random unit vector which we will be use it like a direction.
 			FVector selectedRandomDirection = UKismetMathLibrary::RandomUnitVector();
+			// we don't want to check upwards or downwards
 			selectedRandomDirection.Z = 0;
 
 			// We don't want to spawn near or too far from the player. We add the random direction multiplied with where in distance we can spawn which is a random inside SpawnDistanceRange.

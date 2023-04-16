@@ -5,7 +5,9 @@
 
 #include "Pooler.h"
 #include "ArcherGame/ArcherGameplayTags.h"
+#include "ArcherGame/Character/Ability/Attribute/ArcherHealthSet.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaComponent.h"
+#include "ArcherGame/Character/Ability/Attribute/ArcherManaSet.h"
 #include "ArcherGame/Input/ArcherEnhancedInputComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 
@@ -25,6 +27,20 @@ void AArcherPlayerCharacter::InitializeAbilitySystem()
 	Super::InitializeAbilitySystem();
 
 	ManaComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
+}
+
+void AArcherPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+#if WITH_EDITOR
+	FAutoConsoleVariableSink CVarSink(FConsoleCommandDelegate::CreateUObject(this, &ThisClass::OnConsoleVariableChanged));
+
+	GetWorldTimerManager().SetTimerForNextTick([&]
+	{
+		OnConsoleVariableChanged();
+	});
+#endif
 }
 
 // Called to bind functionality to input
@@ -83,4 +99,28 @@ void AArcherPlayerCharacter::Input_AbilityInputTagPressed(FGameplayTag gameplayT
 void AArcherPlayerCharacter::Input_AbilityInputTagReleased(FGameplayTag gameplayTag)
 {
 	AbilitySystemComponent->AbilityInputReleased(gameplayTag);
+}
+
+void AArcherPlayerCharacter::OnConsoleVariableChanged() const
+{
+	auto HandleLooseGameplayTag = [&](const FGameplayTag gameplayTag, const bool bAdd)
+	{
+		if (bAdd)
+		{
+			GetArcherAbilitySystemComponent()->AddLooseGameplayTag(gameplayTag);
+		}
+		else
+		{
+			GetArcherAbilitySystemComponent()->RemoveLooseGameplayTag(gameplayTag);
+		}
+	};
+
+	bool bDamageImmune = false;
+	IConsoleManager::Get().FindConsoleVariable(TEXT("player.DamageImmunity.Activated"))->GetValue(bDamageImmune);
+	HandleLooseGameplayTag(TAG_Gameplay_DamageImmunity, bDamageImmune);
+
+
+	bool bManaImmune = false;
+	IConsoleManager::Get().FindConsoleVariable(TEXT("player.ManaImmunity.Activated"))->GetValue(bManaImmune);
+	HandleLooseGameplayTag(TAG_Gameplay_ManaImmunity, bManaImmune);
 }

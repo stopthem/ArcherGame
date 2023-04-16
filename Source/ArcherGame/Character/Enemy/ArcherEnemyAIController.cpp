@@ -24,7 +24,6 @@ void AArcherEnemyAIController::BeginPlay()
 	}
 
 #if WITH_EDITOR
-	BrainComponent->PauseLogic("");
 	FAutoConsoleVariableSink CVarSink(FConsoleCommandDelegate::CreateUObject(this, &ThisClass::HandleLogicFromConsoleVariable));
 
 	GetWorldTimerManager().SetTimerForNextTick([&]

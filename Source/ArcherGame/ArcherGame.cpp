@@ -7,8 +7,24 @@ IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, ArcherGame, "ArcherGame");
 
 static TAutoConsoleVariable CVarBehaviourTreeActive(
 	TEXT("ai.AllBehaviorTrees.Activated"),
-	0,
+	1,
 	TEXT("Sets all behavior tree logics in the scene whatever they are active or not")
 	TEXT("0 : not active")
 	TEXT("1 : active"),
+	ECVF_Scalability | ECVF_RenderThreadSafe);
+
+static TAutoConsoleVariable CVarPlayerDamageImmunity(
+	TEXT("player.DamageImmunity.Activated"),
+	0,
+	TEXT("Sets player damage immunity")
+	TEXT("0 : not immune")
+	TEXT("1 : immune"),
+	ECVF_Scalability | ECVF_RenderThreadSafe);
+
+static TAutoConsoleVariable CVarPlayerManaImmunity(
+	TEXT("player.ManaImmunity.Activated"),
+	0,
+	TEXT("Sets player mana immunity")
+	TEXT("0 : not immune")
+	TEXT("1 : immune"),
 	ECVF_Scalability | ECVF_RenderThreadSafe);

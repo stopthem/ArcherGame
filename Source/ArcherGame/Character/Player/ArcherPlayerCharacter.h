@@ -43,6 +43,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherPlayerCharacter|Mana", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UArcherManaComponent> ManaComponent;
 
+	virtual void BeginPlay() override;
+
 #pragma region Input Handling
 
 public:
@@ -73,4 +75,8 @@ private:
 public:
 	// only friend for hud purposes
 	friend class AArcherDebugHUD;
+
+private:
+	UFUNCTION()
+	void OnConsoleVariableChanged() const;
 };
