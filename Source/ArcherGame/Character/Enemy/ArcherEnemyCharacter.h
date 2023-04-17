@@ -15,7 +15,7 @@
  *
  * Base class that all enemies use.
  */
-UCLASS()
+UCLASS(Abstract)
 class ARCHERGAME_API AArcherEnemyCharacter : public AArcherCharacter, public IOnHitFlashEffect
 {
 	GENERATED_BODY()

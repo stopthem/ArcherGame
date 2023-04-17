@@ -8,6 +8,11 @@
 
 class UGameplayMessageSubsystem;
 
+/*
+ * FMessageTagInfo
+ *
+ * Struct that holds a gameplay tag about the message and should it be broadcasted.
+ */
 USTRUCT(BlueprintType)
 struct FMessageTagInfo
 {
@@ -21,6 +26,11 @@ public:
 	FGameplayTag MessageTag;
 };
 
+/*
+ * FMessageTagInfoHolder
+ *
+ * Holder of special message infos.
+ */
 USTRUCT(BlueprintType)
 struct FMessageTagInfoHolder
 {
@@ -114,6 +124,7 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 #pragma endregion
 
+	// Broadcast cooldown duration with Gameplay Message plugin.
 	UFUNCTION(BlueprintCallable)
 	void BroadcastCooldown() const;
 
@@ -123,7 +134,9 @@ protected:
 	EArcherAbilityActivationPolicy ActivationPolicy = EArcherAbilityActivationPolicy::Manual;
 
 private:
+	// Broadcast can activate ability with Gameplay Message plugin.
 	void BroadcastCanActivate(const FGameplayAbilityActorInfo* actorInfo, const bool bCanActivate) const;
 
+	// Broadcast is ability active with Gameplay Message plugin.
 	void BroadcastIsActive(const bool bIsAbilityActive) const;
 };

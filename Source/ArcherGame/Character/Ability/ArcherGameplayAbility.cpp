@@ -6,6 +6,7 @@
 #include "AbilitySystemGlobals.h"
 #include "ArcherGameplayEffectContext.h"
 #include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Messages/ArcherAbilityCanActivateMessage.h"
 #include "Messages/ArcherAbilityIsActiveMessage.h"

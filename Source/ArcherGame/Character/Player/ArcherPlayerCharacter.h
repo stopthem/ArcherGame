@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "NativeGameplayTags.h"
-#include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Character/ArcherCharacter.h"
 #include "ArcherPlayerCharacter.generated.h"
 
+class ULyraCameraMode;
 class UArcherManaComponent;
 class UKismetStringLibrary;
 
@@ -38,10 +38,10 @@ public:
 	APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
 
 protected:
-	virtual void InitializeAbilitySystem() override;
+	virtual void AfterPossessedBy() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherPlayerCharacter|Mana", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UArcherManaComponent> ManaComponent;
+	TObjectPtr<UArcherManaComponent> ArcherPlayerManaComponent;
 
 	virtual void BeginPlay() override;
 
@@ -79,4 +79,31 @@ public:
 private:
 	UFUNCTION()
 	void OnConsoleVariableChanged() const;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	// Overrides the camera from an active gameplay ability
+	void SetAbilityCameraMode(TSubclassOf<ULyraCameraMode> cameraMode, const FGameplayAbilitySpecHandle& gameplayAbilitySpecHandle);
+
+	UFUNCTION(BlueprintCallable)
+	// Clears the camera override if it is set 
+	void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& owningSpecHandle, const FGameplayAbilitySpecHandle& gameplayAbilitySpecHandle);
+
+private:
+	// Camera component calls this with its special multicast RetVal.
+	TSubclassOf<ULyraCameraMode> DetermineCameraMode() const;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherPlayerCharacter|Camera", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ULyraCameraComponent> CameraComponent;
+
+	// This is what camera mode we will use if there is no ability override.
+	UPROPERTY(EditAnywhere, Category = "ArcherPlayerCharacter|Camera")
+	TSubclassOf<ULyraCameraMode> DefaultCameraMode;
+
+	// The camera mode set by a ability.
+	UPROPERTY()
+	TSubclassOf<ULyraCameraMode> AbilityCameraMode;
+
+	// Latest camera mod setter ability spec handle.
+	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
 };

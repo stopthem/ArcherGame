@@ -5,6 +5,8 @@
 
 #include "Pooler.h"
 #include "ArcherGame/ArcherGameplayTags.h"
+#include "ArcherGame/Camera/LyraCameraComponent.h"
+#include "ArcherGame/Camera/LyraCameraMode.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthSet.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaComponent.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaSet.h"
@@ -14,19 +16,20 @@
 // Sets default values
 AArcherPlayerCharacter::AArcherPlayerCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	// PrimaryActorTick.bCanEverTick = true;
+	CameraComponent = CreateDefaultSubobject<ULyraCameraComponent>("CameraComponent");
 
-	ManaComponent = CreateDefaultSubobject<UArcherManaComponent>("ArcherPlayerCharacterManaComponent");
+	ArcherPlayerManaComponent = CreateDefaultSubobject<UArcherManaComponent>("ArcherPlayerCharacterManaComponent");
 
 	TeamId = 0;
 }
 
-void AArcherPlayerCharacter::InitializeAbilitySystem()
+void AArcherPlayerCharacter::AfterPossessedBy()
 {
-	Super::InitializeAbilitySystem();
+	Super::AfterPossessedBy();
 
-	ManaComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
+	ArcherPlayerManaComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
+
+	CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);
 }
 
 void AArcherPlayerCharacter::BeginPlay()
@@ -68,26 +71,21 @@ void AArcherPlayerCharacter::Input_Move(const FInputActionValue& inputActionValu
 		// x is vertical, y is horizontal 
 		InputVector = inputActionValue.Get<FVector>();
 
-		// add vertical input
-		AddMovementInput(FVector::ForwardVector, InputVector.X);
+		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
 
-		// add horizontal input
-		AddMovementInput(FVector::RightVector, InputVector.Y);
-
-		// return if there is no input so characters rotation doesnt reset to 0 0 0
-		if (InputVector.Size() == 0)
+		auto AddInputToCharMovement = [&](const FVector& direction, float inputValue)
 		{
-			return;
-		}
+			if (inputValue == 0)
+			{
+				return;
+			}
 
-		// if aiming, control rotation is handled by various aiming abilities. (ex. GA_Archer_Aim, GA_Archer_Ultimate)
-		if (GetIsAiming())
-		{
-			return;
-		}
+			const FVector movementDirection = MovementRotation.RotateVector(direction);
+			AddMovementInput(movementDirection, inputValue);
+		};
 
-		// set the character movement rotation target to input vector's rotation 
-		Controller->SetControlRotation(InputVector.Rotation());
+		AddInputToCharMovement(FVector::RightVector, InputVector.X);
+		AddInputToCharMovement(FVector::ForwardVector, InputVector.Y);
 	}
 }
 
@@ -123,4 +121,33 @@ void AArcherPlayerCharacter::OnConsoleVariableChanged() const
 	bool bManaImmune = false;
 	IConsoleManager::Get().FindConsoleVariable(TEXT("player.ManaImmunity.Activated"))->GetValue(bManaImmune);
 	HandleLooseGameplayTag(TAG_Gameplay_ManaImmunity, bManaImmune);
+}
+
+void AArcherPlayerCharacter::SetAbilityCameraMode(TSubclassOf<ULyraCameraMode> cameraMode, const FGameplayAbilitySpecHandle& gameplayAbilitySpecHandle)
+{
+	if (!cameraMode)
+	{
+		return;
+	}
+
+	AbilityCameraMode = cameraMode;
+	AbilityCameraModeOwningSpecHandle = gameplayAbilitySpecHandle;
+}
+
+void AArcherPlayerCharacter::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& owningSpecHandle, const FGameplayAbilitySpecHandle& gameplayAbilitySpecHandle)
+{
+	// Only clear camera mode if giver is removing.
+	if (AbilityCameraModeOwningSpecHandle != gameplayAbilitySpecHandle)
+	{
+		return;
+	}
+
+	AbilityCameraMode = nullptr;
+	AbilityCameraModeOwningSpecHandle = FGameplayAbilitySpecHandle();
+}
+
+TSubclassOf<ULyraCameraMode> AArcherPlayerCharacter::DetermineCameraMode() const
+{
+	// Do we have a overriden camera mode from ability ? if so return that if not return our default camera mode.
+	return AbilityCameraMode ? AbilityCameraMode : DefaultCameraMode;
 }

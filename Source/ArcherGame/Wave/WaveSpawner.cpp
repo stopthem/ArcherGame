@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetStringLibrary.h"
 
 bool FWaveInfo::GetAliveEnemies(TArray<AArcherEnemyCharacter*>& out_aliveEnemies)
 {

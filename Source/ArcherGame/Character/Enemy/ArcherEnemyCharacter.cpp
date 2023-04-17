@@ -20,7 +20,7 @@ void AArcherEnemyCharacter::BeginPlay()
 
 	// set interface variable and bind to health component's OnHealthChanged
 	OnHitEffectParams = FOnHitFlashEffectParams(OnHitFlashEffectParams);
-	HealthComponent->OnHealthChanged.AddDynamic(this, &ThisClass::OnHealthChanged);
+	ArcherHealthComponent->OnHealthChanged.AddDynamic(this, &ThisClass::OnHealthChanged);
 }
 
 void AArcherEnemyCharacter::Spawn()

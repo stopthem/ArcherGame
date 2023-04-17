@@ -14,7 +14,7 @@ AArcherCharacter::AArcherCharacter()
 
 	AbilitySystemComponent = CreateDefaultSubobject<UArcherAbilitySystemComponent>(TEXT("ArcherAbilitySystemComponent"));
 
-	HealthComponent = CreateDefaultSubobject<UArcherHealthComponent>("ArcherCharacterHealthComponent");
+	ArcherHealthComponent = CreateDefaultSubobject<UArcherHealthComponent>("ArcherCharacterHealthComponent");
 }
 
 void AArcherCharacter::PossessedBy(AController* NewController)
@@ -26,16 +26,16 @@ void AArcherCharacter::PossessedBy(AController* NewController)
 	if (bAbilitySystemInitted)return;
 	bAbilitySystemInitted = true;
 
-	InitializeAbilitySystem();
+	AfterPossessedBy();
 }
 
-void AArcherCharacter::InitializeAbilitySystem()
+void AArcherCharacter::AfterPossessedBy()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 	AbilitySet->GrantSetAbilityEffectAttributes(AbilitySystemComponent);
 
-	HealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
+	ArcherHealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
 }
 
 void AArcherCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const

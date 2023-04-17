@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "ArcherCharacter.generated.h"
 
+class ULyraCameraComponent;
 class UArcherAbilitySet;
 class UArcherCombatSet;
 class UArcherHealthSet;
@@ -20,7 +21,7 @@ class UInputConfig;
  *
  * Base class of all the characters used in the game.
  */
-UCLASS()
+UCLASS(Abstract)
 class ARCHERGAME_API AArcherCharacter : public ACharacter, public IAbilitySystemInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
@@ -47,11 +48,11 @@ protected:
 	TObjectPtr<UArcherAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArcherCharacter|Character", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UArcherHealthComponent> HealthComponent;
+	TObjectPtr<UArcherHealthComponent> ArcherHealthComponent;
 
 	// Init ability system component
 	virtual void PossessedBy(AController* NewController) override;
-	virtual void InitializeAbilitySystem();
+	virtual void AfterPossessedBy();
 
 public:
 	// Start of IGameplayTagAssetInterface

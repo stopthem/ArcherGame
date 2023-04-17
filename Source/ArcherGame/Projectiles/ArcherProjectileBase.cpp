@@ -28,6 +28,7 @@ void AArcherProjectileBase::Shoot(AActor* projectileInstigator)
 
 	// When we use initial speed ProjectileMovementComponent->Velocity becomes direction for unreal and we override it again with what unreal does (velocity * initial speed).
 	ProjectileMovementComponent->Velocity = GetActorForwardVector() * ProjectileMovementComponent->InitialSpeed;
+
 	ProjectileMovementComponent->Activate();
 
 	// Start tween for scaling to zero and calling HandleActorEnding
@@ -123,6 +124,7 @@ bool AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 		// the actual damage is magnitude and we are getting it from TAG_Data_Damage which is set by damage causer
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(specHandle, TAG_Data_Damage, GetDamageAmount());
 
+		// If our instigator has ability system component, apply spec to target
 		if (UArcherAbilitySystemComponent* causerASC = ProjectileInstigator->FindComponentByClass<UArcherAbilitySystemComponent>())
 		{
 			causerASC->ApplyGameplayEffectSpecToTarget(*specHandle.Data.Get(), otherASC);
@@ -140,6 +142,7 @@ bool AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 
 void AArcherProjectileBase::HandleActorEnding()
 {
+	// Destroy SpawnedTween so FCTween doesn't try to update tween when this object is not used.
 	if (ProjectileHitParticleInfo.SpawnedTween != nullptr)
 	{
 		ProjectileHitParticleInfo.SpawnedTween->Destroy();
@@ -170,5 +173,6 @@ void AArcherProjectileBase::ReturnToPool()
 	DamagingCollisionCount = 0;
 
 	ProjectileMovementComponent->Deactivate();
+
 	PoolableComponent->ReturnToPool();
 }
