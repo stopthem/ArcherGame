@@ -146,6 +146,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "View", Meta = (UIMin = "5.0", UIMax = "170", ClampMin = "5.0", ClampMax = "170.0"))
 	float FieldOfView;
 
+	UPROPERTY(EditDefaultsOnly, Category="Blending")
+	bool bBlendUndilated;
+
 	// How long it takes to blend in this mode.
 	UPROPERTY(EditDefaultsOnly, Category = "Blending")
 	float BlendTime;

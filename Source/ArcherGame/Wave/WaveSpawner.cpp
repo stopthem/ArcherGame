@@ -4,12 +4,15 @@
 #include "WaveSpawner.h"
 
 #include "NavigationSystem.h"
+#include "ArcherGame/ArcherGameGameModeBase.h"
+#include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthComponent.h"
+#include "ArcherGame/Character/Ability/Messages/ArcherLevelEndMessage.h"
 #include "ArcherGame/Character/Enemy/ArcherEnemyCharacter.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetStringLibrary.h"
 
 bool FWaveInfo::GetAliveEnemies(TArray<AArcherEnemyCharacter*>& out_aliveEnemies)
 {
@@ -72,6 +75,8 @@ int AWaveSpawner::GetCurrentWaveCount()
 
 void AWaveSpawner::PrepareSpawnWave()
 {
+	AArcherGameGameModeBase::Get(GetWorld())->SetGameStatus(WaitingWave);
+
 	GetWorldTimerManager().SetTimer(TimeBetweenWavesHandle, this, &ThisClass::SpawnWave, TimeBetweenWaves, false);
 }
 
@@ -79,12 +84,22 @@ void AWaveSpawner::SpawnWave()
 {
 	check(NavigationSystemV1);
 
+	// Don't spawn wave if we are not waiting for a wave.
+	if (AArcherGameGameModeBase::Get(GetWorld())->GetGameStatus() != WaitingWave)
+	{
+		return;
+	}
+
 	CurrentWaveCount++;
 
 	if (!WaveInfos.IsValidIndex(CurrentWaveCount))
 	{
 		// if there is not a next wave, waves are complete
 		OnWavesCompleted.Broadcast();
+
+		FArcherLevelEndMessage levelEndMessage;
+		levelEndMessage.bWin = true;
+		UGameplayMessageSubsystem::Get(this).BroadcastMessage(TAG_GameplayEvent_LevelEnd, levelEndMessage);
 
 		return;
 	}
@@ -138,6 +153,7 @@ void AWaveSpawner::SpawnWave()
 		}
 	}
 
+	AArcherGameGameModeBase::Get(GetWorld())->SetGameStatus(WaveOnProgress);
 	OnWaveStarted.Broadcast();
 }
 

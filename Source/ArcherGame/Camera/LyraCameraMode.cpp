@@ -10,7 +10,6 @@
 #include "GameFramework/Pawn.h"
 #include "LyraCameraComponent.h"
 #include "LyraPlayerCameraManager.h"
-#include "ArcherGame/BlueprintFunctionLibraries/InterpolationLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Color.h"
 #include "Misc/AssertionMacros.h"
@@ -162,7 +161,6 @@ void ULyraCameraMode::UpdateView(float DeltaTime, bool bOverrideCameraLag)
 	// const FRotator interpedRotator = UInterpolationLibrary::RotatorSpringInterpCD(View.Rotation, PivotRotation, PivotRotationInterpVelocity, GetWorld()->GetDeltaSeconds(), CameraLagSpeed);
 
 	View.Rotation = PivotRotation;
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *View.Rotation.ToString());
 	View.ControlRotation = View.Rotation;
 	View.FieldOfView = FieldOfView;
 }
@@ -202,7 +200,8 @@ void ULyraCameraMode::UpdateBlending(float DeltaTime)
 {
 	if (BlendTime > 0.0f)
 	{
-		BlendAlpha += (DeltaTime / BlendTime);
+		const float deltaTime = bBlendUndilated ? GetWorld()->DeltaRealTimeSeconds : DeltaTime;
+		BlendAlpha += (deltaTime / BlendTime);
 		BlendAlpha = FMath::Min(BlendAlpha, 1.0f);
 	}
 	else

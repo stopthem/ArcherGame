@@ -11,5 +11,7 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayEvent_Damaged, "GameplayEvent.Damaged")
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayEvent_Death, "GameplayEvent.Death")
 
+UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayEvent_LevelEnd, "GameplayEvent.LevelEnd");
+
 UE_DEFINE_GAMEPLAY_TAG(TAG_Status_Death_Started, "Status.Death.Started");
 UE_DEFINE_GAMEPLAY_TAG(TAG_Status_Death_Ended, "Status.Death.Ended");

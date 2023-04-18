@@ -34,6 +34,11 @@ protected:
 		RenderStatistic(title, value);
 	}
 
+	void AddString(const TCHAR* title, const FString& value)
+	{
+		RenderStatistic(title, FText::AsCultureInvariant(value));
+	}
+
 	void AddFloat(const TCHAR* title, float value)
 	{
 		RenderStatistic(title, FText::AsNumber(value));

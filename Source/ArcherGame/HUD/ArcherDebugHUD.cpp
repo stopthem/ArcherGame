@@ -3,6 +3,7 @@
 
 #include "ArcherDebugHUD.h"
 
+#include "ArcherGame/ArcherGameGameModeBase.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthSet.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaSet.h"
 #include "ArcherGame/Character/Player/ArcherPlayerCharacter.h"
@@ -25,4 +26,6 @@ void AArcherDebugHUD::DrawHUD()
 	bool bBehavioursActive = false;
 	IConsoleManager::Get().FindConsoleVariable(TEXT("ai.AllBehaviorTrees.Activated"))->GetValue(bBehavioursActive);
 	AddBool(L"Is Behaviour Trees active", bBehavioursActive);
+
+	AddString(L"Game Status", UEnum::GetValueAsString(AArcherGameGameModeBase::Get(GetWorld())->GetGameStatus()));
 }

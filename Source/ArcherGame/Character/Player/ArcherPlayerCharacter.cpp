@@ -7,6 +7,7 @@
 #include "ArcherGame/ArcherGameplayTags.h"
 #include "ArcherGame/Camera/LyraCameraComponent.h"
 #include "ArcherGame/Camera/LyraCameraMode.h"
+#include "ArcherGame/Character/Ability/Attribute/ArcherHealthComponent.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthSet.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaComponent.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaSet.h"
