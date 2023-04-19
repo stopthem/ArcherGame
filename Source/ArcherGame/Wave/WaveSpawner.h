@@ -77,8 +77,6 @@ public:
 private:
 	FTimerHandle TimeBetweenWavesHandle;
 
-	bool bShouldSpawnWave = true;
-
 public:
 	// The range of distance where we can spawn enemies
 	UPROPERTY(EditAnywhere, Category="Wave")
@@ -137,7 +135,4 @@ protected:
 private:
 	UPROPERTY()
 	UNavigationSystemV1* NavigationSystemV1;
-
-private:
-	void HandleLogicFromConsoleVariable();
 };
