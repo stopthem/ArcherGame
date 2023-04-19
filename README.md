@@ -14,9 +14,7 @@ Footages :
 
 Player Animation Showcase
 
-
 https://user-images.githubusercontent.com/68704994/231745844-7f05d02e-da3f-43d7-b723-3670a5c72a32.mp4
-
 
 Player Skills Showcase
 
@@ -25,17 +23,11 @@ Second ability - dash towards input if there is one otherwise character forward\
 Third ability - Rain of arrows, damage all enemies in a radius by period\
 Fourth ability - Piercing arrow, damage 2 enemies and move until there is a block collision response.
 
+https://user-images.githubusercontent.com/68704994/233131240-b176754b-06b4-45bc-b47c-a6e8eb276daa.mp4
 
+AI, Wave and Player Death Showcase
 
-https://user-images.githubusercontent.com/68704994/231867636-ecfc0c7e-b326-4ea7-a01d-074860b03ab1.mp4
+https://user-images.githubusercontent.com/68704994/233131626-8aad4c30-2481-4b91-b95b-db8b000984ac.mp4
 
-
-
-
-AI and Player Death Showcase
-
-
-
-
-https://user-images.githubusercontent.com/68704994/231746205-bc1a069b-6dd3-4171-8418-c2b92ca5c292.mp4
+https://user-images.githubusercontent.com/68704994/233135937-87d997bf-0416-451e-b60e-e4b353652658.mp4
 
