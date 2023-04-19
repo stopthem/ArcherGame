@@ -7,6 +7,8 @@
 #include "GameplayEffectExtension.h"
 #include "ArcherAbilitySystemComponent.generated.h"
 
+class UArcherAbilityRelationshipDataAsset;
+class AArcherCharacter;
 class UArcherAbilityTagRelationshipMapping;
 /**
  * UArcherAbilitySystemComponent
@@ -52,6 +54,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Archer Ability System Component|Abilities With Widgets")
 	TArray<TObjectPtr<UArcherGameplayAbility>> ArcherAbilitiesWithCostBroadcast;
 
+	UPROPERTY(EditAnywhere, Category="Archer Ability System Component")
+	TObjectPtr<UArcherAbilityRelationshipDataAsset> AbilityRelationshipDataAsset;
+
 	UFUNCTION(BlueprintCallable)
 	void CheckCanActivateBroadcasterArcherAbilities();
 
@@ -79,7 +84,8 @@ protected:
 public:
 	// PlayerController calls this and handles WaitInput ability tasks
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
-	//Clears input spec handles
+
+	// Clears input spec handles
 	void ClearAbilityInput();
 
 public:
@@ -102,4 +108,25 @@ private:
 	bool FindAbilitySpecHandlesFromInputTag(FGameplayTag inputTag, TArray<FGameplayAbilitySpecHandle>& put_gameplayAbilitySpecHandles);
 
 	void TryActivateAbilitiesOnSpawn();
+
+	bool FindAbilitySpecFromTag(FGameplayTag abilityTag, FGameplayAbilitySpec& out_abilitySpec);
+
+public:
+	UPROPERTY(EditAnywhere, Category="ArcherAbilitySystemComponent|Sound")
+	TObjectPtr<USoundBase> NoReasonCantActivateSound;
+
+	UPROPERTY(EditAnywhere, Category="ArcherAbilitySystemComponent|Sound")
+	TObjectPtr<USoundBase> CooldownCantActivateSound;
+
+	UPROPERTY(EditAnywhere, Category="ArcherAbilitySystemComponent|Sound")
+	TObjectPtr<USoundBase> CostCantActivateSound;
+
+private:
+	UPROPERTY()
+	TObjectPtr<AArcherCharacter> ArcherCharacter;
+
+	void HandleCantActivateSoundEffects(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, OUT FGameplayTagContainer* optionalRelevantTags);
+
+protected:
+	virtual void BeginPlay() override;
 };

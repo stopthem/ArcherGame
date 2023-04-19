@@ -23,6 +23,8 @@ void AArcherGameGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	GameplayMessageListenerHandle = UGameplayMessageSubsystem::Get(this).RegisterListener<FArcherLevelEndMessage, AArcherGameGameModeBase>(TAG_GameplayEvent_LevelEnd, this, &ThisClass::OnLevelEnd);
+	
+	GEngine->bSubtitlesEnabled = false;
 }
 
 void AArcherGameGameModeBase::OnLevelEnd(FGameplayTag messageChannelTag, const FArcherLevelEndMessage& levelEndMessage)

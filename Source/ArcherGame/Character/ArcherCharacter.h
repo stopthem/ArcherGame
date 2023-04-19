@@ -55,6 +55,19 @@ protected:
 	virtual void AfterPossessedBy();
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void PlaySoundEffect(USoundBase* soundBase, float playChance = 1) const;
+
+	UAudioComponent* GetAudioComponent() const
+	{
+		return AudioComponent;
+	}
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ArcherCharacter|Audio")
+	TObjectPtr<UAudioComponent> AudioComponent;
+
+public:
 	// Start of IGameplayTagAssetInterface
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 	virtual bool HasMatchingGameplayTag(FGameplayTag TagToCheck) const override;

@@ -8,7 +8,10 @@
 #include "ArcherGameplayEffect.h"
 #include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
 #include "ArcherGame/BlueprintFunctionLibraries/ArrayBlueprintFunctionLibrary.h"
+#include "ArcherGame/Character/ArcherCharacter.h"
+#include "ArcherGame/DataAssets/ArcherAbilityRelationshipDataAsset.h"
 #include "Attribute/ArcherHealthSet.h"
+#include "Kismet/KismetStringLibrary.h"
 
 UArcherAbilitySystemComponent::UArcherAbilitySystemComponent()
 {
@@ -26,7 +29,6 @@ void UArcherAbilitySystemComponent::CheckCanActivateBroadcasterArcherAbilities()
 		FGameplayAbilitySpecHandle specHandle;
 		FindAbilitySpecHandleFromTag(archerAbilitiesWithCostBroadcast->AbilityTags.First(), specHandle);
 		archerAbilitiesWithCostBroadcast->CanActivateAbility(specHandle, AbilityActorInfo.Get(), &GameplayTagCountContainer.GetExplicitGameplayTags(), nullptr, nullptr);
-		// archerAbilitiesWithCostBroadcast->CheckCost(specHandle, AbilityActorInfo.Get(), nullptr);
 	}
 }
 
@@ -102,6 +104,69 @@ void UArcherAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
 	}
 }
 
+void UArcherAbilitySystemComponent::HandleCantActivateSoundEffects(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, OUT FGameplayTagContainer* optionalRelevantTags)
+{
+	check(AbilityRelationshipDataAsset);
+
+	UGameplayAbility* ability = FindAbilitySpecFromHandle(handle)->Ability;
+	const UArcherGameplayAbility* archerGameplayAbility = Cast<UArcherGameplayAbility>(ability);
+
+	if (!archerGameplayAbility->bShouldPlayCantActivateSoundEffects)
+	{
+		return;
+	}
+
+	FAbilityRelationshipInfo foundAbilityRelationshipInfo;
+
+	const bool bFoundAbilityRelationship = AbilityRelationshipDataAsset->GetAbilityRelationshipFromTagContainer(ability->AbilityTags, foundAbilityRelationshipInfo);
+
+	auto GetToCheckAbility = [&](FGameplayTag abilityTag)
+	{
+		// Given tag is found within foundAbilityRelationshipInfo, so if that is null tag will be invalid.
+		if (abilityTag.IsValid())
+		{
+			FGameplayAbilitySpec foundSpec;
+			FindAbilitySpecFromTag(abilityTag, foundSpec);
+
+			return foundSpec.Ability;
+		}
+
+		return ability;
+	};
+
+	const UGameplayAbility* abilityToCheckCooldown = ability;
+	const UGameplayAbility* abilityToCheckCost = ability;
+	if (bFoundAbilityRelationship)
+	{
+		abilityToCheckCooldown = GetToCheckAbility(foundAbilityRelationshipInfo.CheckCooldownAbilityTag);
+		abilityToCheckCost = GetToCheckAbility(foundAbilityRelationshipInfo.CheckCostAbilityTag);
+	}
+
+	USoundBase* soundToPlay;
+
+	if (!abilityToCheckCost->CheckCost(handle, actorInfo, optionalRelevantTags))
+	{
+		soundToPlay = CostCantActivateSound;
+	}
+	else if (!abilityToCheckCooldown->CheckCooldown(handle, actorInfo, optionalRelevantTags))
+	{
+		soundToPlay = CooldownCantActivateSound;
+	}
+	else
+	{
+		soundToPlay = NoReasonCantActivateSound;
+	}
+
+	ArcherCharacter->PlaySoundEffect(soundToPlay);
+}
+
+void UArcherAbilitySystemComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ArcherCharacter = Cast<AArcherCharacter>(GetOwner());
+}
+
 void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
 {
 	static TArray<FGameplayAbilitySpecHandle> abilitiesToActivate;
@@ -162,7 +227,11 @@ void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bG
 	//
 	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : abilitiesToActivate)
 	{
-		TryActivateAbility(AbilitySpecHandle);
+		// If we couldn't activate the ability, play sound effects based on that.
+		if (!TryActivateAbility(AbilitySpecHandle))
+		{
+			HandleCantActivateSoundEffects(AbilitySpecHandle, AbilityActorInfo.Get(), nullptr);
+		}
 	}
 
 	//
@@ -210,7 +279,7 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecHandleFromTag(FGameplayTag ab
 
 
 	// if we found a ability with the given tag try to activate it
-	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec GameplayAbilitySpec)
+	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec& GameplayAbilitySpec)
 	{
 		return GameplayAbilitySpec.Ability && GameplayAbilitySpec.Ability->AbilityTags.HasTagExact(abilityTag);
 	}))
@@ -256,7 +325,6 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inp
 	{
 		return false;
 	}
-
 
 	// if we found a ability with the given tag try to activate it
 	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec GameplayAbilitySpec)
@@ -309,6 +377,26 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecHandlesFromInputTag(FGameplay
 	}
 
 	return out_gameplayAbilitySpecHandles.Num() > 0;
+}
+
+bool UArcherAbilitySystemComponent::FindAbilitySpecFromTag(FGameplayTag abilityTag, FGameplayAbilitySpec& out_abilitySpec)
+{
+	ABILITYLIST_SCOPE_LOCK()
+
+	if (!abilityTag.IsValid())
+	{
+		return false;
+	}
+
+	FGameplayAbilitySpecHandle foundHandle;
+	if (FindAbilitySpecHandleFromTag(abilityTag, foundHandle))
+	{
+		out_abilitySpec = *FindAbilitySpecFromHandle(foundHandle);
+		return true;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Archer ability system component -> couldn't find handle in actor %s with tag %s"), *ArcherCharacter->GetActorNameOrLabel(), *abilityTag.GetTagName().ToString());
+	return false;
 }
 
 void UArcherAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)

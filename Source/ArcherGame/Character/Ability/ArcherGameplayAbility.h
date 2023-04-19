@@ -82,15 +82,22 @@ class ARCHERGAME_API UArcherGameplayAbility : public UGameplayAbility
 public:
 	UArcherGameplayAbility();
 
-	// Level of the ability
-	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Ability Info")
-	// int32 AbilityLevel = 1;
-
 	// Holder of the messages that this ability can broadcast
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Archer Gameplay Ability|Message")
 	FMessageTagInfoHolder MessageTagInfoHolder;
 
 	EArcherAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
+
+public:
+	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
+	bool bShouldPlayCantActivateSoundEffects = false;
+
+	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
+	TSubclassOf<UGameplayAbility> OverridenLookCostForSoundEffect;
+	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
+	TSubclassOf<UGameplayAbility> OverridenLookCooldownForSoundEffect;
+	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
+	TSubclassOf<UGameplayAbility> OverridenLookCanActivateForSoundEffect;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -124,14 +131,12 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, const FGameplayAbilityActivationInfo activationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 #pragma endregion
 
-	// Broadcast cooldown duration with Gameplay Message plugin.
-	UFUNCTION(BlueprintCallable)
-	void BroadcastCooldown() const;
-
 protected:
 	// Defines how this ability is meant to activate.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Archer Gameplay Ability")
 	EArcherAbilityActivationPolicy ActivationPolicy = EArcherAbilityActivationPolicy::Manual;
+
+#pragma region Broadcasting Messages
 
 private:
 	// Broadcast can activate ability with Gameplay Message plugin.
@@ -139,4 +144,10 @@ private:
 
 	// Broadcast is ability active with Gameplay Message plugin.
 	void BroadcastIsActive(const bool bIsAbilityActive) const;
+
+public:
+	// Broadcast cooldown duration with Gameplay Message plugin.
+	UFUNCTION(BlueprintCallable)
+	void BroadcastCooldown() const;
+#pragma endregion
 };

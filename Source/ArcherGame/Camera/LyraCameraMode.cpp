@@ -37,7 +37,8 @@ void FLyraCameraModeView::Blend(const FLyraCameraModeView& Other, float OtherWei
 	{
 		return;
 	}
-	else if (OtherWeight >= 1.0f)
+
+	if (OtherWeight >= 1.0f)
 	{
 		*this = Other;
 		return;

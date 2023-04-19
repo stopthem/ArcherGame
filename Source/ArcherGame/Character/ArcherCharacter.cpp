@@ -5,6 +5,7 @@
 #include "Ability/ArcherAbilitySet.h"
 #include "Ability/Attribute/ArcherAttributeSet.h"
 #include "Ability/Attribute/ArcherHealthComponent.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AArcherCharacter::AArcherCharacter()
@@ -15,6 +16,8 @@ AArcherCharacter::AArcherCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<UArcherAbilitySystemComponent>(TEXT("ArcherAbilitySystemComponent"));
 
 	ArcherHealthComponent = CreateDefaultSubobject<UArcherHealthComponent>("ArcherCharacterHealthComponent");
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
 }
 
 void AArcherCharacter::PossessedBy(AController* NewController)
@@ -36,6 +39,19 @@ void AArcherCharacter::AfterPossessedBy()
 	AbilitySet->GrantSetAbilityEffectAttributes(AbilitySystemComponent);
 
 	ArcherHealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
+}
+
+void AArcherCharacter::PlaySoundEffect(USoundBase* soundBase, float playChance) const
+{
+	check(AudioComponent);
+
+	if (FMath::RandRange(0, 1) > playChance)
+	{
+		return;
+	}
+
+	AudioComponent->SetSound(soundBase);
+	AudioComponent->Play();
 }
 
 void AArcherCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const

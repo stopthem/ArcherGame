@@ -25,6 +25,7 @@ class ARCHERGAME_API AArcherPlayerCharacter : public AArcherCharacter, public IG
 public:
 	AArcherPlayerCharacter();
 
+public:
 	UPROPERTY(EditAnywhere, Category="ArcherPlayerCharacter|Aim")
 	FGameplayTagContainer AimingTagsContainer;
 
@@ -34,6 +35,7 @@ public:
 		return HasAnyMatchingGameplayTags(AimingTagsContainer);
 	}
 
+public:
 	UFUNCTION(BlueprintCallable)
 	APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
 
@@ -80,6 +82,8 @@ private:
 	UFUNCTION()
 	void OnConsoleVariableChanged() const;
 
+#pragma region Camera Handling
+
 public:
 	UFUNCTION(BlueprintCallable)
 	// Overrides the camera from an active gameplay ability
@@ -106,4 +110,5 @@ private:
 
 	// Latest camera mod setter ability spec handle.
 	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
+#pragma endregion
 };
