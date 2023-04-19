@@ -5,11 +5,6 @@ A personal project of learning the Unreal Engine and C++.
 
 It utilizes Gameplay Ability System.
 
-Im not finished developing it, it needs;\
-Sounds,\
-Basic wave of enemies,\
-Health and mana regen for player
-
 Footages : 
 
 Player Animation Showcase
