@@ -13,6 +13,7 @@
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetStringLibrary.h"
 
 bool FWaveInfo::GetAliveEnemies(TArray<AArcherEnemyCharacter*>& out_aliveEnemies)
 {
@@ -53,6 +54,15 @@ void AWaveSpawner::BeginPlay()
 	NavigationSystemV1 = UNavigationSystemV1::GetCurrent(this);
 
 	PrepareSpawnWave();
+
+#if WITH_EDITOR
+	FAutoConsoleVariableSink CVarSink(FConsoleCommandDelegate::CreateUObject(this, &ThisClass::HandleLogicFromConsoleVariable));
+
+	GetWorldTimerManager().SetTimerForNextTick([&]
+	{
+		HandleLogicFromConsoleVariable();
+	});
+#endif
 }
 
 int AWaveSpawner::GetHowManyDeadCount()
@@ -82,6 +92,11 @@ void AWaveSpawner::PrepareSpawnWave()
 
 void AWaveSpawner::SpawnWave()
 {
+	if (!bShouldSpawnWave)
+	{
+		return;
+	}
+
 	check(NavigationSystemV1);
 
 	// Don't spawn wave if we are not waiting for a wave.
@@ -171,4 +186,9 @@ void AWaveSpawner::OnWaveEnemyDied(AActor* owningActor)
 
 		PrepareSpawnWave();
 	}
+}
+
+void AWaveSpawner::HandleLogicFromConsoleVariable()
+{
+	IConsoleManager::Get().FindConsoleVariable(TEXT("archergame.Wave.ShouldSpawn"))->GetValue(bShouldSpawnWave);
 }

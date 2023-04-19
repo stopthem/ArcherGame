@@ -28,3 +28,11 @@ static TAutoConsoleVariable CVarPlayerManaImmunity(
 	TEXT("0 : not immune")
 	TEXT("1 : immune"),
 	ECVF_Scalability | ECVF_RenderThreadSafe);
+
+static TAutoConsoleVariable CVarShouldSpawnWave(
+	TEXT("archergame.Wave.ShouldSpawn"),
+	0,
+	TEXT("Should game spawn wave?")
+	TEXT("0 : spawn")
+	TEXT("1 : dont spawn"),
+	ECVF_Scalability | ECVF_RenderThreadSafe);
