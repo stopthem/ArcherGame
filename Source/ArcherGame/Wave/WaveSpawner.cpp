@@ -44,8 +44,6 @@ AWaveSpawner::AWaveSpawner()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	// PrimaryActorTick.bCanEverTick = true;
-
-	bShouldSpawnWave = true;
 }
 
 void AWaveSpawner::BeginPlay()
@@ -173,9 +171,4 @@ void AWaveSpawner::OnWaveEnemyDied(AActor* owningActor)
 
 		PrepareSpawnWave();
 	}
-}
-
-void AWaveSpawner::HandleLogicFromConsoleVariable()
-{
-	IConsoleManager::Get().FindConsoleVariable(TEXT("archergame.Wave.ShouldSpawn"))->GetValue(bShouldSpawnWave);
 }
