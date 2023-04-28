@@ -36,21 +36,5 @@ void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 
 	particlePlayingOptions.PlayRotation = GetProjectileHitRotation();
 
-	ProjectileHitParticleInfo.PlayHitParticle(this, otherActor, particlePlayingOptions, true, true);
-	// if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
-	// {
-	// 	FVector* socketLocation = nullptr;
-	// 	const FName socketName = otherActorMesh->FindClosestBone(GetActorLocation(), socketLocation);
-	//
-	// 	if (socketName.IsNone())
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("ArrowProjectile -> couldn't find closest bone this actor %s overlapped actor %s"), *GetActorNameOrLabel(), *otherActor->GetActorNameOrLabel());
-	// 		return;
-	// 	}
-	//
-	// }
-	// else
-	// {
-	// 	Super::PlayHitParticle(otherActor);
-	// }
+	ProjectileHitParticleInfo.PlayHitParticle(this, otherActor, particlePlayingOptions);
 }

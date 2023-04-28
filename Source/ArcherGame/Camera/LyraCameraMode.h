@@ -108,7 +108,7 @@ public:
 	virtual void DrawDebug(UCanvas* Canvas) const;
 
 protected:
-	virtual FVector GetPivotLocation() const;
+	virtual FVector GetPivotLocation();
 	virtual FRotator GetPivotRotation();
 
 	/**
@@ -201,9 +201,10 @@ public:
 	// Gets the tag associated with the top layer and the blend weight of it
 	void GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTag& OutTagOfTopLayer) const;
 
-protected:
+	UFUNCTION(BlueprintCallable)
 	ULyraCameraMode* GetCameraModeInstance(TSubclassOf<ULyraCameraMode> CameraModeClass);
 
+protected:
 	void UpdateStack(float DeltaTime);
 	void BlendStack(FLyraCameraModeView& OutCameraModeView) const;
 

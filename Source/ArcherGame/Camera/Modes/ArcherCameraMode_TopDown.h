@@ -29,7 +29,7 @@ public:
 
 protected:
 #pragma region ULyraCameraMode Interface
-	virtual FVector GetPivotLocation() const override;
+	virtual FVector GetPivotLocation() override;
 	virtual FRotator GetPivotRotation() override;
 #pragma endregion
 };

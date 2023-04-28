@@ -16,7 +16,8 @@ class UObject;
 struct FFrame;
 struct FGameplayTag;
 struct FMinimalViewInfo;
-template <class TClass> class TSubclassOf;
+template <class TClass>
+class TSubclassOf;
 
 DECLARE_DELEGATE_RetVal(TSubclassOf<ULyraCameraMode>, FLyraCameraModeDelegate);
 
@@ -32,7 +33,6 @@ class ULyraCameraComponent : public UCameraComponent
 	GENERATED_BODY()
 
 public:
-
 	ULyraCameraComponent(const FObjectInitializer& ObjectInitializer);
 
 	// Returns the camera component if one exists on the specified actor.
@@ -53,20 +53,23 @@ public:
 	// Gets the tag associated with the top layer and the blend weight of it
 	void GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTag& OutTagOfTopLayer) const;
 
-protected:
+	UFUNCTION(BlueprintCallable)
+	ULyraCameraModeStack* GetCameraStack() const
+	{
+		return CameraModeStack;
+	}
 
+protected:
 	virtual void OnRegister() override;
 	virtual void GetCameraView(float DeltaTime, FMinimalViewInfo& DesiredView) override;
 
 	virtual void UpdateCameraModes();
 
 protected:
-
 	// Stack used to blend the camera modes.
 	UPROPERTY()
 	TObjectPtr<ULyraCameraModeStack> CameraModeStack;
 
 	// Offset applied to the field of view.  The offset is only for one frame, it gets cleared once it is applied.
 	float FieldOfViewOffset;
-
 };

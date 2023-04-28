@@ -115,12 +115,20 @@ void AArcherPlayerCharacter::OnConsoleVariableChanged() const
 	};
 
 	bool bDamageImmune = false;
+
+#if WITH_EDITORONLY_DATA
 	IConsoleManager::Get().FindConsoleVariable(TEXT("player.DamageImmunity.Activated"))->GetValue(bDamageImmune);
+#endif
+
 	HandleLooseGameplayTag(TAG_Gameplay_DamageImmunity, bDamageImmune);
 
 
 	bool bManaImmune = false;
+
+#if WITH_EDITORONLY_DATA
 	IConsoleManager::Get().FindConsoleVariable(TEXT("player.ManaImmunity.Activated"))->GetValue(bManaImmune);
+#endif
+
 	HandleLooseGameplayTag(TAG_Gameplay_ManaImmunity, bManaImmune);
 }
 

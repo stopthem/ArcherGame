@@ -15,6 +15,16 @@ class UPoolableComponent;
 class UArcherGameplayEffect;
 class UParticleBlueprintFunctionLibrary;
 class UPoolerBlueprintFunctionLibrary;
+
+UENUM()
+enum EParticleCanAttachOptions
+{
+	DontAttach,
+	AttachBoth,
+	AttachWorld,
+	AttachPlayer
+};
+
 /**
  * FProjectileHitParticleInfo
  *
@@ -46,8 +56,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
 
-	UParticleSystemComponent* PlayHitParticle(const AActor* hitter, const AActor* hitActor, FParticlePlayingOptions particlePlayingOptions, bool bCanAttach = false, bool bRotateTowardsFoundBone = true,
-	                                          EAttachLocation::Type attachLocation = EAttachLocation::KeepWorldPosition) const;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
+	TEnumAsByte<EParticleCanAttachOptions> ParticleCanAttachOptions = DontAttach;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="ParticleCanAttachOptions != EParticleCanAttachOptions::DontAttach"))
+	bool bRotateTowardsFoundBone = true;
+
+	UParticleSystemComponent* PlayHitParticle(const AActor* hitter, const AActor* hitActor, FParticlePlayingOptions particlePlayingOptions, EAttachLocation::Type attachLocation = EAttachLocation::KeepWorldPosition) const;
 };
 
 /**

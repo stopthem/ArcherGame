@@ -92,7 +92,7 @@ void ULyraCameraMode::OnActivation()
 	UpdateView(GetWorld()->GetDeltaSeconds(), true);
 }
 
-FVector ULyraCameraMode::GetPivotLocation() const
+FVector ULyraCameraMode::GetPivotLocation()
 {
 	const AActor* TargetActor = GetTargetActor();
 	check(TargetActor);
@@ -159,10 +159,9 @@ void ULyraCameraMode::UpdateView(float DeltaTime, bool bOverrideCameraLag)
 	// Only set final location(probably interpolated) if we don't override camera lag.
 	View.Location = bDoCameraLag && !bOverrideCameraLag ? finalLocation : PivotLocation;
 
-	// const FRotator interpedRotator = UInterpolationLibrary::RotatorSpringInterpCD(View.Rotation, PivotRotation, PivotRotationInterpVelocity, GetWorld()->GetDeltaSeconds(), CameraLagSpeed);
-
 	View.Rotation = PivotRotation;
 	View.ControlRotation = View.Rotation;
+
 	View.FieldOfView = FieldOfView;
 }
 

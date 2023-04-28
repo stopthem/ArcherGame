@@ -15,8 +15,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 
-UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AActor* hitter, const AActor* hitActor, FParticlePlayingOptions particlePlayingOptions, const bool bCanAttach, const bool bRotateTowardsFoundBone,
-                                                                      EAttachLocation::Type attachLocation) const
+UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AActor* hitter, const AActor* hitActor, FParticlePlayingOptions particlePlayingOptions, EAttachLocation::Type attachLocation) const
 {
 	// If we got a block collision response that means we hit a world object.
 	const bool bHitIsWorld = hitActor->GetComponentsCollisionResponseToChannel(Cast<AArcherProjectileBase>(hitter)->GetCollisionComponent()->GetCollisionObjectType()) == ECR_Block;
@@ -27,8 +26,11 @@ UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AAct
 	// If player hit vfx is not null and we didn't hit world object, use player vfx.
 	UParticleSystem* particleSystemTemplate = !bHitIsWorld && PlayerHitVfx ? PlayerHitVfx : HitVfx;
 
+	// We should attach if attach options is AttachBoth or attach player and we didn't hit world or attach world and we hit world. 
+	const bool bShouldAttach = ParticleCanAttachOptions == AttachBoth || ((ParticleCanAttachOptions == AttachPlayer && !bHitIsWorld) || (ParticleCanAttachOptions == AttachWorld && bHitIsWorld));
+
 	// If we can attach, try to set optional variables in particle playing options like scene component, socket name and rotation towards bone.
-	if (bCanAttach)
+	if (bShouldAttach)
 	{
 		if (USkinnedMeshComponent* foundSkinnedMeshComponent = hitActor->FindComponentByClass<USkinnedMeshComponent>())
 		{
@@ -46,19 +48,29 @@ UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AAct
 				}
 			}
 		}
+		else
+		{
+			particlePlayingOptions.SceneComponent = hitActor->GetRootComponent();
+		}
 
 		particlePlayingOptions.ParticleAttachmentRules = EParticleAttachmentRules::AttachGivenValuesAreWorld;
 	}
 
 	UParticleSystemComponent* spawnedParticleComponent;
 
+
 	if (bPlayPooledParticle)
 	{
+		if (!bShouldAttach)
+		{
+			particlePlayingOptions.SceneComponent = nullptr;
+			particlePlayingOptions.SocketName = NAME_None;
+		}
 		spawnedParticleComponent = UParticleBlueprintFunctionLibrary::PlayPooledParticle(particlePlayingOptions.PlayActor, particlePoolerTag, particlePlayingOptions);
 	}
 	else
 	{
-		if (bCanAttach)
+		if (bShouldAttach)
 		{
 			spawnedParticleComponent = UGameplayStatics::SpawnEmitterAttached(particleSystemTemplate, particlePlayingOptions.SceneComponent, particlePlayingOptions.SocketName, particlePlayingOptions.PlayLocation,
 			                                                                  particlePlayingOptions.PlayRotation,

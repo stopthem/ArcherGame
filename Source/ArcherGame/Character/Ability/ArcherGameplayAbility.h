@@ -92,13 +92,6 @@ public:
 	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
 	bool bShouldPlayCantActivateSoundEffects = false;
 
-	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
-	TSubclassOf<UGameplayAbility> OverridenLookCostForSoundEffect;
-	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
-	TSubclassOf<UGameplayAbility> OverridenLookCooldownForSoundEffect;
-	UPROPERTY(EditAnywhere, Category="Archer Gameplay Ability|Sound")
-	TSubclassOf<UGameplayAbility> OverridenLookCanActivateForSoundEffect;
-
 public:
 	UFUNCTION(BlueprintCallable)
 	class AArcherPlayerCharacter* GetArcherPlayerCharacterFromActorInfo() const;

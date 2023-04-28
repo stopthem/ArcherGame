@@ -9,7 +9,7 @@ UArcherCameraMode_TopDown::UArcherCameraMode_TopDown()
 {
 }
 
-FVector UArcherCameraMode_TopDown::GetPivotLocation() const
+FVector UArcherCameraMode_TopDown::GetPivotLocation()
 {
 	// If given values treated like local, transform FollowOffset if not add our FollowOffset to target location.
 	return bFollowOffsetRelative ? UKismetMathLibrary::TransformLocation(GetTargetActor()->GetTransform(), FollowOffset) : GetTargetActor()->GetActorLocation() + FollowOffset;

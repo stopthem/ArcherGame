@@ -100,7 +100,6 @@ public:
 	FGameplayTagContainer GetActivatableAbilitiesTagAsContainer();
 
 private:
-	// returns if a ability spec is found from given tag
 	bool FindAbilitySpecFromInputTag(FGameplayTag inputTag, FGameplayAbilitySpec& out_gameplayAbilitySpec);
 
 	bool FindAbilitySpecsFromInputTag(FGameplayTag inputTag, TArray<FGameplayAbilitySpec>& out_gameplayAbilitySpecs);

@@ -51,7 +51,7 @@ void ULyraCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desi
 	CameraModeStack->EvaluateStack(DeltaTime, CameraModeView);
 
 	// Keep player controller in sync with the latest view.
-	if (APawn* TargetPawn = Cast<APawn>(GetTargetActor()))
+	if (const APawn* TargetPawn = Cast<APawn>(GetTargetActor()))
 	{
 		if (APlayerController* PC = TargetPawn->GetController<APlayerController>())
 		{
@@ -89,7 +89,7 @@ void ULyraCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desi
 
 	if (IsXRHeadTrackedCamera())
 	{
-		// In XR much of the camera behavior above is irrellevant, but the post process settings are not.
+		// In XR much of the camera behavior above is irrelevant, but the post process settings are not.
 		Super::GetCameraView(DeltaTime, DesiredView);
 	}
 }
