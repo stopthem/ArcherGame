@@ -5,7 +5,7 @@
 // Inspired from Keijiro's code: https://github.com/keijiro/SmoothingTest
 // Math reference: http://mathproofs.blogspot.jp/2013/07/critically-damped-spring-smoothing.html
 
-FVector UInterpolationLibrary::VectorSpringInterpCD(FVector Current, FVector Target, FVector& Velocity, float DeltaTime, float InterpSpeed, float MaxVelocity)
+FVector UInterpolationLibrary::VectorSpringInterpCD(const FVector& Current, const FVector& Target, FVector& Velocity, float DeltaTime, float InterpSpeed, float MaxVelocity)
 {
 	const FVector n1 = Velocity - (Current - Target) * (InterpSpeed * InterpSpeed * DeltaTime);
 	const float n2 = 1.f + InterpSpeed * DeltaTime;
@@ -35,7 +35,7 @@ FRotator UInterpolationLibrary::RotatorSpringInterpCD(FRotator Current, FRotator
 	return QuatSpringInterpCD(Current.Quaternion(), Target.Quaternion(), Velocity, DeltaTime, InterpSpeed, MaxVelocity).Rotator();
 }
 
-FQuat UInterpolationLibrary::QuatSpringInterpCD(FQuat Current, FQuat Target, FVector4& Velocity, float DeltaTime, float InterpSpeed, float MaxVelocity)
+FQuat UInterpolationLibrary::QuatSpringInterpCD(const FQuat& Current, const FQuat& Target, FVector4& Velocity, float DeltaTime, float InterpSpeed, float MaxVelocity)
 {
 	// Here would it be better to make operations directly on FQuat? 
 	// I can't find FQuat operators code to check, so I prefer those conversions...

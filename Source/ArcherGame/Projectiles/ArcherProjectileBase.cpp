@@ -12,6 +12,66 @@
 #include "ArcherGame/Character/Ability/ArcherGameplayEffect.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
+
+UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AActor* hitter, const AActor* hitActor, FParticlePlayingOptions particlePlayingOptions, const bool bCanAttach, const bool bRotateTowardsFoundBone,
+                                                                      EAttachLocation::Type attachLocation) const
+{
+	// If we got a block collision response that means we hit a world object.
+	const bool bHitIsWorld = hitActor->GetComponentsCollisionResponseToChannel(Cast<AArcherProjectileBase>(hitter)->GetCollisionComponent()->GetCollisionObjectType()) == ECR_Block;
+
+	// If tag is valid and we didn't hit world object, use player vfx pooler tag.
+	const FGameplayTag particlePoolerTag = !bHitIsWorld && PlayerHitVfxPoolerTag.IsValid() ? PlayerHitVfxPoolerTag : HitVfxPoolerTag;
+
+	// If player hit vfx is not null and we didn't hit world object, use player vfx.
+	UParticleSystem* particleSystemTemplate = !bHitIsWorld && PlayerHitVfx ? PlayerHitVfx : HitVfx;
+
+	// If we can attach, try to set optional variables in particle playing options like scene component, socket name and rotation towards bone.
+	if (bCanAttach)
+	{
+		if (USkinnedMeshComponent* foundSkinnedMeshComponent = hitActor->FindComponentByClass<USkinnedMeshComponent>())
+		{
+			FVector* socketLocation = nullptr;
+			// If we found a skinned mesh component, find closest bone.
+			particlePlayingOptions.SocketName = foundSkinnedMeshComponent->FindClosestBone(hitter->GetActorLocation(), socketLocation);
+
+			if (socketLocation)
+			{
+				particlePlayingOptions.SceneComponent = foundSkinnedMeshComponent;
+
+				if (bRotateTowardsFoundBone)
+				{
+					particlePlayingOptions.PlayRotation = UKismetMathLibrary::FindLookAtRotation(particlePlayingOptions.PlayLocation, *socketLocation);
+				}
+			}
+		}
+
+		particlePlayingOptions.ParticleAttachmentRules = EParticleAttachmentRules::AttachGivenValuesAreWorld;
+	}
+
+	UParticleSystemComponent* spawnedParticleComponent;
+
+	if (bPlayPooledParticle)
+	{
+		spawnedParticleComponent = UParticleBlueprintFunctionLibrary::PlayPooledParticle(particlePlayingOptions.PlayActor, particlePoolerTag, particlePlayingOptions);
+	}
+	else
+	{
+		if (bCanAttach)
+		{
+			spawnedParticleComponent = UGameplayStatics::SpawnEmitterAttached(particleSystemTemplate, particlePlayingOptions.SceneComponent, particlePlayingOptions.SocketName, particlePlayingOptions.PlayLocation,
+			                                                                  particlePlayingOptions.PlayRotation,
+			                                                                  attachLocation);
+		}
+		else
+		{
+			spawnedParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(hitter, particleSystemTemplate, particlePlayingOptions.PlayLocation, particlePlayingOptions.PlayRotation);
+		}
+	}
+
+	return spawnedParticleComponent;
+}
 
 // Sets default values
 AArcherProjectileBase::AArcherProjectileBase()
@@ -31,21 +91,35 @@ void AArcherProjectileBase::Shoot(AActor* projectileInstigator)
 
 	ProjectileMovementComponent->Activate();
 
-	// Start tween for scaling to zero and calling HandleActorEnding
-	ProjectileHitParticleInfo.SpawnedTween = FCTween::Play(GetActorScale3D(), FVector(0), [&](const FVector& vector)
-	                                         {
-		                                         SetActorScale3D(vector);
-	                                         }, ProjectileHitParticleInfo.DestroyEmitterScaleTweenParams.Duration, ProjectileHitParticleInfo.DestroyEmitterScaleTweenParams.Ease)
-	                                         ->SetDelay(ProjectileHitParticleInfo.DestroyEmitterScaleTweenParams.OneValue)
-	                                         ->SetOnComplete([&]
-	                                         {
-		                                         HandleActorEnding();
-	                                         });
+
+	if (bDestroyAfterTime)
+	{
+		// Start tween for scaling to zero and calling HandleActorEnding
+		SetTimerForDestroy(TimeBeforeHandlingEnd);
+	}
 
 	if (!ProjectileCollisionComponent->OnComponentBeginOverlap.IsAlreadyBound(this, &ThisClass::OnBeginOverlap))
 	{
 		ProjectileCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
 	}
+}
+
+void AArcherProjectileBase::SetTimerForDestroy(float time)
+{
+	if (EndScaleTween)
+	{
+		EndScaleTween->Destroy();
+	}
+
+	EndScaleTween = FCTween::Play(GetActorScale3D(), FVector(0), [&](const FVector& vector)
+	                {
+		                SetActorScale3D(vector);
+	                }, DestroyEmitterScaleTweenParams.Duration, DestroyEmitterScaleTweenParams.Ease)
+	                ->SetDelay(time - DestroyEmitterScaleTweenParams.Duration)
+	                ->SetOnComplete([&]
+	                {
+		                HandleActorEnding();
+	                });
 }
 
 void AArcherProjectileBase::BeginPlay()
@@ -98,18 +172,11 @@ void AArcherProjectileBase::OnBeginOverlap(UPrimitiveComponent* overlappedCompon
 
 void AArcherProjectileBase::PlayHitParticle(AActor* otherActor)
 {
-	if (ProjectileHitParticleInfo.bPlayPooledParticle)
-	{
-		FParticlePlayingOptions particlePlayingOptions(otherActor);
-		particlePlayingOptions.PlayLocation = GetActorLocation();
-		particlePlayingOptions.PlayRotation = GetProjectileHitRotation();
-		UParticleBlueprintFunctionLibrary::PlayPooledParticle(particlePlayingOptions.PlayActor, ProjectileHitParticleInfo.HitVfxPoolerTag, particlePlayingOptions);
-	}
-	else
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ProjectileHitParticleInfo.HitVfx, GetActorLocation(),
-		                                         GetProjectileHitRotation());
-	}
+	FParticlePlayingOptions particlePlayingOptions(otherActor);
+	particlePlayingOptions.PlayLocation = GetActorLocation();
+	particlePlayingOptions.PlayRotation = GetProjectileHitRotation();
+
+	ProjectileHitParticleInfo.PlayHitParticle(this, otherActor, particlePlayingOptions);
 }
 
 bool AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
@@ -143,9 +210,9 @@ bool AArcherProjectileBase::DamageOverlappedActor(AActor* otherActor)
 void AArcherProjectileBase::HandleActorEnding()
 {
 	// Destroy SpawnedTween so FCTween doesn't try to update tween when this object is not used.
-	if (ProjectileHitParticleInfo.SpawnedTween != nullptr)
+	if (EndScaleTween != nullptr)
 	{
-		ProjectileHitParticleInfo.SpawnedTween->Destroy();
+		EndScaleTween->Destroy();
 	}
 
 	// wait for next tick because there are probably some calculations by other classes like gameplay effects

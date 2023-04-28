@@ -3,7 +3,7 @@
 
 #include "VectorExBlueprintFunctionLibrary.h"
 
-FVector UVectorExBlueprintFunctionLibrary::GetDirection(FVector fromVector, FVector toVector, bool bNormalized)
+FVector UVectorExBlueprintFunctionLibrary::GetDirection(const FVector& fromVector, const FVector& toVector, bool bNormalized)
 {
 	// get non-normalized direction
 	const FVector direction = toVector - fromVector;

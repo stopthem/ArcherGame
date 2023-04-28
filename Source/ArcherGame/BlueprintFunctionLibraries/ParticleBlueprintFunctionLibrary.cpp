@@ -41,8 +41,8 @@ void UParticleBlueprintFunctionLibrary::SetParticle(AActor* spawnedActor, const 
 		// if given particle playing options has socket name, attach to socket
 		if (!particlePlayingOptions.SocketName.IsNone())
 		{
-			spawnedActor->AttachToComponent(particlePlayingOptions.SkinnedMeshComponent, FAttachmentTransformRules::KeepWorldTransform, particlePlayingOptions.SocketName);
-			attachedTransform = particlePlayingOptions.SkinnedMeshComponent->GetSocketTransform(particlePlayingOptions.SocketName);
+			spawnedActor->AttachToComponent(particlePlayingOptions.SceneComponent, FAttachmentTransformRules::KeepWorldTransform, particlePlayingOptions.SocketName);
+			attachedTransform = particlePlayingOptions.SceneComponent->GetSocketTransform(particlePlayingOptions.SocketName);
 		}
 		else
 		{

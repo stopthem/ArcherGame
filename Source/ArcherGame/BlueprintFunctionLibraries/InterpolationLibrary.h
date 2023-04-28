@@ -18,7 +18,7 @@ public:
 	* Critically Damped Spring Interpolation (ie: Similar to Unity's SmoothDamp, but will less operations)
 	*/
 	UFUNCTION(BlueprintPure, Category = "Math|Interpolation", meta = (Keywords = "interp vinterp vectorspringinterp lerp smoothdamp"))
-	static FVector VectorSpringInterpCD(FVector Current, FVector Target, UPARAM(ref) FVector& Velocity, float DeltaTime, float InterpSpeed = 10.f, float MaxVelocity = 0.f);
+	static FVector VectorSpringInterpCD(const FVector& Current, const FVector& Target, UPARAM(ref) FVector& Velocity, float DeltaTime, float InterpSpeed = 10.f, float MaxVelocity = 0.f);
 
 	/**
 	* Critically Damped Spring Interpolation (ie: Similar to Unity's SmoothDamp, but will less operations)
@@ -36,7 +36,7 @@ public:
 	* Critically Damped Spring Interpolation
 	*/
 	UFUNCTION(BlueprintPure, Category = "Math|Interpolation", meta = (Keywords = "fquat smoothdamp"))
-	static FQuat QuatSpringInterpCD(FQuat Current, FQuat Target, UPARAM(ref) FVector4& Velocity, float DeltaTime, float InterpSpeed = 10.f, float MaxVelocity = 0.f);
+	static FQuat QuatSpringInterpCD(const FQuat& Current, const FQuat& Target, UPARAM(ref) FVector4& Velocity, float DeltaTime, float InterpSpeed = 10.f, float MaxVelocity = 0.f);
 
 
 	// Utility methods

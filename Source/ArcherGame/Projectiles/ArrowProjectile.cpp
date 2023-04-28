@@ -4,7 +4,6 @@
 #include "ArrowProjectile.h"
 
 #include "ArcherGame/BlueprintFunctionLibraries/ParticleBlueprintFunctionLibrary.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AArrowProjectile::AArrowProjectile()
@@ -22,7 +21,7 @@ void AArrowProjectile::Shoot(AActor* effectCauser)
 
 void AArrowProjectile::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {
-	SetActorLocation(GetActorLocation() + GetActorForwardVector() * stickLocationMultiplier);
+	SetActorLocation(GetActorLocation() + GetActorForwardVector() * StickLocationMultiplier);
 
 	Super::OnBeginOverlap(overlappedComponent, otherActor, otherComponent, otherBodyIndex, bFromSweep, hit);
 }
@@ -31,28 +30,27 @@ void AArrowProjectile::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, 
 void AArrowProjectile::PlayHitParticle(AActor* otherActor)
 {
 	// create particle playing options for using its variables multiple times. playing particle can be done without it 
-	FParticlePlayingOptions particlePlayingOptions;
+	FParticlePlayingOptions particlePlayingOptions(otherActor);
 
 	particlePlayingOptions.PlayLocation = GetActorLocation();
 
 	particlePlayingOptions.PlayRotation = GetProjectileHitRotation();
 
-	if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
-	{
-		FVector* socketLocation = nullptr;
-		const FName socketName = otherActorMesh->FindClosestBone(GetActorLocation(), socketLocation);
-
-		if (socketName.IsNone())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("ArrowProjectile -> couldn't find closest bone this actor %s overlapped actor %s"), *GetActorNameOrLabel(), *otherActor->GetActorNameOrLabel());
-			return;
-		}
-
-		UGameplayStatics::SpawnEmitterAttached(ProjectileHitParticleInfo.HitVfx, otherActorMesh, socketName, particlePlayingOptions.PlayLocation,
-		                                       particlePlayingOptions.PlayRotation, FVector(1), EAttachLocation::KeepWorldPosition);
-	}
-	else
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ProjectileHitParticleInfo.HitVfx, particlePlayingOptions.PlayLocation, particlePlayingOptions.PlayRotation);
-	}
+	ProjectileHitParticleInfo.PlayHitParticle(this, otherActor, particlePlayingOptions, true, true);
+	// if (USkinnedMeshComponent* otherActorMesh = otherActor->FindComponentByClass<USkinnedMeshComponent>())
+	// {
+	// 	FVector* socketLocation = nullptr;
+	// 	const FName socketName = otherActorMesh->FindClosestBone(GetActorLocation(), socketLocation);
+	//
+	// 	if (socketName.IsNone())
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("ArrowProjectile -> couldn't find closest bone this actor %s overlapped actor %s"), *GetActorNameOrLabel(), *otherActor->GetActorNameOrLabel());
+	// 		return;
+	// 	}
+	//
+	// }
+	// else
+	// {
+	// 	Super::PlayHitParticle(otherActor);
+	// }
 }

@@ -22,7 +22,7 @@ public:
 
 	// Arrow will go ActorForwardVector * this value when overlapped something
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arrow Projectile|Stick")
-	float stickLocationMultiplier = 25.0f;
+	float StickLocationMultiplier = 25.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Arrow Projectile", meta=(UIMin= "0", UIMax="1", ClampMin="0", ClampMax="1"))
 	float ShootingPower;

@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "FCTweenUObject.h"
 #include "GameplayTagContainer.h"
+#include "ArcherGame/Character/Ability/ArcherAbilitySystemComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ArcherProjectileBase.generated.h"
 
+struct FParticlePlayingOptions;
 class UPoolableComponent;
 class UArcherGameplayEffect;
 class UParticleBlueprintFunctionLibrary;
@@ -30,17 +32,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == true", EditConditionHides))
 	FGameplayTag HitVfxPoolerTag;
 
+	// If null, HitVfxPoolerTag will be used on players.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == true", EditConditionHides))
+	FGameplayTag PlayerHitVfxPoolerTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == false", EditConditionHides))
 	UParticleSystem* HitVfx = nullptr;
 
-	TObjectPtr<FCTweenInstance> SpawnedTween = nullptr;
-
-	// OneValue will be used as time before destroying the projectile 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
-	FTweenParamsOneValue DestroyEmitterScaleTweenParams;
+	// If null, HitVfx will be used on players.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == false", EditConditionHides))
+	UParticleSystem* PlayerHitVfx = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
+
+	UParticleSystemComponent* PlayHitParticle(const AActor* hitter, const AActor* hitActor, FParticlePlayingOptions particlePlayingOptions, bool bCanAttach = false, bool bRotateTowardsFoundBone = true,
+	                                          EAttachLocation::Type attachLocation = EAttachLocation::KeepWorldPosition) const;
 };
 
 /**
@@ -60,6 +67,9 @@ public:
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Shoot(AActor* projectileInstigator);
+
+	UFUNCTION(BlueprintCallable)
+	void SetTimerForDestroy(float time);
 
 private:
 	// Probably spawner of this object.
@@ -106,6 +116,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	UPrimitiveComponent* GetCollisionComponent() const
+	{
+		return ProjectileCollisionComponent;
+	}
+
+protected:
 	// Our collision component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Mesh")
 	TObjectPtr<UPrimitiveComponent> ProjectileCollisionComponent;
@@ -123,14 +140,31 @@ protected:
 		return DamageAmount;
 	}
 
-private:
+public:
+	// Should we destroy the particle after TimeBeforeHandlingEnd passed ?
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|End")
+	bool bDestroyAfterTime = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|End", meta=(EditCondition="bDestroyAfterTime == true"))
+	float TimeBeforeHandlingEnd = 5.0f;
+
+	// Tween params to use in ending scale tween.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|End")
+	FTweenParams DestroyEmitterScaleTweenParams;
+
+	// Return to pool or destroy actor.
+	UFUNCTION(BlueprintCallable)
 	void HandleActorEnding();
+
+private:
+	TObjectPtr<FCTweenInstance> EndScaleTween = nullptr;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")
 	TObjectPtr<UPoolableComponent> PoolableComponent;
 
 	FTimerHandle ReturnToPoolTimerHandle;
+
 	// calls this actors poolable component's return to pool
 	virtual void ReturnToPool();
 

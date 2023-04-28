@@ -23,7 +23,7 @@ void AArcherGameGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	GameplayMessageListenerHandle = UGameplayMessageSubsystem::Get(this).RegisterListener<FArcherLevelEndMessage, AArcherGameGameModeBase>(TAG_GameplayEvent_LevelEnd, this, &ThisClass::OnLevelEnd);
-	
+
 	GEngine->bSubtitlesEnabled = false;
 }
 
@@ -40,7 +40,8 @@ void AArcherGameGameModeBase::OnLevelEnd(FGameplayTag messageChannelTag, const F
 		}, DelayBeforeShowingWidget, EFCEase::Linear)
 		->SetOnComplete([&]
 		{
-			CreateWidget<UUserWidget>(GetWorld(), levelEndMessage.bWin ? WinScreenWidgetClass : FailScreenWidgetClass, FName(TEXT("LevelEndScreenWidget")))->AddToViewport();
+			// I don't know why the struct or a local variable changing in timers levelEndMessage.bWin changes to fail so i need to check game status.
+			CreateWidget<UUserWidget>(GetWorld(), GameStatus == Win ? WinScreenWidgetClass : FailScreenWidgetClass, FName(TEXT("LevelEndScreenWidget")))->AddToViewport();
 		})
 		->SetUseGlobalTimeDilation(false);
 }
