@@ -119,7 +119,7 @@ void UArcherAbilitySystemComponent::HandleCantActivateSoundEffects(const FGamepl
 
 	const bool bFoundAbilityRelationship = AbilityRelationshipDataAsset->GetAbilityRelationshipFromTagContainer(ability->AbilityTags, foundAbilityRelationshipInfo);
 
-	auto GetToCheckAbility = [&](FGameplayTag abilityTag)
+	auto GetToCheckAbility = [&](const FGameplayTag abilityTag)
 	{
 		// Given tag is found within foundAbilityRelationshipInfo, so if that is null tag will be invalid.
 		if (abilityTag.IsValid())
@@ -127,12 +127,18 @@ void UArcherAbilitySystemComponent::HandleCantActivateSoundEffects(const FGamepl
 			FGameplayAbilitySpec foundSpec;
 			FindAbilitySpecFromTag(abilityTag, foundSpec);
 
-			return foundSpec.Ability;
+			// Lambda return requires that all returns are same type.
+			// Can't do UGameplayAbility* and TObjectPtr<UGameplayAbility>
+			return foundSpec.Ability.Get();
 		}
 
 		return ability;
 	};
 
+	// We get cooldown and cost abilities to check separately because
+	// there are some finishing abilities that they have a another ability to ready them up.
+	// in this case we use finishing abilitiy's cooldown for readying ability because
+	// readying ability is activated and its cooldown will be wrong to play a cue.
 	const UGameplayAbility* abilityToCheckCooldown = ability;
 	const UGameplayAbility* abilityToCheckCost = ability;
 	if (bFoundAbilityRelationship)

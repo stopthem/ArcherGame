@@ -4,15 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "FCEasing.h"
+#include "Components/ActorComponent.h"
+#include "Components/GameFrameworkComponent.h"
+#include "HitFlashEffectComponent.generated.h"
 
-#include "OnHitFlashEffect.generated.h"
-
-/*
- * FOnHitFlashEffectParams
- *
- * Used by IOnHitFlashEffect.
- * Holds information about material and blinking interpolation
- */
+class FCTweenInstanceFloat;
+/* FOnHitFlashEffectParams
+*
+* Used by IOnHitFlashEffect.
+* Holds information about material and blinking interpolation
+*/
 USTRUCT(BlueprintType)
 struct FOnHitFlashEffectParams
 {
@@ -23,17 +24,10 @@ public:
 	{
 	}
 
-	FOnHitFlashEffectParams(UPrimitiveComponent* mesh, int materialIndex, FName hitBrightnessScalarValueName)
-	{
-		Mesh = mesh;
-		MaterialIndex = materialIndex;
-		HitBrightnessScalarValueName = hitBrightnessScalarValueName;
-	}
-
 public:
 	// The mesh where we find the material and create material dynamic instance
 	UPROPERTY()
-	TObjectPtr<UPrimitiveComponent> Mesh = nullptr;
+	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent = nullptr;
 
 	// To be copied material index
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="OnHitParams|Init")
@@ -57,35 +51,30 @@ public:
 	EFCEase Ease = EFCEase::InOutSine;
 };
 
-class FCTweenInstanceFloat;
-enum class EFCEase : uint8;
-
-UINTERFACE(MinimalAPI, Blueprintable)
-class UOnHitFlashEffect : public UInterface
-{
-	GENERATED_BODY()
-};
-
 /*
- * IOnHitFlashEffect
+ * UHitFlashEffectComponent
  *
- * Interface that plays a blinking animation on given meshes given material with changing the scalar value of given name
+ * Component that handles the hit effect of paragon characters.
  */
-class IOnHitFlashEffect
+UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent))
+class ARCHERGAME_API UHitFlashEffectComponent : public UGameFrameworkComponent
 {
 	GENERATED_BODY()
 
 public:
-	IOnHitFlashEffect();
+	// Sets default values for this component's properties
+	explicit UHitFlashEffectComponent(const FObjectInitializer& objectInitializer);
 
-protected:
+public:
 	void DoHitFlashBlink();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OnHitEffect")
 	FOnHitFlashEffectParams OnHitEffectParams;
 
 private:
-	// created material instance from 
-	TWeakObjectPtr<UMaterialInstanceDynamic> MaterialInstance;
+	// created material instance from
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> MaterialInstance;
 
 	// Animation tween
 	TObjectPtr<FCTweenInstanceFloat> BlinkTweenInstance;

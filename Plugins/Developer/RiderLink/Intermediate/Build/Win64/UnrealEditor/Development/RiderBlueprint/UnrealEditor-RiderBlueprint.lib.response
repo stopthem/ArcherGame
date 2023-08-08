@@ -7,5 +7,6 @@
 /IGNORE:4221
 /NODEFAULTLIB
 "C:\Users\bechs\Documents\GitHub\Unreal\ArcherGame\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprint\Module.RiderBlueprint.cpp.obj"
+"C:\Users\bechs\Documents\GitHub\Unreal\ArcherGame\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprint\BlueprintProvider.cpp.obj"
 "C:\Users\bechs\Documents\GitHub\Unreal\ArcherGame\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprint\Default.rc2.res"
 /OUT:"C:\Users\bechs\Documents\GitHub\Unreal\ArcherGame\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprint\UnrealEditor-RiderBlueprint.lib"

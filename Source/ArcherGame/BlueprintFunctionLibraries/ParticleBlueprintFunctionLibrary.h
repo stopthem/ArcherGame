@@ -11,10 +11,12 @@ UENUM()
 enum class EParticleAttachmentRules
 {
 	DontAttach,
-	// Given Location and Rotation values will be treated like relative after attaching to actor
+
 	AttachGivenValuesAreRelative,
-	// Given Location and Rotation values will be treated like world and will be converted to relative after attaching
+	// Given Location and Rotation values will be treated like relative after attaching to actor
+
 	AttachGivenValuesAreWorld
+	// Given Location and Rotation values will be treated like world and will be converted to relative after attaching
 };
 
 /**

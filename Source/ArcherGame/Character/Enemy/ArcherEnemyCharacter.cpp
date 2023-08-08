@@ -3,15 +3,15 @@
 
 #include "ArcherEnemyCharacter.h"
 
-#include "AIController.h"
-#include "BrainComponent.h"
 #include "FCTween.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthComponent.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherHealthSet.h"
+#include "ArcherGame/Character/Effects/HitFlashEffectComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 AArcherEnemyCharacter::AArcherEnemyCharacter()
 {
+	HitFlashEffectComponent = CreateDefaultSubobject<UHitFlashEffectComponent>("HitFlashEffectComponent");
 }
 
 void AArcherEnemyCharacter::BeginPlay()
@@ -19,7 +19,7 @@ void AArcherEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// set interface variable and bind to health component's OnHealthChanged
-	OnHitEffectParams = FOnHitFlashEffectParams(OnHitFlashEffectParams);
+	// OnHitEffectParams = FOnHitFlashEffectParams(OnHitFlashEffectParams);
 	ArcherHealthComponent->OnHealthChanged.AddDynamic(this, &ThisClass::OnHealthChanged);
 }
 
@@ -31,14 +31,15 @@ void AArcherEnemyCharacter::Spawn()
 	// Spawn the spawning vfx
 	UGameplayStatics::SpawnEmitterAtLocation(this, SpawnVFX, GetActorLocation(), FRotator(0));
 
-	USkeletalMeshComponent* skeletalMesh = GetMesh();
+	const USkeletalMeshComponent* skeletalMesh = GetMesh();
 
 	// Alter on hit effect params(interface one) duration to match our scale tween duration so it matches exactly.
-	OnHitEffectParams.Duration = SpawnScaleTweenParams.Duration;
+	FOnHitFlashEffectParams& HitFlashEffectParams = HitFlashEffectComponent->OnHitEffectParams;
 
-	OnHitEffectParams.Mesh = skeletalMesh;
+	const float prevHitEffectDuration = HitFlashEffectParams.Duration;
+	HitFlashEffectParams.Duration = SpawnScaleTweenParams.Duration;
 
-	DoHitFlashBlink();
+	HitFlashEffectComponent->DoHitFlashBlink();
 
 	// Play the scaling tween.
 	FCTween::Play(FVector(0), skeletalMesh->GetComponentScale(), [&](const FVector& scaleVector)
@@ -46,13 +47,13 @@ void AArcherEnemyCharacter::Spawn()
 			// It crashes when i use skeletalMesh local variable, don't know why.
 			GetMesh()->SetWorldScale3D(scaleVector);
 		}, SpawnScaleTweenParams.Duration, SpawnScaleTweenParams.Ease)
-		->SetOnComplete([&]
+		->SetOnComplete([=]() mutable
 		{
 			// Remove damage immunity.
 			GetArcherAbilitySystemComponent()->RemoveLooseGameplayTag(TAG_Gameplay_DamageImmunity);
 
 			// Restore on hit flash effect params duration
-			OnHitEffectParams.Duration = OnHitFlashEffectParams.Duration;
+			HitFlashEffectParams.Duration = prevHitEffectDuration;
 		});
 }
 
@@ -64,8 +65,5 @@ void AArcherEnemyCharacter::OnHealthChanged(UArcherHealthComponent* sentHealthCo
 		return;
 	}
 
-	// maybe its better to call once but i wanted this interface to be simple and maybe in the future this mesh will change? :D
-	OnHitEffectParams.Mesh = GetMesh();
-
-	DoHitFlashBlink();
+	HitFlashEffectComponent->DoHitFlashBlink();
 }

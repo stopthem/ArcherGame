@@ -26,8 +26,9 @@ UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AAct
 	// If player hit vfx is not null and we didn't hit world object, use player vfx.
 	UParticleSystem* particleSystemTemplate = !bHitIsWorld && PlayerHitVfx ? PlayerHitVfx : HitVfx;
 
-	// We should attach if attach options is AttachBoth or attach player and we didn't hit world or attach world and we hit world. 
-	const bool bShouldAttach = ParticleCanAttachOptions == AttachBoth || ((ParticleCanAttachOptions == AttachPlayer && !bHitIsWorld) || (ParticleCanAttachOptions == AttachWorld && bHitIsWorld));
+	const bool bShouldAttach = ParticleCanAttachOptions == AttachBoth
+		|| ((ParticleCanAttachOptions == AttachToOverlapResponse && !bHitIsWorld) // We want to attach overlap and hit is not world
+			|| (ParticleCanAttachOptions == AttachToBlockResponse && bHitIsWorld)); // We want to attach to world and our hit is world
 
 	// If we can attach, try to set optional variables in particle playing options like scene component, socket name and rotation towards bone.
 	if (bShouldAttach)
@@ -38,21 +39,25 @@ UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AAct
 			// If we found a skinned mesh component, find closest bone.
 			particlePlayingOptions.SocketName = foundSkinnedMeshComponent->FindClosestBone(hitter->GetActorLocation(), socketLocation);
 
+			// Did we found a bone location?
 			if (socketLocation)
 			{
 				particlePlayingOptions.SceneComponent = foundSkinnedMeshComponent;
 
 				if (bRotateTowardsFoundBone)
 				{
+					// Rotation from play location to found bone location.
 					particlePlayingOptions.PlayRotation = UKismetMathLibrary::FindLookAtRotation(particlePlayingOptions.PlayLocation, *socketLocation);
 				}
 			}
 		}
 		else
 		{
+			// If we didn't found a skinned mesh and a bone, set particle playing options scene component to hit actor's root component. 
 			particlePlayingOptions.SceneComponent = hitActor->GetRootComponent();
 		}
 
+		// Treat particle playing options variables as world.
 		particlePlayingOptions.ParticleAttachmentRules = EParticleAttachmentRules::AttachGivenValuesAreWorld;
 	}
 
@@ -63,6 +68,7 @@ UParticleSystemComponent* FProjectileHitParticleInfo::PlayHitParticle(const AAct
 	{
 		if (!bShouldAttach)
 		{
+			// If we shouldn't attach, we reset the necessary values for attaching.
 			particlePlayingOptions.SceneComponent = nullptr;
 			particlePlayingOptions.SocketName = NAME_None;
 		}
@@ -244,7 +250,7 @@ void AArcherProjectileBase::HandleActorEnding()
 void AArcherProjectileBase::ReturnToPool()
 {
 	// poolable component is added in BeginPlay so this variable can be null
-	if (!PoolableComponent)
+	if (!PoolableComponent.IsValid())
 	{
 		PoolableComponent = FindComponentByClass<UPoolableComponent>();
 	}

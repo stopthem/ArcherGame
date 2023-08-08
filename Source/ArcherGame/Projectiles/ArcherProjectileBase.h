@@ -20,9 +20,15 @@ UENUM()
 enum EParticleCanAttachOptions
 {
 	DontAttach,
+
 	AttachBoth,
-	AttachWorld,
-	AttachPlayer
+	// Attach to the hit regardless of what response it is.
+
+	AttachToBlockResponse,
+	// Attach only to objects that response a block collision to us.
+
+	AttachToOverlapResponse
+	// Attach only to objects that does not response a block collision to us.
 };
 
 /**
@@ -53,9 +59,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX", meta=(EditCondition="bPlayPooledParticle == false", EditConditionHides))
 	UParticleSystem* PlayerHitVfx = nullptr;
 
+	// Should the particle rotation match the actor rotation that plays this?
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	bool bUseActorRotation = false;
 
+	// How do we handle particle attaching?
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|VFX")
 	TEnumAsByte<EParticleCanAttachOptions> ParticleCanAttachOptions = DontAttach;
 
@@ -106,15 +114,15 @@ public:
 
 private:
 	// Current damaging collision count
-	int DamagingCollisionCount;
+	int DamagingCollisionCount = 0;
 
 public:
 	// This will be applied to found ability system component
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile|Damage")
-	TSubclassOf<UArcherGameplayEffect> DamageGameplayEffect;
+	TSubclassOf<UArcherGameplayEffect> DamageGameplayEffect = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Movement")
-	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent = nullptr;
 
 public:
 	// The main hit vfx info
@@ -139,8 +147,8 @@ public:
 
 protected:
 	// Our collision component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Mesh")
-	TObjectPtr<UPrimitiveComponent> ProjectileCollisionComponent;
+	UPROPERTY()
+	TObjectPtr<UPrimitiveComponent> ProjectileCollisionComponent = nullptr;
 
 	UFUNCTION()
 	virtual void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit);
@@ -175,8 +183,7 @@ private:
 	TObjectPtr<FCTweenInstance> EndScaleTween = nullptr;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile|Pooling")
-	TObjectPtr<UPoolableComponent> PoolableComponent;
+	TWeakObjectPtr<UPoolableComponent> PoolableComponent;
 
 	FTimerHandle ReturnToPoolTimerHandle;
 

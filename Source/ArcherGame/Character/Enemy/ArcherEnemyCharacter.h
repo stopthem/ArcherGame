@@ -5,36 +5,30 @@
 #include "CoreMinimal.h"
 #include "FCTweenUObject.h"
 #include "ArcherGame/Character/ArcherCharacter.h"
-#include "ArcherGame/Character/Ability/Attribute/ArcherCombatSet.h"
-#include "..\..\Interfaces\OnHitFlashEffect.h"
 
 #include "ArcherEnemyCharacter.generated.h"
 
+class UHitFlashEffectComponent;
 /**
  * AArcherEnemyCharacter
  *
  * Base class that all enemies use.
  */
 UCLASS(Abstract)
-class ARCHERGAME_API AArcherEnemyCharacter : public AArcherCharacter, public IOnHitFlashEffect
+class ARCHERGAME_API AArcherEnemyCharacter : public AArcherCharacter
 {
 	GENERATED_BODY()
 
 public:
 	AArcherEnemyCharacter();
 
-#pragma region OnHitFlashInterface
-
-public:
-	// The OnHitFlashEffectParams to be used with OnHitFlashEffect's blink
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ArcherEnemyCharacter|OnHitMaterialInterface")
-	FOnHitFlashEffectParams OnHitFlashEffectParams;
-
 private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ArcherEnemyCharacter|Effects", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHitFlashEffectComponent> HitFlashEffectComponent;
+	
 	// do blink of IOnHitFlashEffect
 	UFUNCTION()
 	void OnHealthChanged(UArcherHealthComponent* sentHealthComponent, float oldValue, float newValue, AActor* sentInstigator);
-#pragma endregion
 
 #pragma region Spawning
 
