@@ -47,6 +47,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 #pragma region Input Handling
 
 public:

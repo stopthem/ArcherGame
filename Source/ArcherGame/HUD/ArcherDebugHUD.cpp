@@ -16,10 +16,6 @@ void AArcherDebugHUD::DrawHUD()
 
 	if (!archerCharacter)return;
 
-#if !WITH_EDITOR
-	return;
-#endif
-
 	AddBool(L"Is Damage Immune", archerCharacter->HasMatchingGameplayTag(TAG_Gameplay_DamageImmunity));
 	AddBool(L"Is Mana Immune", archerCharacter->HasMatchingGameplayTag(TAG_Gameplay_ManaImmunity));
 

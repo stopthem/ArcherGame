@@ -12,6 +12,7 @@
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaComponent.h"
 #include "ArcherGame/Character/Ability/Attribute/ArcherManaSet.h"
 #include "ArcherGame/Input/ArcherEnhancedInputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 // Sets default values
@@ -45,6 +46,15 @@ void AArcherPlayerCharacter::BeginPlay()
 		OnConsoleVariableChanged();
 	});
 #endif
+}
+
+void AArcherPlayerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	// If we orient movement in Aiming, blueprints read actor rotation wrong
+	// probably order execution problem
+	GetCharacterMovement()->bOrientRotationToMovement = !GetIsAiming();
 }
 
 // Called to bind functionality to input
