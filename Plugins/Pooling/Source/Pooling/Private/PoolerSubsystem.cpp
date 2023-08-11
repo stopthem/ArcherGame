@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PoolerGameInstanceSubsystem.h"
+#include "PoolerSubsystem.h"
 
 #include "GameplayTagContainer.h"
 #include "Pooler.h"
@@ -19,7 +19,7 @@ APooler* UPoolerSubsystem::GetPoolerFromGameplayTag(FGameplayTag gameplayTag)
 {
 	if (!gameplayTag.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PoolerGameInstanceSubSystem -> GetPoolerFromGameplayTag -> gameplay tag is not valid"));
+		UE_LOG(LogTemp, Warning, TEXT("PoolerGameInstanceSubSystem -> GetPoolerFromGameplayTag -> gameplay tag is invalid"));
 		return nullptr;
 	}
 

@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
-#include "PoolerGameInstanceSubsystem.generated.h"
+#include "PoolerSubsystem.generated.h"
 
 struct FGameplayTag;
 class APooler;
 /**
- * UPoolerGameInstanceSubsystem
+ * UPoolerSubsystem
  *
  * Class for pooler plugin utility functions
  */

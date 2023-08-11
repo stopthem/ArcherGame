@@ -5,9 +5,7 @@
 
 #include "ParticlePoolableComponent.h"
 #include "PoolableComponent.h"
-#include "PoolerGameInstanceSubsystem.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Particles/ParticleSystemComponent.h"
+#include "PoolerSubsystem.h"
 
 APooler::APooler()
 {

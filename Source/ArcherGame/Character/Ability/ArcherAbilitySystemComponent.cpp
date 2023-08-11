@@ -103,7 +103,7 @@ void UArcherAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
 	}
 }
 
-void UArcherAbilitySystemComponent::HandleCantActivateSoundEffects(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, OUT FGameplayTagContainer* optionalRelevantTags)
+void UArcherAbilitySystemComponent::HandleCantActivateSoundEffects(const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo* actorInfo, FGameplayTagContainer* optionalRelevantTags)
 {
 	check(AbilityRelationshipDataAsset);
 
@@ -177,9 +177,7 @@ void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bG
 	static TArray<FGameplayAbilitySpecHandle> abilitiesToActivate;
 	abilitiesToActivate.Reset();
 
-	//
 	// Process all abilities that activate when the input is held.
-	//
 	for (const FGameplayAbilitySpecHandle& specHandle : InputHeldSpecHandles)
 	{
 		if (const FGameplayAbilitySpec* abilitySpec = FindAbilitySpecFromHandle(specHandle))
@@ -196,9 +194,7 @@ void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bG
 		}
 	}
 
-	//
 	// Process all abilities that had their input pressed this frame.
-	//
 	for (const FGameplayAbilitySpecHandle& specHandle : InputPressedSpecHandles)
 	{
 		if (FGameplayAbilitySpec* abilitySpec = FindAbilitySpecFromHandle(specHandle))
@@ -225,11 +221,9 @@ void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bG
 		}
 	}
 
-	//
 	// Try to activate all the abilities that are from presses and holds.
 	// We do it all at once so that held inputs don't activate the ability
 	// and then also send a input event to the ability because of the press.
-	//
 	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : abilitiesToActivate)
 	{
 		// If we couldn't activate the ability, play sound effects based on that.
@@ -239,9 +233,7 @@ void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bG
 		}
 	}
 
-	//
 	// Process all abilities that had their input released this frame.
-	//
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputReleasedSpecHandles)
 	{
 		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
@@ -259,9 +251,7 @@ void UArcherAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bG
 		}
 	}
 
-	//
 	// Clear the cached ability handles.
-	//
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 }
@@ -332,7 +322,7 @@ bool UArcherAbilitySystemComponent::FindAbilitySpecFromInputTag(FGameplayTag inp
 	}
 
 	// if we found a ability with the given tag try to activate it
-	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec GameplayAbilitySpec)
+	if (const auto foundGameplayAbilitySpec = ActivatableAbilities.Items.FindByPredicate([&](const FGameplayAbilitySpec& GameplayAbilitySpec)
 	{
 		return GameplayAbilitySpec.Ability && GameplayAbilitySpec.DynamicAbilityTags.HasTagExact(inputTag);
 	}))
