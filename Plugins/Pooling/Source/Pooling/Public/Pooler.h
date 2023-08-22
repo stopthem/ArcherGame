@@ -36,7 +36,7 @@ public:
 	AActor* GetPooledObj();
 
 	UPROPERTY(BlueprintReadOnly, Category="Pooling")
-	TArray<UPoolableComponent*> PooledActors;
+	TArray<UPoolableComponent*> PooledPoolableComponents;
 
 	// Get pooled object from the pool and find given component
 	template <typename T>

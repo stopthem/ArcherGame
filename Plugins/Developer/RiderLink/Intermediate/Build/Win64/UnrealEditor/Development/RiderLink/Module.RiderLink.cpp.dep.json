@@ -785,6 +785,8 @@
             "c:\\program files\\epic games\\ue_5.1\\engine\\source\\runtime\\core\\public\\hal\\mallocansi.h",
             "c:\\program files\\epic games\\ue_5.1\\engine\\source\\runtime\\core\\public\\profilingdebugging\\memorytrace.h",
             "c:\\program files\\epic games\\ue_5.1\\engine\\source\\runtime\\core\\public\\misc\\memstack.h",
+            "c:\\program files\\microsoft visual studio\\2022\\community\\vc\\tools\\msvc\\14.37.32822\\include\\sanitizer\\asan_interface.h",
+            "c:\\program files\\microsoft visual studio\\2022\\community\\vc\\tools\\msvc\\14.37.32822\\include\\sanitizer\\common_interface_defs.h",
             "c:\\program files\\epic games\\ue_5.1\\engine\\source\\runtime\\core\\public\\profilingdebugging\\metadatatrace.h",
             "c:\\program files\\epic games\\ue_5.1\\engine\\source\\runtime\\core\\public\\profilingdebugging\\stringstrace.h",
             "c:\\program files\\epic games\\ue_5.1\\engine\\source\\runtime\\tracelog\\public\\trace\\trace.inl",

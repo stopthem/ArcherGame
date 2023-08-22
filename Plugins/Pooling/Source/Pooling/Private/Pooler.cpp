@@ -17,7 +17,8 @@ void APooler::BeginPlay()
 
 	for (int i = 0; i < SpawnAtStart; ++i)
 	{
-		SpawnPooledActor();
+		const AActor* pooledActor = SpawnPooledActor();
+		pooledActor->FindComponentByClass<UPoolableComponent>()->ReturnToPool();
 	}
 
 	GetWorld()->GetSubsystem<UPoolerSubsystem>()->AddToPoolerArray(this);
@@ -44,7 +45,7 @@ AActor* APooler::SpawnPooledActor()
 	}
 
 	// Add spawnedActor's UPoolableComponent to the list
-	PooledActors.Add(poolableComponent);
+	PooledPoolableComponents.Add(poolableComponent);
 	// Init this pooler to poolableComponent
 	poolableComponent->Init(this);
 	return spawnedActor;
@@ -73,8 +74,9 @@ AActor* APooler::GetPooledObj()
 {
 	UPoolableComponent* poolableComponent;
 
+	// TODO: should add size cap
 	// is there an available pooled actor?
-	if (const auto foundPoolableComponent = PooledActors.FindByPredicate([](const UPoolableComponent* poolableComponent)
+	if (const auto foundPoolableComponent = PooledPoolableComponents.FindByPredicate([](const UPoolableComponent* poolableComponent)
 	{
 		return !poolableComponent->GetIsTaken();
 	}))
@@ -90,6 +92,7 @@ AActor* APooler::GetPooledObj()
 
 	poolableComponent->Activate();
 	poolableComponent->Taken();
+	
 	AActor* returnedActor = poolableComponent->GetOwner();
 	returnedActor->SetActorHiddenInGame(false);
 
@@ -99,7 +102,7 @@ AActor* APooler::GetPooledObj()
 void APooler::ReturnToPool(const UPoolableComponent* poolableComponent)
 {
 	// does given poolableComponent is pooled by this pooler ?
-	if (!PooledActors.Contains(poolableComponent))return;
+	if (!PooledPoolableComponents.Contains(poolableComponent))return;
 
 	ResetPooledObj(poolableComponent->GetOwner());
 }
